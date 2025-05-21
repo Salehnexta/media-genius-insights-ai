@@ -72,6 +72,7 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   // Make sure config is always defined and handle empty case
   const safeConfig = config || {}
   
+  // Filter out undefined or null configs before calling Object.entries
   const colorConfig = Object.entries(safeConfig).filter(
     ([_, config]) => config && (config.theme || config.color)
   )
