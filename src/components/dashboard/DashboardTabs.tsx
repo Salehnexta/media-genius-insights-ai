@@ -1,12 +1,13 @@
 
 import React, { useState } from 'react';
-import { AreaChart, BarChart, LineChart, PieChart, LayoutGrid, Users, Gauge, TrendingUp } from 'lucide-react';
+import { AreaChart, BarChart, LineChart, PieChart, LayoutGrid, Users, Gauge, TrendingUp, Edit } from 'lucide-react';
 import TabButton from './TabButton';
 import OverviewTab from './tabs/OverviewTab';
 import CampaignsTab from './tabs/CampaignsTab';
 import AudienceTab from './tabs/AudienceTab';
 import CompetitorsTab from './tabs/CompetitorsTab';
 import SentimentTab from './tabs/SentimentTab';
+import ContentCreatorTab from './tabs/ContentCreatorTab';
 import { getChartConfig } from './ChartConfig';
 
 const DashboardTabs: React.FC = () => {
@@ -47,6 +48,12 @@ const DashboardTabs: React.FC = () => {
             isActive={activeTab === 'sentiment'}
             onClick={() => setActiveTab('sentiment')}
           />
+          <TabButton 
+            label="Content Creator" 
+            icon={<Edit className="h-4 w-4" />} 
+            isActive={activeTab === 'content-creator'}
+            onClick={() => setActiveTab('content-creator')}
+          />
         </div>
       </div>
       
@@ -56,6 +63,7 @@ const DashboardTabs: React.FC = () => {
         {activeTab === 'audience' && <AudienceTab chartConfig={chartConfig} />}
         {activeTab === 'competitors' && <CompetitorsTab chartConfig={chartConfig} />}
         {activeTab === 'sentiment' && <SentimentTab chartConfig={chartConfig} />}
+        {activeTab === 'content-creator' && <ContentCreatorTab chartConfig={chartConfig} />}
       </div>
     </div>
   );
