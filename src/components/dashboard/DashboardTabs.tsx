@@ -27,74 +27,68 @@ const DashboardTabs: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
   
   // Dummy data for charts
-  const overviewData = {
-    options: {
-      chart: { toolbar: { show: false }, zoom: { enabled: false } },
-      xaxis: { categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'] },
-    },
-    series: [
-      { name: 'Website Traffic', data: [31, 40, 28, 51, 42, 109, 100] },
-      { name: 'Social Media', data: [11, 32, 45, 32, 34, 52, 41] },
-    ],
-  };
+  const overviewData = [
+    { name: 'Jan', "Website Traffic": 31, "Social Media": 11 },
+    { name: 'Feb', "Website Traffic": 40, "Social Media": 32 },
+    { name: 'Mar', "Website Traffic": 28, "Social Media": 45 },
+    { name: 'Apr', "Website Traffic": 51, "Social Media": 32 },
+    { name: 'May', "Website Traffic": 42, "Social Media": 34 },
+    { name: 'Jun', "Website Traffic": 109, "Social Media": 52 },
+    { name: 'Jul', "Website Traffic": 100, "Social Media": 41 },
+  ];
   
-  const sentimentData = {
-    options: {
-      chart: { toolbar: { show: false }, zoom: { enabled: false } },
-      xaxis: { categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] },
-      colors: ['#34A853', '#EA4335', '#FBBC05'],
-    },
-    series: [
-      { name: 'Positive', data: [44, 55, 57, 56, 61, 58, 63] },
-      { name: 'Negative', data: [76, 85, 101, 98, 87, 105, 91] },
-      { name: 'Neutral', data: [35, 41, 36, 26, 45, 48, 52] },
-    ],
-  };
+  const sentimentData = [
+    { name: 'Mon', "Positive": 44, "Negative": 76, "Neutral": 35 },
+    { name: 'Tue', "Positive": 55, "Negative": 85, "Neutral": 41 },
+    { name: 'Wed', "Positive": 57, "Negative": 101, "Neutral": 36 },
+    { name: 'Thu', "Positive": 56, "Negative": 98, "Neutral": 26 },
+    { name: 'Fri', "Positive": 61, "Negative": 87, "Neutral": 45 },
+    { name: 'Sat', "Positive": 58, "Negative": 105, "Neutral": 48 },
+    { name: 'Sun', "Positive": 63, "Negative": 91, "Neutral": 52 },
+  ];
 
-  const shareOfVoiceData = {
-    options: {
-      chart: { toolbar: { show: false } },
-      labels: ['Your Brand', 'Competitor A', 'Competitor B', 'Competitor C'],
-      colors: ['#4285F4', '#34A853', '#FBBC05', '#EA4335'],
-    },
-    series: [42, 28, 19, 11],
-  };
+  const shareOfVoiceData = [
+    { name: 'Your Brand', value: 42, fill: '#4285F4' },
+    { name: 'Competitor A', value: 28, fill: '#34A853' },
+    { name: 'Competitor B', value: 19, fill: '#FBBC05' },
+    { name: 'Competitor C', value: 11, fill: '#EA4335' }
+  ];
 
   // Chart config needed by the ChartContainer component
   const chartConfig = {
-    'website-traffic': {
+    'Website Traffic': {
       label: 'Website Traffic',
       color: '#4285F4'
     },
-    'social-media': {
+    'Social Media': {
       label: 'Social Media',
       color: '#34A853'
     },
-    'positive': {
+    'Positive': {
       label: 'Positive',
       color: '#34A853'
     },
-    'negative': {
+    'Negative': {
       label: 'Negative',
       color: '#EA4335'
     },
-    'neutral': {
+    'Neutral': {
       label: 'Neutral',
       color: '#FBBC05'
     },
-    'your-brand': {
+    'Your Brand': {
       label: 'Your Brand',
       color: '#4285F4'
     },
-    'competitor-a': {
+    'Competitor A': {
       label: 'Competitor A',
       color: '#34A853'
     },
-    'competitor-b': {
+    'Competitor B': {
       label: 'Competitor B',
       color: '#FBBC05'
     },
-    'competitor-c': {
+    'Competitor C': {
       label: 'Competitor C',
       color: '#EA4335'
     }
@@ -141,11 +135,7 @@ const DashboardTabs: React.FC = () => {
         <div className="chart-container">
           <h3 className="font-medium mb-2">Performance Trends</h3>
           <ChartContainer config={chartConfig} className="h-[240px]">
-            <RechartsPrimitive.AreaChart data={overviewData.options.xaxis.categories.map((category, index) => ({
-              name: category,
-              "Website Traffic": overviewData.series[0].data[index],
-              "Social Media": overviewData.series[1].data[index]
-            }))}>
+            <RechartsPrimitive.AreaChart data={overviewData}>
               <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" />
               <RechartsPrimitive.XAxis dataKey="name" />
               <RechartsPrimitive.YAxis />
@@ -159,12 +149,7 @@ const DashboardTabs: React.FC = () => {
         <div className="chart-container">
           <h3 className="font-medium mb-2">Brand Sentiment Analysis</h3>
           <ChartContainer config={chartConfig} className="h-[240px]">
-            <RechartsPrimitive.LineChart data={sentimentData.options.xaxis.categories.map((category, index) => ({
-              name: category,
-              "Positive": sentimentData.series[0].data[index],
-              "Negative": sentimentData.series[1].data[index],
-              "Neutral": sentimentData.series[2].data[index]
-            }))}>
+            <RechartsPrimitive.LineChart data={sentimentData}>
               <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" />
               <RechartsPrimitive.XAxis dataKey="name" />
               <RechartsPrimitive.YAxis />
@@ -184,12 +169,7 @@ const DashboardTabs: React.FC = () => {
             <ChartContainer config={chartConfig} className="h-[200px]">
               <RechartsPrimitive.PieChart>
                 <RechartsPrimitive.Pie
-                  data={[
-                    { name: 'Your Brand', value: 42, fill: '#4285F4' },
-                    { name: 'Competitor A', value: 28, fill: '#34A853' },
-                    { name: 'Competitor B', value: 19, fill: '#FBBC05' },
-                    { name: 'Competitor C', value: 11, fill: '#EA4335' }
-                  ]}
+                  data={shareOfVoiceData}
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
@@ -206,7 +186,7 @@ const DashboardTabs: React.FC = () => {
           <h3 className="font-medium mb-2">Media Mentions</h3>
           <div className="h-[200px] flex items-center justify-center">
             <div className="text-center p-4">
-              <div className="text-3xl font-bold text-marketing-blue mb-1">267</div>
+              <div className="text-3xl font-bold text-blue-500 mb-1">267</div>
               <div className="text-sm text-gray-500">Media mentions in the last 7 days</div>
               <div className="mt-3 text-sm flex items-center justify-center text-green-500">
                 <TrendingUp className="h-4 w-4 mr-1" />
