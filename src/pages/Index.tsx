@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
-import Sidebar from '@/components/layout/Sidebar';
 import ChatInterface from '@/components/chat/ChatInterface';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import StatCards from '@/components/dashboard/StatCards';
@@ -9,7 +8,6 @@ import DashboardTabs from '@/components/dashboard/DashboardTabs';
 
 const Index = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   
   // Set up dark mode
   useEffect(() => {
@@ -34,12 +32,6 @@ const Index = () => {
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">
-      {/* Sidebar */}
-      <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        setIsCollapsed={setIsSidebarCollapsed}
-      />
-      
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
