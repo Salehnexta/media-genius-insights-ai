@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { AreaChart, BarChart, LineChart, PieChart, LayoutGrid, Users, Gauge, TrendingUp } from 'lucide-react';
-import { Chart } from "@/components/ui/chart";
+import { ChartContainer as Chart } from "@/components/ui/chart";
 
 interface TabButtonProps {
   label: string;
