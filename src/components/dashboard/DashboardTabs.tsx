@@ -1,6 +1,8 @@
+
 import React, { useState } from 'react';
 import { AreaChart, BarChart, LineChart, PieChart, LayoutGrid, Users, Gauge, TrendingUp } from 'lucide-react';
-import { ChartContainer as Chart } from "@/components/ui/chart";
+import { ChartContainer } from "@/components/ui/chart";
+import * as RechartsPrimitive from "recharts";
 
 interface TabButtonProps {
   label: string;
@@ -58,6 +60,46 @@ const DashboardTabs: React.FC = () => {
     series: [42, 28, 19, 11],
   };
 
+  // Chart config needed by the ChartContainer component
+  const chartConfig = {
+    'website-traffic': {
+      label: 'Website Traffic',
+      color: '#4285F4'
+    },
+    'social-media': {
+      label: 'Social Media',
+      color: '#34A853'
+    },
+    'positive': {
+      label: 'Positive',
+      color: '#34A853'
+    },
+    'negative': {
+      label: 'Negative',
+      color: '#EA4335'
+    },
+    'neutral': {
+      label: 'Neutral',
+      color: '#FBBC05'
+    },
+    'your-brand': {
+      label: 'Your Brand',
+      color: '#4285F4'
+    },
+    'competitor-a': {
+      label: 'Competitor A',
+      color: '#34A853'
+    },
+    'competitor-b': {
+      label: 'Competitor B',
+      color: '#FBBC05'
+    },
+    'competitor-c': {
+      label: 'Competitor C',
+      color: '#EA4335'
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
       <div className="border-b mb-4">
@@ -98,22 +140,40 @@ const DashboardTabs: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div className="chart-container">
           <h3 className="font-medium mb-2">Performance Trends</h3>
-          <Chart
-            type="area"
-            options={overviewData.options}
-            series={overviewData.series}
-            height={240}
-          />
+          <ChartContainer config={chartConfig} className="h-[240px]">
+            <RechartsPrimitive.AreaChart data={overviewData.options.xaxis.categories.map((category, index) => ({
+              name: category,
+              "Website Traffic": overviewData.series[0].data[index],
+              "Social Media": overviewData.series[1].data[index]
+            }))}>
+              <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" />
+              <RechartsPrimitive.XAxis dataKey="name" />
+              <RechartsPrimitive.YAxis />
+              <RechartsPrimitive.Tooltip />
+              <RechartsPrimitive.Area type="monotone" dataKey="Website Traffic" stroke="#4285F4" fill="#4285F4" />
+              <RechartsPrimitive.Area type="monotone" dataKey="Social Media" stroke="#34A853" fill="#34A853" />
+            </RechartsPrimitive.AreaChart>
+          </ChartContainer>
         </div>
         
         <div className="chart-container">
           <h3 className="font-medium mb-2">Brand Sentiment Analysis</h3>
-          <Chart 
-            type="line"
-            options={sentimentData.options}
-            series={sentimentData.series}
-            height={240}
-          />
+          <ChartContainer config={chartConfig} className="h-[240px]">
+            <RechartsPrimitive.LineChart data={sentimentData.options.xaxis.categories.map((category, index) => ({
+              name: category,
+              "Positive": sentimentData.series[0].data[index],
+              "Negative": sentimentData.series[1].data[index],
+              "Neutral": sentimentData.series[2].data[index]
+            }))}>
+              <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" />
+              <RechartsPrimitive.XAxis dataKey="name" />
+              <RechartsPrimitive.YAxis />
+              <RechartsPrimitive.Tooltip />
+              <RechartsPrimitive.Line type="monotone" dataKey="Positive" stroke="#34A853" />
+              <RechartsPrimitive.Line type="monotone" dataKey="Negative" stroke="#EA4335" />
+              <RechartsPrimitive.Line type="monotone" dataKey="Neutral" stroke="#FBBC05" />
+            </RechartsPrimitive.LineChart>
+          </ChartContainer>
         </div>
       </div>
       
@@ -121,12 +181,24 @@ const DashboardTabs: React.FC = () => {
         <div className="chart-container">
           <h3 className="font-medium mb-2">Share of Voice</h3>
           <div className="flex justify-center">
-            <Chart 
-              type="donut"
-              options={shareOfVoiceData.options}
-              series={shareOfVoiceData.series}
-              height={200}
-            />
+            <ChartContainer config={chartConfig} className="h-[200px]">
+              <RechartsPrimitive.PieChart>
+                <RechartsPrimitive.Pie
+                  data={[
+                    { name: 'Your Brand', value: 42, fill: '#4285F4' },
+                    { name: 'Competitor A', value: 28, fill: '#34A853' },
+                    { name: 'Competitor B', value: 19, fill: '#FBBC05' },
+                    { name: 'Competitor C', value: 11, fill: '#EA4335' }
+                  ]}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  label
+                  dataKey="value"
+                />
+                <RechartsPrimitive.Tooltip />
+              </RechartsPrimitive.PieChart>
+            </ChartContainer>
           </div>
         </div>
         
