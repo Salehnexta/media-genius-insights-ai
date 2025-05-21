@@ -2,21 +2,16 @@
 import React, { useState } from 'react';
 import { AreaChart, BarChart, LineChart, PieChart, LayoutGrid, Users, Gauge, TrendingUp } from 'lucide-react';
 import TabButton from './TabButton';
-import PerformanceTrendsChart from './charts/PerformanceTrendsChart';
-import SentimentAnalysisChart from './charts/SentimentAnalysisChart';
-import ShareOfVoiceChart from './charts/ShareOfVoiceChart';
-import MediaMentionsStats from './charts/MediaMentionsStats';
-import MediaAlerts from './MediaAlerts';
-import { getChartConfig, getOverviewData, getSentimentData, getShareOfVoiceData } from './ChartConfig';
+import OverviewTab from './tabs/OverviewTab';
+import CampaignsTab from './tabs/CampaignsTab';
+import AudienceTab from './tabs/AudienceTab';
+import CompetitorsTab from './tabs/CompetitorsTab';
+import SentimentTab from './tabs/SentimentTab';
+import { getChartConfig } from './ChartConfig';
 
 const DashboardTabs: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
-  
-  // Get data and chart configuration
   const chartConfig = getChartConfig();
-  const overviewData = getOverviewData();
-  const sentimentData = getSentimentData();
-  const shareOfVoiceData = getShareOfVoiceData();
 
   return (
     <div className="flex flex-col h-full">
@@ -55,17 +50,13 @@ const DashboardTabs: React.FC = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-        <PerformanceTrendsChart data={overviewData} chartConfig={chartConfig} />
-        <SentimentAnalysisChart data={sentimentData} chartConfig={chartConfig} />
+      <div className="flex-1 overflow-auto">
+        {activeTab === 'overview' && <OverviewTab chartConfig={chartConfig} />}
+        {activeTab === 'campaigns' && <CampaignsTab chartConfig={chartConfig} />}
+        {activeTab === 'audience' && <AudienceTab chartConfig={chartConfig} />}
+        {activeTab === 'competitors' && <CompetitorsTab chartConfig={chartConfig} />}
+        {activeTab === 'sentiment' && <SentimentTab chartConfig={chartConfig} />}
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <ShareOfVoiceChart data={shareOfVoiceData} chartConfig={chartConfig} />
-        <MediaMentionsStats />
-      </div>
-      
-      <MediaAlerts />
     </div>
   );
 };

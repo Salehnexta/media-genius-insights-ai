@@ -36,6 +36,26 @@ export const getChartConfig = () => {
     'Competitor C': {
       label: 'Competitor C',
       color: '#EA4335'
+    },
+    'Campaign A': {
+      label: 'Campaign A',
+      color: '#4285F4'
+    },
+    'Campaign B': {
+      label: 'Campaign B',
+      color: '#34A853'
+    },
+    'Campaign C': {
+      label: 'Campaign C',
+      color: '#FBBC05'
+    },
+    'New Users': {
+      label: 'New Users',
+      color: '#9b87f5'
+    },
+    'Returning Users': {
+      label: 'Returning Users',
+      color: '#6E59A5'
     }
   };
 };
