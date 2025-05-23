@@ -6,8 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
-import { Facebook, Instagram, Linkedin, Twitter, ImageIcon, Type, Wand2, Download, Copy } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Facebook, Instagram, Linkedin, Twitter, ImageIcon, Type, Wand2, Download, Copy, CalendarDays, Code } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { format } from "date-fns";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface ContentCreatorTabProps {
   chartConfig: any;
@@ -38,6 +42,17 @@ const ContentCreatorTab: React.FC<ContentCreatorTabProps> = ({ chartConfig }) =>
   const [imageStyle, setImageStyle] = useState("realistic");
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [generatedImage, setGeneratedImage] = useState("");
+  const [userInfo, setUserInfo] = useState("");
+
+  // Calendar states
+  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [scheduledPosts, setScheduledPosts] = useState<{[key: string]: any[]}>({});
+
+  // AI Code generation states
+  const [codePrompt, setCodePrompt] = useState("");
+  const [codeLanguage, setCodeLanguage] = useState("javascript");
+  const [isGeneratingCode, setIsGeneratingCode] = useState(false);
+  const [generatedCode, setGeneratedCode] = useState("");
 
   const handleGenerateContent = () => {
     if (!prompt.trim()) {
@@ -76,18 +91,86 @@ const ContentCreatorTab: React.FC<ContentCreatorTabProps> = ({ chartConfig }) =>
 
     setIsGeneratingImage(true);
     
-    // Simulate image generation
+    // Simulate image generation with user info
     setTimeout(() => {
-      // Using a placeholder image service for demo
       const mockImageUrl = `https://picsum.photos/512/512?random=${Date.now()}`;
       setGeneratedImage(mockImageUrl);
       setIsGeneratingImage(false);
       
       toast({
         title: "Image Generated",
-        description: "Your AI image has been created!"
+        description: "Your AI image has been created with user context!"
       });
     }, 2000);
+  };
+
+  const handleGenerateCode = () => {
+    if (!codePrompt.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a description for your code",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGeneratingCode(true);
+    
+    // Simulate code generation
+    setTimeout(() => {
+      const mockCode = `// Generated ${codeLanguage} code for: ${codePrompt}
+function generateContent() {
+  const userInfo = "${userInfo}";
+  const prompt = "${codePrompt}";
+  
+  // AI-generated implementation based on user requirements
+  return {
+    success: true,
+    data: "Generated content based on user specifications",
+    userContext: userInfo
+  };
+}
+
+export default generateContent;`;
+      
+      setGeneratedCode(mockCode);
+      setIsGeneratingCode(false);
+      
+      toast({
+        title: "Code Generated",
+        description: `Your ${codeLanguage} code has been created!`
+      });
+    }, 2000);
+  };
+
+  const handleSchedulePost = () => {
+    if (!selectedDate || !generatedContent) {
+      toast({
+        title: "Error",
+        description: "Please select a date and generate content first",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const dateKey = format(selectedDate, "yyyy-MM-dd");
+    const newPost = {
+      id: Date.now(),
+      content: generatedContent,
+      platform,
+      image: generatedImage,
+      time: format(new Date(), "HH:mm")
+    };
+
+    setScheduledPosts(prev => ({
+      ...prev,
+      [dateKey]: [...(prev[dateKey] || []), newPost]
+    }));
+
+    toast({
+      title: "Post Scheduled",
+      description: `Your ${platform} post has been scheduled for ${format(selectedDate, "PPP")}`
+    });
   };
 
   const handleCopyContent = () => {
@@ -96,6 +179,16 @@ const ContentCreatorTab: React.FC<ContentCreatorTabProps> = ({ chartConfig }) =>
       toast({
         title: "Copied!",
         description: "Content copied to clipboard"
+      });
+    }
+  };
+
+  const handleCopyCode = () => {
+    if (generatedCode) {
+      navigator.clipboard.writeText(generatedCode);
+      toast({
+        title: "Copied!",
+        description: "Code copied to clipboard"
       });
     }
   };
@@ -125,6 +218,177 @@ const ContentCreatorTab: React.FC<ContentCreatorTabProps> = ({ chartConfig }) =>
     <div className="p-4 h-full overflow-y-auto">
       <div className="space-y-6 max-w-full">
         
+        {/* User Information */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-md font-medium">User Information</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div>
+              <Label htmlFor="user-info">Tell AI about yourself/brand</Label>
+              <Textarea
+                id="user-info"
+                value={userInfo}
+                onChange={(e) => setUserInfo(e.target.value)}
+                placeholder="Describe your brand, target audience, tone of voice, and any specific requirements for content generation..."
+                className="min-h-[80px]"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Publishing Calendar */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-md font-medium flex items-center gap-2">
+              <CalendarDays className="h-5 w-5" />
+              Publishing Calendar
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-3">
+                <Label>Select Publishing Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !selectedDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarDays className="mr-2 h-4 w-4" />
+                      {selectedDate ? format(selectedDate, "PPP") : "Pick a date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={setSelectedDate}
+                      initialFocus
+                      className="p-3 pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+                
+                <Button 
+                  onClick={handleSchedulePost}
+                  disabled={!selectedDate || !generatedContent}
+                  className="w-full"
+                >
+                  Schedule Post
+                </Button>
+              </div>
+              
+              <div className="space-y-3">
+                <Label>Scheduled Posts</Label>
+                <div className="max-h-48 overflow-y-auto border rounded-md p-2">
+                  {Object.entries(scheduledPosts).length === 0 ? (
+                    <p className="text-muted-foreground text-sm">No posts scheduled yet</p>
+                  ) : (
+                    Object.entries(scheduledPosts).map(([date, posts]) => (
+                      <div key={date} className="mb-3">
+                        <p className="font-medium text-sm">{format(new Date(date), "PPP")}</p>
+                        {posts.map((post) => (
+                          <div key={post.id} className="text-xs text-muted-foreground ml-2">
+                            {platformIcons[post.platform as keyof typeof platformIcons]} {post.platform} at {post.time}
+                          </div>
+                        ))}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* AI Code Generator */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-md font-medium flex items-center gap-2">
+              <Code className="h-5 w-5" />
+              AI Code Generator
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <div>
+                    <Label htmlFor="code-prompt">Code Description</Label>
+                    <Textarea
+                      id="code-prompt"
+                      value={codePrompt}
+                      onChange={(e) => setCodePrompt(e.target.value)}
+                      placeholder="Describe what code you want to generate (e.g., 'Create a function to analyze social media engagement')"
+                      className="min-h-[100px]"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="code-language">Programming Language</Label>
+                    <select
+                      id="code-language"
+                      value={codeLanguage}
+                      onChange={(e) => setCodeLanguage(e.target.value)}
+                      className="w-full p-2 border border-input rounded-md bg-background"
+                    >
+                      <option value="javascript">JavaScript</option>
+                      <option value="typescript">TypeScript</option>
+                      <option value="python">Python</option>
+                      <option value="react">React Component</option>
+                      <option value="html">HTML</option>
+                      <option value="css">CSS</option>
+                    </select>
+                  </div>
+                  
+                  <Button 
+                    onClick={handleGenerateCode} 
+                    disabled={isGeneratingCode || !codePrompt.trim()}
+                    className="w-full"
+                  >
+                    <Code className="h-4 w-4 mr-2" />
+                    {isGeneratingCode ? "Generating Code..." : "Generate Code"}
+                  </Button>
+                </div>
+                
+                <div className="space-y-3">
+                  {generatedCode ? (
+                    <div className="space-y-3">
+                      <Label>Generated Code</Label>
+                      <div className="relative">
+                        <Textarea
+                          value={generatedCode}
+                          readOnly
+                          className="min-h-[200px] font-mono text-sm"
+                        />
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={handleCopyCode}
+                          className="absolute top-2 right-2"
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full h-48 border-2 border-dashed border-muted-foreground/25 rounded-lg flex items-center justify-center">
+                      <div className="text-center text-muted-foreground">
+                        <Code className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                        <p>Generated code will appear here</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* AI Image Generator */}
         <Card>
           <CardHeader className="pb-2">
@@ -287,33 +551,6 @@ const ContentCreatorTab: React.FC<ContentCreatorTabProps> = ({ chartConfig }) =>
                 )}
               </div>
             </Tabs>
-          </CardContent>
-        </Card>
-
-        {/* Quick Actions */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-md font-medium">Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <Button variant="outline" className="h-auto p-4 flex flex-col gap-2">
-                <Type className="h-6 w-6" />
-                <span className="text-sm">Blog Post</span>
-              </Button>
-              <Button variant="outline" className="h-auto p-4 flex flex-col gap-2">
-                <ImageIcon className="h-6 w-6" />
-                <span className="text-sm">Story Image</span>
-              </Button>
-              <Button variant="outline" className="h-auto p-4 flex flex-col gap-2">
-                <Wand2 className="h-6 w-6" />
-                <span className="text-sm">Caption Ideas</span>
-              </Button>
-              <Button variant="outline" className="h-auto p-4 flex flex-col gap-2">
-                <Twitter className="h-6 w-6" />
-                <span className="text-sm">Thread</span>
-              </Button>
-            </div>
           </CardContent>
         </Card>
 
