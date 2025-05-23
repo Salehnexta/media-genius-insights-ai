@@ -4,6 +4,7 @@ import { ChartContainer } from "@/components/ui/chart";
 import * as RechartsPrimitive from "recharts";
 import { getShareOfVoiceData } from '../../ChartConfig';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface MarketShareChartProps {
   chartConfig: any;
@@ -11,12 +12,18 @@ interface MarketShareChartProps {
 
 const MarketShareChart: React.FC<MarketShareChartProps> = ({ chartConfig }) => {
   const shareOfVoiceData = getShareOfVoiceData();
+  const { t } = useLanguage();
+
+  const translatedData = shareOfVoiceData.map(item => ({
+    ...item,
+    name: t(`chart.${item.name.toLowerCase().replace(' ', '.')}`),
+  }));
 
   return (
     <Card className="w-full h-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-md font-medium flex items-center gap-2">
-          🎯 Market Share Analysis
+          🎯 {t('chart.market.share')}
         </CardTitle>
       </CardHeader>
       <CardContent className="flex justify-center items-center">
@@ -24,7 +31,7 @@ const MarketShareChart: React.FC<MarketShareChartProps> = ({ chartConfig }) => {
           <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
             <RechartsPrimitive.PieChart>
               <RechartsPrimitive.Pie
-                data={shareOfVoiceData}
+                data={translatedData}
                 cx="50%"
                 cy="50%"
                 innerRadius={50}
@@ -32,7 +39,7 @@ const MarketShareChart: React.FC<MarketShareChartProps> = ({ chartConfig }) => {
                 paddingAngle={5}
                 dataKey="value"
               >
-                {shareOfVoiceData.map((entry, index) => (
+                {translatedData.map((entry, index) => (
                   <RechartsPrimitive.Cell key={`cell-${index}`} fill={entry.fill} />
                 ))}
               </RechartsPrimitive.Pie>
@@ -43,7 +50,7 @@ const MarketShareChart: React.FC<MarketShareChartProps> = ({ chartConfig }) => {
                   borderRadius: '8px',
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                 }}
-                formatter={(value) => [`${value}%`, 'Market Share']}
+                formatter={(value) => [`${value}%`, t('chart.market.share.label')]}
               />
               <RechartsPrimitive.Legend verticalAlign="bottom" layout="horizontal" />
               <text 
