@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,6 +17,7 @@ interface TextGeneratorProps {
   setIsGenerating: (value: boolean) => void;
   generatedContent: string;
   setGeneratedContent: (value: string) => void;
+  isMobile?: boolean;
 }
 
 const platformPrompts = {
@@ -42,7 +42,8 @@ const TextGenerator: React.FC<TextGeneratorProps> = ({
   isGenerating,
   setIsGenerating,
   generatedContent,
-  setGeneratedContent
+  setGeneratedContent,
+  isMobile = false
 }) => {
   const handleGenerateContent = () => {
     if (!prompt.trim()) {
@@ -87,33 +88,37 @@ const TextGenerator: React.FC<TextGeneratorProps> = ({
   };
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-md font-medium flex items-center gap-2">
-          <Type className="h-5 w-5" />
+    <Card className={isMobile ? 'shadow-sm' : ''}>
+      <CardHeader className="pb-1 sm:pb-2">
+        <CardTitle className={`${isMobile ? 'text-sm' : 'text-md'} font-medium flex items-center gap-2`}>
+          <Type className="h-4 w-4 sm:h-5 sm:w-5" />
           Social Media Text Generator
         </CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="twitter" onValueChange={setPlatform} className="w-full">
-          <TabsList className="w-full grid grid-cols-4">
-            <TabsTrigger value="twitter" className="flex items-center gap-2">
-              <Twitter className="h-4 w-4" /> Twitter
+          <TabsList className={`w-full grid grid-cols-4 ${isMobile ? 'text-xs' : ''}`}>
+            <TabsTrigger value="twitter" className="flex items-center gap-1 sm:gap-2">
+              <Twitter className="h-3 w-3 sm:h-4 sm:w-4" /> 
+              {!isMobile && "Twitter"}
             </TabsTrigger>
-            <TabsTrigger value="instagram" className="flex items-center gap-2">
-              <Instagram className="h-4 w-4" /> Instagram
+            <TabsTrigger value="instagram" className="flex items-center gap-1 sm:gap-2">
+              <Instagram className="h-3 w-3 sm:h-4 sm:w-4" /> 
+              {!isMobile && "Instagram"}
             </TabsTrigger>
-            <TabsTrigger value="linkedin" className="flex items-center gap-2">
-              <Linkedin className="h-4 w-4" /> LinkedIn
+            <TabsTrigger value="linkedin" className="flex items-center gap-1 sm:gap-2">
+              <Linkedin className="h-3 w-3 sm:h-4 sm:w-4" /> 
+              {!isMobile && "LinkedIn"}
             </TabsTrigger>
-            <TabsTrigger value="facebook" className="flex items-center gap-2">
-              <Facebook className="h-4 w-4" /> Facebook
+            <TabsTrigger value="facebook" className="flex items-center gap-1 sm:gap-2">
+              <Facebook className="h-3 w-3 sm:h-4 sm:w-4" /> 
+              {!isMobile && "Facebook"}
             </TabsTrigger>
           </TabsList>
           
           <div className="mt-4 space-y-4">
             <div>
-              <Label htmlFor="content-prompt">
+              <Label htmlFor="content-prompt" className={`${isMobile ? 'text-xs' : 'text-sm'}`}>
                 {platformPrompts[platform as keyof typeof platformPrompts]}:
               </Label>
               <div className="flex gap-2 mt-2">
@@ -122,13 +127,14 @@ const TextGenerator: React.FC<TextGeneratorProps> = ({
                   value={prompt} 
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="Enter your topic" 
-                  className="flex-1"
+                  className={`flex-1 ${isMobile ? 'text-xs' : 'text-sm'}`}
                 />
                 <Button 
                   onClick={handleGenerateContent} 
                   disabled={isGenerating || !prompt.trim()}
+                  className={isMobile ? 'text-xs px-3' : ''}
                 >
-                  <Wand2 className="h-4 w-4 mr-2" />
+                  <Wand2 className="h-4 w-4 mr-1 sm:mr-2" />
                   {isGenerating ? "Generating..." : "Generate"}
                 </Button>
               </div>
@@ -136,12 +142,12 @@ const TextGenerator: React.FC<TextGeneratorProps> = ({
             
             {generatedContent && (
               <div className="space-y-3">
-                <Label>Generated Content:</Label>
+                <Label className={`${isMobile ? 'text-xs' : 'text-sm'}`}>Generated Content:</Label>
                 <div className="relative">
                   <Textarea 
                     value={generatedContent}
                     onChange={(e) => setGeneratedContent(e.target.value)}
-                    className="min-h-[150px] p-4"
+                    className={`min-h-[120px] p-4 ${isMobile ? 'text-xs' : 'text-sm'}`}
                   />
                   <Button 
                     size="sm" 
@@ -157,9 +163,9 @@ const TextGenerator: React.FC<TextGeneratorProps> = ({
                 <div className="p-4 bg-muted rounded-md">
                   <div className="flex items-center gap-2 mb-2">
                     {platformIcons[platform as keyof typeof platformIcons]}
-                    <span className="font-medium">Preview</span>
+                    <span className={`font-medium ${isMobile ? 'text-xs' : 'text-sm'}`}>Preview</span>
                   </div>
-                  <div className="whitespace-pre-line text-sm">{generatedContent}</div>
+                  <div className={`whitespace-pre-line ${isMobile ? 'text-xs' : 'text-sm'}`}>{generatedContent}</div>
                 </div>
               </div>
             )}

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,6 +15,7 @@ interface ImageGeneratorProps {
   setIsGeneratingImage: (value: boolean) => void;
   generatedImage: string;
   setGeneratedImage: (value: string) => void;
+  isMobile?: boolean;
 }
 
 const ImageGenerator: React.FC<ImageGeneratorProps> = ({
@@ -26,7 +26,8 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
   isGeneratingImage,
   setIsGeneratingImage,
   generatedImage,
-  setGeneratedImage
+  setGeneratedImage,
+  isMobile = false
 }) => {
   const handleGenerateImage = () => {
     if (!imagePrompt.trim()) {
@@ -68,9 +69,9 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
   };
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm sm:text-md font-medium flex items-center gap-2">
+    <Card className={isMobile ? 'shadow-sm' : ''}>
+      <CardHeader className="pb-1 sm:pb-2">
+        <CardTitle className={`${isMobile ? 'text-sm' : 'text-sm sm:text-md'} font-medium flex items-center gap-2`}>
           <ImageIcon className="h-4 w-4 sm:h-5 sm:w-5" />
           AI Image Generator
         </CardTitle>
@@ -80,23 +81,23 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div className="space-y-3">
               <div>
-                <Label htmlFor="image-prompt" className="text-sm">Image Description</Label>
+                <Label htmlFor="image-prompt" className={`${isMobile ? 'text-xs' : 'text-sm'}`}>Image Description</Label>
                 <Textarea
                   id="image-prompt"
                   value={imagePrompt}
                   onChange={(e) => setImagePrompt(e.target.value)}
                   placeholder="Describe the image you want to generate (e.g., 'A modern office space with people collaborating')"
-                  className="min-h-[80px] sm:min-h-[100px] text-sm"
+                  className={`min-h-[60px] ${isMobile ? 'text-xs' : 'text-sm'} sm:min-h-[80px]`}
                 />
               </div>
               
               <div>
-                <Label htmlFor="image-style" className="text-sm">Style</Label>
+                <Label htmlFor="image-style" className={`${isMobile ? 'text-xs' : 'text-sm'}`}>Style</Label>
                 <select
                   id="image-style"
                   value={imageStyle}
                   onChange={(e) => setImageStyle(e.target.value)}
-                  className="w-full p-2 border border-input rounded-md bg-background text-sm"
+                  className={`w-full p-2 border border-input rounded-md bg-background ${isMobile ? 'text-xs' : 'text-sm'}`}
                 >
                   <option value="realistic">Realistic</option>
                   <option value="illustration">Illustration</option>
@@ -109,7 +110,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
               <Button 
                 onClick={handleGenerateImage} 
                 disabled={isGeneratingImage || !imagePrompt.trim()}
-                className="w-full text-sm"
+                className={`w-full ${isMobile ? 'text-xs' : 'text-sm'}`}
                 size="sm"
               >
                 <Wand2 className="h-4 w-4 mr-2" />
@@ -120,7 +121,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
             <div className="space-y-3">
               {generatedImage ? (
                 <div className="space-y-3">
-                  <Label className="text-sm">Generated Image</Label>
+                  <Label className={`${isMobile ? 'text-xs' : 'text-sm'}`}>Generated Image</Label>
                   <div className="relative">
                     <img
                       src={generatedImage}
@@ -141,7 +142,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
                 <div className="w-full h-48 sm:h-64 border-2 border-dashed border-muted-foreground/25 rounded-lg flex items-center justify-center">
                   <div className="text-center text-muted-foreground">
                     <ImageIcon className="h-8 w-8 sm:h-12 sm:w-12 mx-auto mb-2 opacity-50" />
-                    <p className="text-xs sm:text-sm">Generated image will appear here</p>
+                    <p className={`${isMobile ? 'text-xs' : 'text-xs sm:text-sm'}`}>Generated image will appear here</p>
                   </div>
                 </div>
               )}

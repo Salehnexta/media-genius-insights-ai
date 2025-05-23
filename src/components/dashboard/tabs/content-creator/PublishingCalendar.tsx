@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,6 +25,7 @@ interface PublishingCalendarProps {
   generatedContent: string;
   platform: string;
   generatedImage: string;
+  isMobile?: boolean;
 }
 
 const PublishingCalendar: React.FC<PublishingCalendarProps> = ({
@@ -35,7 +35,8 @@ const PublishingCalendar: React.FC<PublishingCalendarProps> = ({
   setScheduledPosts,
   generatedContent,
   platform,
-  generatedImage
+  generatedImage,
+  isMobile = false
 }) => {
   const platformIcons = {
     twitter: <Twitter className="h-4 w-4 sm:h-5 sm:w-5" />,
@@ -75,9 +76,9 @@ const PublishingCalendar: React.FC<PublishingCalendarProps> = ({
   };
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm sm:text-md font-medium flex items-center gap-2">
+    <Card className={isMobile ? 'shadow-sm' : ''}>
+      <CardHeader className="pb-1 sm:pb-2">
+        <CardTitle className={`${isMobile ? 'text-sm' : 'text-sm sm:text-md'} font-medium flex items-center gap-2`}>
           <CalendarDays className="h-4 w-4 sm:h-5 sm:w-5" />
           Publishing Calendar
         </CardTitle>
@@ -85,13 +86,13 @@ const PublishingCalendar: React.FC<PublishingCalendarProps> = ({
       <CardContent>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="space-y-3">
-            <Label className="text-sm">Select Publishing Date</Label>
+            <Label className={`${isMobile ? 'text-xs' : 'text-sm'}`}>Select Publishing Date</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
                   className={cn(
-                    "w-full justify-start text-left font-normal text-sm",
+                    `w-full justify-start text-left font-normal ${isMobile ? 'text-xs' : 'text-sm'}`,
                     !selectedDate && "text-muted-foreground"
                   )}
                 >
@@ -113,7 +114,7 @@ const PublishingCalendar: React.FC<PublishingCalendarProps> = ({
             <Button 
               onClick={handleSchedulePost}
               disabled={!selectedDate || !generatedContent}
-              className="w-full text-sm"
+              className={`w-full ${isMobile ? 'text-xs' : 'text-sm'}`}
               size="sm"
             >
               Schedule Post
@@ -121,14 +122,14 @@ const PublishingCalendar: React.FC<PublishingCalendarProps> = ({
           </div>
           
           <div className="space-y-3">
-            <Label className="text-sm">Scheduled Posts</Label>
+            <Label className={`${isMobile ? 'text-xs' : 'text-sm'}`}>Scheduled Posts</Label>
             <div className="max-h-32 sm:max-h-48 overflow-y-auto border rounded-md p-2">
               {Object.entries(scheduledPosts).length === 0 ? (
-                <p className="text-muted-foreground text-xs sm:text-sm">No posts scheduled yet</p>
+                <p className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-xs sm:text-sm'}`}>No posts scheduled yet</p>
               ) : (
                 Object.entries(scheduledPosts).map(([date, posts]) => (
                   <div key={date} className="mb-3">
-                    <p className="font-medium text-xs sm:text-sm">{format(new Date(date), "PPP")}</p>
+                    <p className={`font-medium ${isMobile ? 'text-xs' : 'text-xs sm:text-sm'}`}>{format(new Date(date), "PPP")}</p>
                     {posts.map((post) => (
                       <div key={post.id} className="text-xs text-muted-foreground ml-2 flex items-center gap-1">
                         {platformIcons[post.platform as keyof typeof platformIcons]} 
