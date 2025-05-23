@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ChartContainer } from "@/components/ui/chart";
 import * as RechartsPrimitive from "recharts";
@@ -18,18 +17,18 @@ const demographicData = [
 ];
 
 const geoData = [
-  { name: 'North America', value: 45 },
-  { name: 'Europe', value: 30 },
-  { name: 'Asia', value: 15 },
-  { name: 'South America', value: 5 },
-  { name: 'Africa', value: 3 },
-  { name: 'Oceania', value: 2 }
+  { name: 'North America', value: 45, fill: '#4285F4' },
+  { name: 'Europe', value: 30, fill: '#34A853' },
+  { name: 'Asia', value: 15, fill: '#FBBC05' },
+  { name: 'South America', value: 5, fill: '#EA4335' },
+  { name: 'Africa', value: 3, fill: '#9b87f5' },
+  { name: 'Oceania', value: 2, fill: '#6E59A5' }
 ];
 
 const deviceData = [
-  { name: 'Mobile', value: 65 },
-  { name: 'Desktop', value: 30 },
-  { name: 'Tablet', value: 5 }
+  { name: 'Mobile', value: 65, fill: '#4285F4' },
+  { name: 'Desktop', value: 30, fill: '#34A853' },
+  { name: 'Tablet', value: 5, fill: '#FBBC05' }
 ];
 
 const interestData = [
@@ -52,81 +51,125 @@ const engagementData = [
 
 const AudienceTab: React.FC<AudienceTabProps> = ({ chartConfig }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Card>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 h-full overflow-y-auto">
+      <Card className="w-full h-full">
         <CardHeader className="pb-2">
           <CardTitle className="text-md font-medium">Age Demographics</CardTitle>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig} className="h-[240px]">
-            <RechartsPrimitive.BarChart data={demographicData}>
-              <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" />
-              <RechartsPrimitive.XAxis dataKey="name" />
-              <RechartsPrimitive.YAxis />
-              <RechartsPrimitive.Tooltip />
-              <RechartsPrimitive.Bar dataKey="value" fill="#4285F4" />
-            </RechartsPrimitive.BarChart>
+            <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
+              <RechartsPrimitive.BarChart data={demographicData} margin={{ top: 10, right: 30, left: 0, bottom: 10 }}>
+                <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" />
+                <RechartsPrimitive.XAxis dataKey="name" />
+                <RechartsPrimitive.YAxis />
+                <RechartsPrimitive.Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
+                <RechartsPrimitive.Bar dataKey="value" fill="#4285F4">
+                  <RechartsPrimitive.LabelList dataKey="value" position="top" formatter={(value) => `${value}%`} />
+                </RechartsPrimitive.Bar>
+              </RechartsPrimitive.BarChart>
+            </RechartsPrimitive.ResponsiveContainer>
           </ChartContainer>
         </CardContent>
       </Card>
       
-      <Card>
+      {/* Enhanced Geographic Distribution Chart */}
+      <Card className="w-full h-full">
         <CardHeader className="pb-2">
           <CardTitle className="text-md font-medium">Geographic Distribution</CardTitle>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig} className="h-[240px]">
-            <RechartsPrimitive.PieChart>
-              <RechartsPrimitive.Pie
-                data={geoData}
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                label
-                dataKey="value"
-              />
-              <RechartsPrimitive.Tooltip />
-              <RechartsPrimitive.Legend />
-            </RechartsPrimitive.PieChart>
+            <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
+              <RechartsPrimitive.PieChart>
+                <RechartsPrimitive.Pie
+                  data={geoData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={40}
+                  outerRadius={80}
+                  paddingAngle={3}
+                  dataKey="value"
+                >
+                  {geoData.map((entry, index) => (
+                    <RechartsPrimitive.Cell key={`cell-${index}`} fill={entry.fill} />
+                  ))}
+                </RechartsPrimitive.Pie>
+                <RechartsPrimitive.Tooltip 
+                  formatter={(value) => [`${value}%`, 'Percentage']} 
+                  contentStyle={{ 
+                    background: 'rgba(255, 255, 255, 0.95)', 
+                    border: 'none', 
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                  }}
+                />
+                <RechartsPrimitive.Legend layout="vertical" verticalAlign="middle" align="right" />
+              </RechartsPrimitive.PieChart>
+            </RechartsPrimitive.ResponsiveContainer>
           </ChartContainer>
         </CardContent>
       </Card>
       
-      <Card>
+      {/* Enhanced Device Usage Chart */}
+      <Card className="w-full h-full">
         <CardHeader className="pb-2">
           <CardTitle className="text-md font-medium">Device Usage</CardTitle>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig} className="h-[240px]">
-            <RechartsPrimitive.PieChart>
-              <RechartsPrimitive.Pie
-                data={deviceData}
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                label
-                dataKey="value"
-              />
-              <RechartsPrimitive.Tooltip />
-              <RechartsPrimitive.Legend />
-            </RechartsPrimitive.PieChart>
+            <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
+              <RechartsPrimitive.PieChart>
+                <RechartsPrimitive.Pie
+                  data={deviceData}
+                  cx="50%"
+                  cy="50%"
+                  startAngle={180}
+                  endAngle={0}
+                  innerRadius={60}
+                  outerRadius={90}
+                  paddingAngle={3}
+                  dataKey="value"
+                  label={({ name, value }) => `${name}: ${value}%`}
+                  labelLine={false}
+                >
+                  {deviceData.map((entry, index) => (
+                    <RechartsPrimitive.Cell key={`cell-${index}`} fill={entry.fill} />
+                  ))}
+                </RechartsPrimitive.Pie>
+                <RechartsPrimitive.Tooltip 
+                  formatter={(value) => [`${value}%`, 'Percentage']} 
+                  contentStyle={{ 
+                    background: 'rgba(255, 255, 255, 0.95)', 
+                    border: 'none', 
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                  }}
+                />
+                <RechartsPrimitive.Legend layout="horizontal" verticalAlign="bottom" align="center" />
+              </RechartsPrimitive.PieChart>
+            </RechartsPrimitive.ResponsiveContainer>
           </ChartContainer>
         </CardContent>
       </Card>
       
-      <Card>
+      <Card className="w-full h-full">
         <CardHeader className="pb-2">
           <CardTitle className="text-md font-medium">User Interests</CardTitle>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig} className="h-[240px]">
-            <RechartsPrimitive.BarChart data={interestData} layout="vertical">
-              <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" />
-              <RechartsPrimitive.XAxis type="number" />
-              <RechartsPrimitive.YAxis type="category" dataKey="name" />
-              <RechartsPrimitive.Tooltip />
-              <RechartsPrimitive.Bar dataKey="value" fill="#34A853" />
-            </RechartsPrimitive.BarChart>
+            <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
+              <RechartsPrimitive.BarChart data={interestData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" />
+                <RechartsPrimitive.XAxis type="number" />
+                <RechartsPrimitive.YAxis type="category" dataKey="name" />
+                <RechartsPrimitive.Tooltip />
+                <RechartsPrimitive.Bar dataKey="value" fill="#34A853">
+                  <RechartsPrimitive.LabelList dataKey="value" position="right" />
+                </RechartsPrimitive.Bar>
+              </RechartsPrimitive.BarChart>
+            </RechartsPrimitive.ResponsiveContainer>
           </ChartContainer>
         </CardContent>
       </Card>
