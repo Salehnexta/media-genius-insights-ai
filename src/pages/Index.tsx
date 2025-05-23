@@ -2,8 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import ChatInterface from '@/components/chat/ChatInterface';
-import DashboardHeader from '@/components/dashboard/DashboardHeader';
-import StatCards from '@/components/dashboard/StatCards';
 import DashboardTabs from '@/components/dashboard/DashboardTabs';
 
 const Index = () => {
@@ -37,10 +35,7 @@ const Index = () => {
         <Header isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
         
         <div className="flex-1 overflow-auto p-6">
-          <DashboardHeader />
-          <StatCards />
-          
-          <div className="flex gap-6 h-[calc(100%-200px)]">
+          <div className="flex gap-6 h-full">
             {/* Chat Interface (40% width) */}
             <div className="w-[40%] h-full">
               <ChatInterface />
