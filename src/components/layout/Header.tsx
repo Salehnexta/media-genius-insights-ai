@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { Bell, Moon, Search, Settings, Sun, Languages } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Bell, Moon, Search, Settings, Sun, Languages, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
   DropdownMenu, 
@@ -39,6 +40,12 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleDarkMode }) => {
       </div>
       
       <div className="flex items-center space-x-2">
+        <Link to="/">
+          <Button variant="ghost" size="icon">
+            <Home className="h-5 w-5" />
+          </Button>
+        </Link>
+        
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           <span className="absolute top-1 right-1 bg-red-500 rounded-full w-2 h-2"></span>
