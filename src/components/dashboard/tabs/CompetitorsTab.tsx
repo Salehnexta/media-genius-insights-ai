@@ -13,20 +13,20 @@ interface CompetitorsTabProps {
 const CompetitorsTab: React.FC<CompetitorsTabProps> = ({ chartConfig }) => {
   return (
     <div className="p-4 h-full overflow-y-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 max-w-full">
-        <div className="lg:col-span-1">
+      <div className="space-y-6 max-w-full">
+        <div className="w-full">
           <MarketShareChart chartConfig={chartConfig} />
         </div>
-        <div className="lg:col-span-2">
+        <div className="w-full">
           <PerformanceBenchmarkChart chartConfig={chartConfig} />
         </div>
-        <div className="lg:col-span-2">
+        <div className="w-full">
           <TrafficComparisonChart chartConfig={chartConfig} />
         </div>
-        <div className="lg:col-span-1">
+        <div className="w-full">
           <BrandPositioningChart chartConfig={chartConfig} />
         </div>
-        <div className="lg:col-span-3">
+        <div className="w-full">
           <MarketEvolutionChart chartConfig={chartConfig} />
         </div>
       </div>

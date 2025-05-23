@@ -39,9 +39,9 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ chartConfig }) => {
 
   return (
     <div className="p-4 h-full overflow-y-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 max-w-full">
+      <div className="space-y-6 max-w-full">
         {/* Modern Area Chart with Gradient */}
-        <Card className="lg:col-span-2">
+        <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-md font-medium flex items-center gap-2">
               📈 Revenue & Profit Analysis
@@ -142,7 +142,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ chartConfig }) => {
         </Card>
 
         {/* Performance Radar Chart */}
-        <Card className="lg:col-span-2 xl:col-span-3">
+        <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-md font-medium flex items-center gap-2">
               ⚡ Performance vs Benchmark
@@ -249,7 +249,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ chartConfig }) => {
         </Card>
 
         {/* Stacked Area Chart */}
-        <Card className="lg:col-span-2">
+        <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-md font-medium flex items-center gap-2">
               📱 Channel Performance Stack

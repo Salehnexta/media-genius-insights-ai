@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ChartContainer } from "@/components/ui/chart";
 import * as RechartsPrimitive from "recharts";
@@ -52,7 +53,7 @@ const engagementData = [
 const AudienceTab: React.FC<AudienceTabProps> = ({ chartConfig }) => {
   return (
     <div className="p-4 h-full overflow-y-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 max-w-full">
+      <div className="space-y-6 max-w-full">
         <Card className="w-full">
           <CardHeader className="pb-2">
             <CardTitle className="text-md font-medium">Age Demographics</CardTitle>
@@ -187,7 +188,7 @@ const AudienceTab: React.FC<AudienceTabProps> = ({ chartConfig }) => {
           </CardContent>
         </Card>
         
-        <Card className="w-full lg:col-span-2 xl:col-span-2">
+        <Card className="w-full">
           <CardHeader className="pb-2">
             <CardTitle className="text-md font-medium">New vs Returning Users</CardTitle>
           </CardHeader>
@@ -208,7 +209,7 @@ const AudienceTab: React.FC<AudienceTabProps> = ({ chartConfig }) => {
           </CardContent>
         </Card>
         
-        <Card className="w-full xl:col-span-1">
+        <Card className="w-full">
           <CardHeader className="pb-2">
             <CardTitle className="text-md font-medium">Engagement Levels</CardTitle>
           </CardHeader>
