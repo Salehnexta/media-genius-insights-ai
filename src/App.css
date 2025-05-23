@@ -1,3 +1,4 @@
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -39,4 +40,37 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Chat bubble styles */
+.chat-bubble-ai {
+  @apply bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-2 rounded-2xl rounded-tl-md max-w-xs;
+}
+
+.chat-bubble-user {
+  @apply bg-blue-500 text-white px-4 py-2 rounded-2xl rounded-tr-md max-w-xs;
+}
+
+/* Animation for messages */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Responsive chat panel */
+@media (max-width: 768px) {
+  .chat-panel {
+    width: 100vw !important;
+    right: 0 !important;
+  }
 }
