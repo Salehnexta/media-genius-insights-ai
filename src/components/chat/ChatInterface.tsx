@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Bot, User } from 'lucide-react';
+import { Send, Bot, User, TrendingUp, BarChart3, Users, Target } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -23,6 +23,37 @@ const initialMessages: Message[] = [
     content: "I've detected a 27% increase in negative sentiment around your new product launch. Would you like me to generate a report?",
     sender: 'ai',
     timestamp: new Date(Date.now() - 1000 * 60 * 2),
+  }
+];
+
+const suggestionCards = [
+  {
+    id: 1,
+    title: "Generate campaign analysis",
+    subtitle: "Analyze performance metrics",
+    icon: <BarChart3 className="h-6 w-6" />,
+    bgColor: "bg-gradient-to-br from-blue-500 to-blue-600"
+  },
+  {
+    id: 2,
+    title: "Create content strategy",
+    subtitle: "Build engaging content plans",
+    icon: <Target className="h-6 w-6" />,
+    bgColor: "bg-gradient-to-br from-purple-500 to-purple-600"
+  },
+  {
+    id: 3,
+    title: "Audience insights",
+    subtitle: "Understand your customers",
+    icon: <Users className="h-6 w-6" />,
+    bgColor: "bg-gradient-to-br from-green-500 to-green-600"
+  },
+  {
+    id: 4,
+    title: "Trend analysis",
+    subtitle: "Track market trends",
+    icon: <TrendingUp className="h-6 w-6" />,
+    bgColor: "bg-gradient-to-br from-orange-500 to-orange-600"
   }
 ];
 
@@ -49,6 +80,29 @@ const ChatInterface: React.FC = () => {
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
         content: "I'm analyzing your request. Based on your current campaign performance, I recommend adjusting your ad spend distribution to focus more on platforms showing higher engagement rates.",
+        sender: 'ai',
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, aiResponse]);
+    }, 1000);
+  };
+
+  const handleSuggestionClick = (suggestion: typeof suggestionCards[0]) => {
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      content: suggestion.title,
+      sender: 'user',
+      timestamp: new Date()
+    };
+    
+    setMessages([...messages, userMessage]);
+    
+    // Simulate AI response
+    setTimeout(() => {
+      const aiResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        content: `I'll help you with ${suggestion.title.toLowerCase()}. Let me gather the relevant data and insights for you.`,
         sender: 'ai',
         timestamp: new Date()
       };
@@ -86,6 +140,30 @@ const ChatInterface: React.FC = () => {
             </div>
           </div>
         ))}
+        
+        {/* Suggestion Cards */}
+        {messages.length <= 2 && (
+          <div className="mt-6">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Here we are again, what are we chatting about today? Ask me literally anything related to marketing.
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              {suggestionCards.map(card => (
+                <button
+                  key={card.id}
+                  onClick={() => handleSuggestionClick(card)}
+                  className={`${card.bgColor} text-white p-4 rounded-2xl text-left hover:scale-105 transition-transform duration-200 shadow-lg`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    {card.icon}
+                  </div>
+                  <h3 className="font-semibold text-sm mb-1">{card.title}</h3>
+                  <p className="text-xs opacity-90">{card.subtitle}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       
       {/* Input Area */}
