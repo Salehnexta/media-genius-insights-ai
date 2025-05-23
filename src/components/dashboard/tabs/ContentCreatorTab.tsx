@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
-import { Facebook, Instagram, Linkedin, Twitter, ImageIcon, Type, Wand2, Download, Copy, CalendarDays, Code } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Twitter, ImageIcon, Type, Wand2, Download, Copy, CalendarDays } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -47,12 +47,6 @@ const ContentCreatorTab: React.FC<ContentCreatorTabProps> = ({ chartConfig }) =>
   // Calendar states
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [scheduledPosts, setScheduledPosts] = useState<{[key: string]: any[]}>({});
-
-  // AI Code generation states
-  const [codePrompt, setCodePrompt] = useState("");
-  const [codeLanguage, setCodeLanguage] = useState("javascript");
-  const [isGeneratingCode, setIsGeneratingCode] = useState(false);
-  const [generatedCode, setGeneratedCode] = useState("");
 
   const handleGenerateContent = () => {
     if (!prompt.trim()) {
@@ -104,45 +98,6 @@ const ContentCreatorTab: React.FC<ContentCreatorTabProps> = ({ chartConfig }) =>
     }, 2000);
   };
 
-  const handleGenerateCode = () => {
-    if (!codePrompt.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a description for your code",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsGeneratingCode(true);
-    
-    // Simulate code generation
-    setTimeout(() => {
-      const mockCode = `// Generated ${codeLanguage} code for: ${codePrompt}
-function generateContent() {
-  const userInfo = "${userInfo}";
-  const prompt = "${codePrompt}";
-  
-  // AI-generated implementation based on user requirements
-  return {
-    success: true,
-    data: "Generated content based on user specifications",
-    userContext: userInfo
-  };
-}
-
-export default generateContent;`;
-      
-      setGeneratedCode(mockCode);
-      setIsGeneratingCode(false);
-      
-      toast({
-        title: "Code Generated",
-        description: `Your ${codeLanguage} code has been created!`
-      });
-    }, 2000);
-  };
-
   const handleSchedulePost = () => {
     if (!selectedDate || !generatedContent) {
       toast({
@@ -179,16 +134,6 @@ export default generateContent;`;
       toast({
         title: "Copied!",
         description: "Content copied to clipboard"
-      });
-    }
-  };
-
-  const handleCopyCode = () => {
-    if (generatedCode) {
-      navigator.clipboard.writeText(generatedCode);
-      toast({
-        title: "Copied!",
-        description: "Code copied to clipboard"
       });
     }
   };
@@ -298,90 +243,6 @@ export default generateContent;`;
                         ))}
                       </div>
                     ))
-                  )}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* AI Code Generator */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-md font-medium flex items-center gap-2">
-              <Code className="h-5 w-5" />
-              AI Code Generator
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-3">
-                  <div>
-                    <Label htmlFor="code-prompt">Code Description</Label>
-                    <Textarea
-                      id="code-prompt"
-                      value={codePrompt}
-                      onChange={(e) => setCodePrompt(e.target.value)}
-                      placeholder="Describe what code you want to generate (e.g., 'Create a function to analyze social media engagement')"
-                      className="min-h-[100px]"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="code-language">Programming Language</Label>
-                    <select
-                      id="code-language"
-                      value={codeLanguage}
-                      onChange={(e) => setCodeLanguage(e.target.value)}
-                      className="w-full p-2 border border-input rounded-md bg-background"
-                    >
-                      <option value="javascript">JavaScript</option>
-                      <option value="typescript">TypeScript</option>
-                      <option value="python">Python</option>
-                      <option value="react">React Component</option>
-                      <option value="html">HTML</option>
-                      <option value="css">CSS</option>
-                    </select>
-                  </div>
-                  
-                  <Button 
-                    onClick={handleGenerateCode} 
-                    disabled={isGeneratingCode || !codePrompt.trim()}
-                    className="w-full"
-                  >
-                    <Code className="h-4 w-4 mr-2" />
-                    {isGeneratingCode ? "Generating Code..." : "Generate Code"}
-                  </Button>
-                </div>
-                
-                <div className="space-y-3">
-                  {generatedCode ? (
-                    <div className="space-y-3">
-                      <Label>Generated Code</Label>
-                      <div className="relative">
-                        <Textarea
-                          value={generatedCode}
-                          readOnly
-                          className="min-h-[200px] font-mono text-sm"
-                        />
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={handleCopyCode}
-                          className="absolute top-2 right-2"
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="w-full h-48 border-2 border-dashed border-muted-foreground/25 rounded-lg flex items-center justify-center">
-                      <div className="text-center text-muted-foreground">
-                        <Code className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                        <p>Generated code will appear here</p>
-                      </div>
-                    </div>
                   )}
                 </div>
               </div>
