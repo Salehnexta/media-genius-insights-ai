@@ -40,14 +40,14 @@ const Index = () => {
           <DashboardHeader />
           <StatCards />
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100%-200px)]">
-            {/* Chat Interface (1/3 width on large screens) */}
-            <div className="h-full">
+          <div className="flex gap-6 h-[calc(100%-200px)]">
+            {/* Chat Interface (40% width) */}
+            <div className="w-[40%] h-full">
               <ChatInterface />
             </div>
             
-            {/* Dashboard Content (2/3 width on large screens) */}
-            <div className="lg:col-span-2 h-full overflow-hidden flex flex-col">
+            {/* Dashboard Content (60% width) */}
+            <div className="w-[60%] h-full overflow-hidden flex flex-col">
               <DashboardTabs />
             </div>
           </div>
