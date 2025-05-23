@@ -31,28 +31,28 @@ const suggestionCards = [
     id: 1,
     title: "Generate campaign analysis",
     subtitle: "Analyze performance metrics",
-    icon: <BarChart3 className="h-5 w-5" />,
+    icon: <BarChart3 className="h-6 w-6" />,
     bgColor: "bg-gradient-to-br from-blue-500 to-blue-600"
   },
   {
     id: 2,
     title: "Create content strategy",
     subtitle: "Build engaging content plans",
-    icon: <Target className="h-5 w-5" />,
+    icon: <Target className="h-6 w-6" />,
     bgColor: "bg-gradient-to-br from-purple-500 to-purple-600"
   },
   {
     id: 3,
     title: "Audience insights",
     subtitle: "Understand your customers",
-    icon: <Users className="h-5 w-5" />,
+    icon: <Users className="h-6 w-6" />,
     bgColor: "bg-gradient-to-br from-green-500 to-green-600"
   },
   {
     id: 4,
     title: "Trend analysis",
     subtitle: "Track market trends",
-    icon: <TrendingUp className="h-5 w-5" />,
+    icon: <TrendingUp className="h-6 w-6" />,
     bgColor: "bg-gradient-to-br from-orange-500 to-orange-600"
   }
 ];
@@ -112,7 +112,7 @@ const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-transparent">
+    <div className="flex flex-col h-full border rounded-lg shadow-sm bg-white dark:bg-gray-900">
       {/* Messages Area */}
       <div className="flex-1 p-4 overflow-y-auto space-y-4">
         {messages.map(message => (
@@ -122,19 +122,19 @@ const ChatInterface: React.FC = () => {
           >
             <div className={`flex max-w-[85%] items-start space-x-2`}>
               {message.sender === 'ai' && (
-                <div className="h-7 w-7 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 flex-shrink-0">
-                  <Bot size={14} />
+                <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                  <Bot size={16} />
                 </div>
               )}
               <div className={message.sender === 'ai' ? 'chat-bubble-ai' : 'chat-bubble-user'}>
-                <p className="text-sm leading-relaxed">{message.content}</p>
+                <p className="text-sm">{message.content}</p>
                 <p className={`text-xs ${message.sender === 'ai' ? 'text-gray-500 dark:text-gray-400' : 'text-blue-100'} mt-1`}>
                   {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
               {message.sender === 'user' && (
-                <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0">
-                  <User size={14} />
+                <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white">
+                  <User size={16} />
                 </div>
               )}
             </div>
@@ -145,22 +145,20 @@ const ChatInterface: React.FC = () => {
         {messages.length <= 2 && (
           <div className="mt-6">
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              What would you like to explore today?
+              Here we are again, what are we chatting about today? Ask me literally anything related to marketing.
             </p>
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               {suggestionCards.map(card => (
                 <button
                   key={card.id}
                   onClick={() => handleSuggestionClick(card)}
-                  className={`${card.bgColor} text-white p-3 rounded-xl text-left hover:scale-[1.02] transition-transform duration-200 shadow-md`}
+                  className={`${card.bgColor} text-white p-4 rounded-2xl text-left hover:scale-105 transition-transform duration-200 shadow-lg`}
                 >
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center justify-between mb-2">
                     {card.icon}
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-sm mb-1">{card.title}</h3>
-                      <p className="text-xs opacity-90">{card.subtitle}</p>
-                    </div>
                   </div>
+                  <h3 className="font-semibold text-sm mb-1">{card.title}</h3>
+                  <p className="text-xs opacity-90">{card.subtitle}</p>
                 </button>
               ))}
             </div>
@@ -169,24 +167,25 @@ const ChatInterface: React.FC = () => {
       </div>
       
       {/* Input Area */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-800">
+      <div className="p-4 border-t">
         <div className="flex space-x-2">
           <Input
-            placeholder="Ask me anything..."
+            placeholder="Ask me anything about your marketing..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            className="flex-1 text-sm"
+            className="flex-1"
           />
-          <Button onClick={handleSend} size="sm">
-            <Send className="h-4 w-4" />
+          <Button onClick={handleSend} type="submit">
+            <Send className="h-4 w-4 mr-2" />
+            Send
           </Button>
         </div>
         <div className="flex justify-between mt-2">
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            Try: "Generate sentiment report"
+            Try: "Generate sentiment report" or "Create social posts"
           </div>
-          <div className="text-xs text-blue-500">EN ⟶ AR</div>
+          <div className="text-xs text-blue-500">English ⟶ عربي</div>
         </div>
       </div>
     </div>
