@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Send, Bot, User, TrendingUp, BarChart3, Users, Target } from 'lucide-react';
@@ -9,6 +9,11 @@ interface Message {
   content: string;
   sender: 'ai' | 'user';
   timestamp: Date;
+}
+
+interface ChatInterfaceProps {
+  isMobile?: boolean;
+  isExpanded?: boolean;
 }
 
 const initialMessages: Message[] = [
@@ -57,9 +62,16 @@ const suggestionCards = [
   }
 ];
 
-const ChatInterface: React.FC = () => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpanded = false }) => {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, isExpanded]);
   
   const handleSend = () => {
     if (!input.trim()) return;
@@ -111,11 +123,16 @@ const ChatInterface: React.FC = () => {
     }, 1000);
   };
 
+  // For mobile compact mode, just show the last message
+  const displayMessages = isMobile && !isExpanded
+    ? messages.slice(-1)
+    : messages;
+
   return (
-    <div className="flex flex-col h-full border rounded-lg shadow-sm bg-white dark:bg-gray-900">
+    <div className={`flex flex-col h-full border rounded-lg shadow-sm bg-white dark:bg-gray-900 ${isMobile ? 'border-0 shadow-none rounded-none' : ''}`}>
       {/* Messages Area */}
-      <div className="flex-1 p-4 overflow-y-auto space-y-4">
-        {messages.map(message => (
+      <div className={`flex-1 p-4 ${isMobile ? 'px-3' : ''} overflow-y-auto space-y-4`}>
+        {displayMessages.map(message => (
           <div 
             key={message.id} 
             className={`flex ${message.sender === 'ai' ? 'justify-start' : 'justify-end'} animate-fade-in`}
@@ -140,14 +157,15 @@ const ChatInterface: React.FC = () => {
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
         
-        {/* Suggestion Cards */}
-        {messages.length <= 2 && (
+        {/* Suggestion Cards - Only show in full chat view */}
+        {(!isMobile || isExpanded) && messages.length <= 2 && (
           <div className="mt-6">
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               Here we are again, what are we chatting about today? Ask me literally anything related to marketing.
             </p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2'} gap-3`}>
               {suggestionCards.map(card => (
                 <button
                   key={card.id}
@@ -167,7 +185,7 @@ const ChatInterface: React.FC = () => {
       </div>
       
       {/* Input Area */}
-      <div className="p-4 border-t">
+      <div className="p-3 border-t">
         <div className="flex space-x-2">
           <Input
             placeholder="Ask me anything about your marketing..."
@@ -176,17 +194,19 @@ const ChatInterface: React.FC = () => {
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             className="flex-1"
           />
-          <Button onClick={handleSend} type="submit">
+          <Button onClick={handleSend} type="submit" className={isMobile ? 'px-3' : ''}>
             <Send className="h-4 w-4 mr-2" />
-            Send
+            {!isMobile && "Send"}
           </Button>
         </div>
-        <div className="flex justify-between mt-2">
-          <div className="text-xs text-gray-500 dark:text-gray-400">
-            Try: "Generate sentiment report" or "Create social posts"
+        {(!isMobile || isExpanded) && (
+          <div className="flex justify-between mt-2">
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              Try: "Generate sentiment report" or "Create social posts"
+            </div>
+            <div className="text-xs text-blue-500">English ⟶ عربي</div>
           </div>
-          <div className="text-xs text-blue-500">English ⟶ عربي</div>
-        </div>
+        )}
       </div>
     </div>
   );
