@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Send, Bot, User, TrendingUp, BarChart3, Users, Target } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Message {
   id: string;
@@ -16,56 +17,61 @@ interface ChatInterfaceProps {
   isExpanded?: boolean;
 }
 
-const initialMessages: Message[] = [
-  {
-    id: '1',
-    content: "Welcome to MarketingGenius AI! I'm your marketing assistant. What would you like help with today?",
-    sender: 'ai',
-    timestamp: new Date(),
-  },
-  {
-    id: '2',
-    content: "I've detected a 27% increase in negative sentiment around your new product launch. Would you like me to generate a report?",
-    sender: 'ai',
-    timestamp: new Date(Date.now() - 1000 * 60 * 2),
-  }
-];
-
-const suggestionCards = [
-  {
-    id: 1,
-    title: "Generate campaign analysis",
-    subtitle: "Analyze performance metrics",
-    icon: <BarChart3 className="h-6 w-6" />,
-    bgColor: "bg-gradient-to-br from-blue-500 to-blue-600"
-  },
-  {
-    id: 2,
-    title: "Create content strategy",
-    subtitle: "Build engaging content plans",
-    icon: <Target className="h-6 w-6" />,
-    bgColor: "bg-gradient-to-br from-purple-500 to-purple-600"
-  },
-  {
-    id: 3,
-    title: "Audience insights",
-    subtitle: "Understand your customers",
-    icon: <Users className="h-6 w-6" />,
-    bgColor: "bg-gradient-to-br from-green-500 to-green-600"
-  },
-  {
-    id: 4,
-    title: "Trend analysis",
-    subtitle: "Track market trends",
-    icon: <TrendingUp className="h-6 w-6" />,
-    bgColor: "bg-gradient-to-br from-orange-500 to-orange-600"
-  }
-];
-
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpanded = false }) => {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const { t } = useLanguage();
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Initialize messages with translations
+  useEffect(() => {
+    const initialMessages: Message[] = [
+      {
+        id: '1',
+        content: t('chat.welcome'),
+        sender: 'ai',
+        timestamp: new Date(),
+      },
+      {
+        id: '2',
+        content: t('chat.alert'),
+        sender: 'ai',
+        timestamp: new Date(Date.now() - 1000 * 60 * 2),
+      }
+    ];
+    setMessages(initialMessages);
+  }, [t]);
+
+  const suggestionCards = [
+    {
+      id: 1,
+      title: t('suggestion.campaign.title'),
+      subtitle: t('suggestion.campaign.subtitle'),
+      icon: <BarChart3 className="h-6 w-6" />,
+      bgColor: "bg-gradient-to-br from-blue-500 to-blue-600"
+    },
+    {
+      id: 2,
+      title: t('suggestion.content.title'),
+      subtitle: t('suggestion.content.subtitle'),
+      icon: <Target className="h-6 w-6" />,
+      bgColor: "bg-gradient-to-br from-purple-500 to-purple-600"
+    },
+    {
+      id: 3,
+      title: t('suggestion.audience.title'),
+      subtitle: t('suggestion.audience.subtitle'),
+      icon: <Users className="h-6 w-6" />,
+      bgColor: "bg-gradient-to-br from-green-500 to-green-600"
+    },
+    {
+      id: 4,
+      title: t('suggestion.trend.title'),
+      subtitle: t('suggestion.trend.subtitle'),
+      icon: <TrendingUp className="h-6 w-6" />,
+      bgColor: "bg-gradient-to-br from-orange-500 to-orange-600"
+    }
+  ];
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -163,7 +169,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
         {(!isMobile || isExpanded) && messages.length <= 2 && (
           <div className="mt-6">
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              Here we are again, what are we chatting about today? Ask me literally anything related to marketing.
+              {t('chat.suggestion.today')}
             </p>
             <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2'} gap-3`}>
               {suggestionCards.map(card => (
@@ -188,7 +194,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
       <div className="p-3 border-t">
         <div className="flex space-x-2">
           <Input
-            placeholder="Ask me anything about your marketing..."
+            placeholder={t('chat.placeholder')}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
@@ -196,15 +202,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
           />
           <Button onClick={handleSend} type="submit" className={isMobile ? 'px-3' : ''}>
             <Send className="h-4 w-4 mr-2" />
-            {!isMobile && "Send"}
+            {!isMobile && t('chat.send')}
           </Button>
         </div>
         {(!isMobile || isExpanded) && (
           <div className="flex justify-between mt-2">
             <div className="text-xs text-gray-500 dark:text-gray-400">
-              Try: "Generate sentiment report" or "Create social posts"
+              {t('chat.example')}
             </div>
-            <div className="text-xs text-blue-500">English ⟶ عربي</div>
+            <div className="text-xs text-blue-500">{t('chat.language.indicator')}</div>
           </div>
         )}
       </div>

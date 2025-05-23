@@ -1,16 +1,19 @@
 
 import React from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const MediaAlerts: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <div className="mt-4">
-      <h3 className="font-medium mb-2">Latest Media Alerts</h3>
+      <h3 className="font-medium mb-2">{t('alert.media.title')}</h3>
       <div className="space-y-2">
         <div className="alert-info p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-md">
-          TechCrunch published an article mentioning your latest product launch
+          {t('alert.media.tech')}
         </div>
         <div className="alert-warning p-3 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 rounded-md">
-          Competitor B launched a new marketing campaign targeting your customer base
+          {t('alert.media.competitor')}
         </div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -5,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ImageIcon, Wand2, Download } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ImageGeneratorProps {
   imagePrompt: string;
@@ -29,11 +31,13 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
   setGeneratedImage,
   isMobile = false
 }) => {
+  const { t } = useLanguage();
+
   const handleGenerateImage = () => {
     if (!imagePrompt.trim()) {
       toast({
         title: "Error",
-        description: "Please enter a description for your image",
+        description: t('error.image.description'),
         variant: "destructive"
       });
       return;
@@ -48,8 +52,8 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
       setIsGeneratingImage(false);
       
       toast({
-        title: "Image Generated",
-        description: "Your AI image has been created with user context!"
+        title: t('success.image.generated'),
+        description: t('success.image.message')
       });
     }, 2000);
   };
@@ -62,18 +66,26 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
       link.click();
       
       toast({
-        title: "Downloaded!",
-        description: "Image downloaded successfully"
+        title: t('success.downloaded'),
+        description: t('success.download.message')
       });
     }
   };
+
+  const styleOptions = [
+    { value: 'realistic', label: t('style.realistic') },
+    { value: 'illustration', label: t('style.illustration') },
+    { value: 'cartoon', label: t('style.cartoon') },
+    { value: 'abstract', label: t('style.abstract') },
+    { value: 'minimalist', label: t('style.minimalist') }
+  ];
 
   return (
     <Card className={isMobile ? 'shadow-sm' : ''}>
       <CardHeader className="pb-1 sm:pb-2">
         <CardTitle className={`${isMobile ? 'text-sm' : 'text-sm sm:text-md'} font-medium flex items-center gap-2`}>
           <ImageIcon className="h-4 w-4 sm:h-5 sm:w-5" />
-          AI Image Generator
+          {t('content.image.generator')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -81,29 +93,27 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div className="space-y-3">
               <div>
-                <Label htmlFor="image-prompt" className={`${isMobile ? 'text-xs' : 'text-sm'}`}>Image Description</Label>
+                <Label htmlFor="image-prompt" className={`${isMobile ? 'text-xs' : 'text-sm'}`}>{t('content.image.description')}</Label>
                 <Textarea
                   id="image-prompt"
                   value={imagePrompt}
                   onChange={(e) => setImagePrompt(e.target.value)}
-                  placeholder="Describe the image you want to generate (e.g., 'A modern office space with people collaborating')"
+                  placeholder={t('content.image.placeholder')}
                   className={`min-h-[60px] ${isMobile ? 'text-xs' : 'text-sm'} sm:min-h-[80px]`}
                 />
               </div>
               
               <div>
-                <Label htmlFor="image-style" className={`${isMobile ? 'text-xs' : 'text-sm'}`}>Style</Label>
+                <Label htmlFor="image-style" className={`${isMobile ? 'text-xs' : 'text-sm'}`}>{t('content.image.style')}</Label>
                 <select
                   id="image-style"
                   value={imageStyle}
                   onChange={(e) => setImageStyle(e.target.value)}
                   className={`w-full p-2 border border-input rounded-md bg-background ${isMobile ? 'text-xs' : 'text-sm'}`}
                 >
-                  <option value="realistic">Realistic</option>
-                  <option value="illustration">Illustration</option>
-                  <option value="cartoon">Cartoon</option>
-                  <option value="abstract">Abstract</option>
-                  <option value="minimalist">Minimalist</option>
+                  {styleOptions.map(option => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
                 </select>
               </div>
               
@@ -114,7 +124,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
                 size="sm"
               >
                 <Wand2 className="h-4 w-4 mr-2" />
-                {isGeneratingImage ? "Generating Image..." : "Generate Image"}
+                {isGeneratingImage ? t('content.image.generating') : t('content.image.generate')}
               </Button>
             </div>
             
@@ -125,7 +135,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
                   <div className="relative">
                     <img
                       src={generatedImage}
-                      alt="Generated social media image"
+                      alt={t('content.image.alt')}
                       className="w-full h-48 sm:h-64 object-cover rounded-lg border"
                     />
                     <Button
@@ -142,7 +152,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
                 <div className="w-full h-48 sm:h-64 border-2 border-dashed border-muted-foreground/25 rounded-lg flex items-center justify-center">
                   <div className="text-center text-muted-foreground">
                     <ImageIcon className="h-8 w-8 sm:h-12 sm:w-12 mx-auto mb-2 opacity-50" />
-                    <p className={`${isMobile ? 'text-xs' : 'text-xs sm:text-sm'}`}>Generated image will appear here</p>
+                    <p className={`${isMobile ? 'text-xs' : 'text-xs sm:text-sm'}`}>{t('content.image.placeholder.text')}</p>
                   </div>
                 </div>
               )}
