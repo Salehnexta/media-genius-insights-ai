@@ -35,8 +35,8 @@ const ContentCreatorTab: React.FC<ContentCreatorTabProps> = ({ chartConfig }) =>
   const [scheduledPosts, setScheduledPosts] = useState<{[key: string]: ScheduledPost[]}>({});
 
   return (
-    <div className="p-4 h-full overflow-y-auto">
-      <div className="space-y-6 max-w-full">
+    <div className="p-2 sm:p-4 h-full overflow-y-auto">
+      <div className="space-y-4 sm:space-y-6 max-w-full">
         
         <UserInfoSection 
           userInfo={userInfo}

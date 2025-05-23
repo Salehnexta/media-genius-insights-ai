@@ -38,10 +38,10 @@ const PublishingCalendar: React.FC<PublishingCalendarProps> = ({
   generatedImage
 }) => {
   const platformIcons = {
-    twitter: <Twitter className="h-5 w-5" />,
-    instagram: <Instagram className="h-5 w-5" />,
-    linkedin: <Linkedin className="h-5 w-5" />,
-    facebook: <Facebook className="h-5 w-5" />
+    twitter: <Twitter className="h-4 w-4 sm:h-5 sm:w-5" />,
+    instagram: <Instagram className="h-4 w-4 sm:h-5 sm:w-5" />,
+    linkedin: <Linkedin className="h-4 w-4 sm:h-5 sm:w-5" />,
+    facebook: <Facebook className="h-4 w-4 sm:h-5 sm:w-5" />
   };
 
   const handleSchedulePost = () => {
@@ -77,21 +77,21 @@ const PublishingCalendar: React.FC<PublishingCalendarProps> = ({
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-md font-medium flex items-center gap-2">
-          <CalendarDays className="h-5 w-5" />
+        <CardTitle className="text-sm sm:text-md font-medium flex items-center gap-2">
+          <CalendarDays className="h-4 w-4 sm:h-5 sm:w-5" />
           Publishing Calendar
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="space-y-3">
-            <Label>Select Publishing Date</Label>
+            <Label className="text-sm">Select Publishing Date</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
                   className={cn(
-                    "w-full justify-start text-left font-normal",
+                    "w-full justify-start text-left font-normal text-sm",
                     !selectedDate && "text-muted-foreground"
                   )}
                 >
@@ -113,24 +113,26 @@ const PublishingCalendar: React.FC<PublishingCalendarProps> = ({
             <Button 
               onClick={handleSchedulePost}
               disabled={!selectedDate || !generatedContent}
-              className="w-full"
+              className="w-full text-sm"
+              size="sm"
             >
               Schedule Post
             </Button>
           </div>
           
           <div className="space-y-3">
-            <Label>Scheduled Posts</Label>
-            <div className="max-h-48 overflow-y-auto border rounded-md p-2">
+            <Label className="text-sm">Scheduled Posts</Label>
+            <div className="max-h-32 sm:max-h-48 overflow-y-auto border rounded-md p-2">
               {Object.entries(scheduledPosts).length === 0 ? (
-                <p className="text-muted-foreground text-sm">No posts scheduled yet</p>
+                <p className="text-muted-foreground text-xs sm:text-sm">No posts scheduled yet</p>
               ) : (
                 Object.entries(scheduledPosts).map(([date, posts]) => (
                   <div key={date} className="mb-3">
-                    <p className="font-medium text-sm">{format(new Date(date), "PPP")}</p>
+                    <p className="font-medium text-xs sm:text-sm">{format(new Date(date), "PPP")}</p>
                     {posts.map((post) => (
-                      <div key={post.id} className="text-xs text-muted-foreground ml-2">
-                        {platformIcons[post.platform as keyof typeof platformIcons]} {post.platform} at {post.time}
+                      <div key={post.id} className="text-xs text-muted-foreground ml-2 flex items-center gap-1">
+                        {platformIcons[post.platform as keyof typeof platformIcons]} 
+                        <span className="truncate">{post.platform} at {post.time}</span>
                       </div>
                     ))}
                   </div>
