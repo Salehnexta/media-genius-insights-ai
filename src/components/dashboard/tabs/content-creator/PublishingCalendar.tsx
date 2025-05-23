@@ -1,0 +1,147 @@
+
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarDays, Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { format } from "date-fns";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+
+interface ScheduledPost {
+  id: number;
+  content: string;
+  platform: string;
+  image: string;
+  time: string;
+}
+
+interface PublishingCalendarProps {
+  selectedDate: Date | undefined;
+  setSelectedDate: (date: Date | undefined) => void;
+  scheduledPosts: {[key: string]: ScheduledPost[]};
+  setScheduledPosts: React.Dispatch<React.SetStateAction<{[key: string]: ScheduledPost[]}>>;
+  generatedContent: string;
+  platform: string;
+  generatedImage: string;
+}
+
+const PublishingCalendar: React.FC<PublishingCalendarProps> = ({
+  selectedDate,
+  setSelectedDate,
+  scheduledPosts,
+  setScheduledPosts,
+  generatedContent,
+  platform,
+  generatedImage
+}) => {
+  const platformIcons = {
+    twitter: <Twitter className="h-5 w-5" />,
+    instagram: <Instagram className="h-5 w-5" />,
+    linkedin: <Linkedin className="h-5 w-5" />,
+    facebook: <Facebook className="h-5 w-5" />
+  };
+
+  const handleSchedulePost = () => {
+    if (!selectedDate || !generatedContent) {
+      toast({
+        title: "Error",
+        description: "Please select a date and generate content first",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const dateKey = format(selectedDate, "yyyy-MM-dd");
+    const newPost = {
+      id: Date.now(),
+      content: generatedContent,
+      platform,
+      image: generatedImage,
+      time: format(new Date(), "HH:mm")
+    };
+
+    setScheduledPosts(prev => ({
+      ...prev,
+      [dateKey]: [...(prev[dateKey] || []), newPost]
+    }));
+
+    toast({
+      title: "Post Scheduled",
+      description: `Your ${platform} post has been scheduled for ${format(selectedDate, "PPP")}`
+    });
+  };
+
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-md font-medium flex items-center gap-2">
+          <CalendarDays className="h-5 w-5" />
+          Publishing Calendar
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-3">
+            <Label>Select Publishing Date</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !selectedDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarDays className="mr-2 h-4 w-4" />
+                  {selectedDate ? format(selectedDate, "PPP") : "Pick a date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  initialFocus
+                  className="p-3 pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+            
+            <Button 
+              onClick={handleSchedulePost}
+              disabled={!selectedDate || !generatedContent}
+              className="w-full"
+            >
+              Schedule Post
+            </Button>
+          </div>
+          
+          <div className="space-y-3">
+            <Label>Scheduled Posts</Label>
+            <div className="max-h-48 overflow-y-auto border rounded-md p-2">
+              {Object.entries(scheduledPosts).length === 0 ? (
+                <p className="text-muted-foreground text-sm">No posts scheduled yet</p>
+              ) : (
+                Object.entries(scheduledPosts).map(([date, posts]) => (
+                  <div key={date} className="mb-3">
+                    <p className="font-medium text-sm">{format(new Date(date), "PPP")}</p>
+                    {posts.map((post) => (
+                      <div key={post.id} className="text-xs text-muted-foreground ml-2">
+                        {platformIcons[post.platform as keyof typeof platformIcons]} {post.platform} at {post.time}
+                      </div>
+                    ))}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default PublishingCalendar;
