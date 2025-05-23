@@ -4,11 +4,13 @@ import Header from '@/components/layout/Header';
 import ChatInterface from '@/components/chat/ChatInterface';
 import DashboardTabs from '@/components/dashboard/DashboardTabs';
 import { ChevronUp, ChevronDown } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const Index = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { t } = useLanguage();
   
   // Set up dark mode
   useEffect(() => {
@@ -98,7 +100,7 @@ const Index = () => {
                   <ChevronUp className="h-4 w-4 text-gray-500 absolute right-4" />
                 }
                 <span className="text-sm text-gray-500 dark:text-gray-400 ml-4 absolute left-4">
-                  💬 Chat with Insights
+                  💬 {t('chat.insights')}
                 </span>
               </div>
               

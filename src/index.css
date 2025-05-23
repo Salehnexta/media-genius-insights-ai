@@ -96,6 +96,26 @@
   }
 }
 
+/* RTL Support */
+.rtl {
+  direction: rtl;
+}
+
+.rtl .space-x-4 > * + * {
+  margin-right: 1rem;
+  margin-left: 0;
+}
+
+.rtl .space-x-2 > * + * {
+  margin-right: 0.5rem;
+  margin-left: 0;
+}
+
+.rtl .space-x-3 > * + * {
+  margin-right: 0.75rem;
+  margin-left: 0;
+}
+
 /* Chat Bubbles */
 .chat-bubble-ai {
   @apply bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm text-gray-900 dark:text-gray-100 relative;
@@ -140,4 +160,3 @@
 .dark ::-webkit-scrollbar-thumb:hover {
   background: #6b7280;
 }
-
