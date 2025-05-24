@@ -57,13 +57,16 @@ export const useOnboardingData = () => {
     try {
       console.log('Loading onboarding data for user:', user.id);
       
+      // Fix: Get the most recent record only, ordered by updated_at desc
       const { data: existingData, error } = await supabase
         .from('onboarding_data')
         .select('*')
         .eq('user_id', user.id)
-        .maybeSingle();
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .single();
 
-      if (error) {
+      if (error && error.code !== 'PGRST116') {
         console.error('Error loading onboarding data:', error);
         setData(defaultData);
         return;
@@ -129,11 +132,12 @@ export const useOnboardingData = () => {
     try {
       console.log('Saving onboarding data for user:', user.id, dataToSave);
 
-      const { data: existingOnboarding } = await supabase
+      // Check if there are any existing records (to handle duplicates)
+      const { data: existingRecords } = await supabase
         .from('onboarding_data')
         .select('id')
         .eq('user_id', user.id)
-        .maybeSingle();
+        .order('updated_at', { ascending: false });
 
       const savePayload = {
         skill_level: dataToSave.skillLevel,
@@ -151,17 +155,35 @@ export const useOnboardingData = () => {
 
       console.log('Save payload:', savePayload);
 
-      if (existingOnboarding) {
+      if (existingRecords && existingRecords.length > 0) {
+        // Update the most recent record
+        const mostRecentId = existingRecords[0].id;
         const { error: onboardingError } = await supabase
           .from('onboarding_data')
           .update(savePayload)
-          .eq('user_id', user.id);
+          .eq('id', mostRecentId);
 
         if (onboardingError) {
           console.error('Update error:', onboardingError);
           throw onboardingError;
         }
+
+        // Delete any duplicate records
+        if (existingRecords.length > 1) {
+          const duplicateIds = existingRecords.slice(1).map(record => record.id);
+          console.log('Deleting duplicate records:', duplicateIds);
+          
+          const { error: deleteError } = await supabase
+            .from('onboarding_data')
+            .delete()
+            .in('id', duplicateIds);
+
+          if (deleteError) {
+            console.warn('Error deleting duplicates (non-critical):', deleteError);
+          }
+        }
       } else {
+        // Create new record
         const { error: onboardingError } = await supabase
           .from('onboarding_data')
           .insert({
@@ -252,13 +274,16 @@ export const useOnboardingData = () => {
     console.log('Fetching onboarding data for user:', user.id);
     
     try {
+      // Fix: Get most recent record only
       const { data, error } = await supabase
         .from('onboarding_data')
         .select('*')
         .eq('user_id', user.id)
-        .maybeSingle();
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .single();
 
-      if (error) {
+      if (error && error.code !== 'PGRST116') {
         console.error('Error in getOnboardingData:', error);
         return null;
       }

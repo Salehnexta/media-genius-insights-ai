@@ -18,13 +18,14 @@ const Index: React.FC = () => {
   const isArabic = language === 'ar';
 
   useEffect(() => {
-    console.log('=== INDEX DEBUG ===');
-    console.log('Auth loading:', authLoading);
-    console.log('User exists:', !!user);
-    console.log('User ID:', user?.id);
-    console.log('Onboarding loading:', onboardingLoading);
-    console.log('Has completed onboarding:', hasCompletedOnboarding);
-    console.log('Is checking:', isChecking);
+    console.log('Index useEffect triggered:', {
+      authLoading,
+      user: !!user,
+      userId: user?.id,
+      onboardingLoading,
+      hasCompletedOnboarding,
+      isChecking
+    });
     
     if (!authLoading && !user) {
       console.log('No user found, redirecting to auth');
@@ -33,6 +34,7 @@ const Index: React.FC = () => {
     }
 
     if (user && !onboardingLoading && !isChecking && hasCompletedOnboarding === null) {
+      console.log('Checking onboarding status...');
       checkOnboardingStatus();
     }
   }, [user, authLoading, onboardingLoading, navigate, isChecking, hasCompletedOnboarding]);
@@ -46,19 +48,13 @@ const Index: React.FC = () => {
     setIsChecking(true);
     
     try {
-      console.log('Checking onboarding status for user:', user.id);
+      console.log('Fetching onboarding data for user:', user.id);
       const onboardingData = await getOnboardingData();
-      console.log('Raw onboarding data:', onboardingData);
+      console.log('Onboarding data result:', onboardingData);
       
-      // Check both completed_at field and completed field for backward compatibility
-      const isCompleted = onboardingData && (
-        onboardingData.completed_at !== null || 
-        onboardingData.completed === true
-      );
-      
-      console.log('Is onboarding completed?', isCompleted);
-      console.log('completed_at:', onboardingData?.completed_at);
-      console.log('completed field:', onboardingData?.completed);
+      // Check if onboarding is completed
+      const isCompleted = onboardingData && onboardingData.completed_at !== null;
+      console.log('Onboarding completed status:', isCompleted);
       
       setHasCompletedOnboarding(isCompleted);
       
