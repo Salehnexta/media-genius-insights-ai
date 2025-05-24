@@ -197,7 +197,7 @@ const OnboardingWizard: React.FC = () => {
 
           {/* Step Navigation */}
           <div className="flex justify-center mb-8">
-            <div className={`flex ${isArabic ? 'flex-row-reverse gap-2' : 'gap-2'}`}>
+            <div className={`flex gap-2`}>
               {steps.map((step, index) => (
                 <button
                   key={step.id}
@@ -230,17 +230,17 @@ const OnboardingWizard: React.FC = () => {
           </Card>
 
           {/* Navigation Buttons */}
-          <div className={`flex justify-between items-center ${isArabic ? 'flex-row-reverse' : ''}`}>
+          <div className={`flex ${isArabic ? 'flex-row-reverse justify-between' : 'justify-between'} items-center`}>
             <Button
               variant="outline"
               onClick={handlePrevious}
               disabled={currentStep === 0}
-              className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}
+              className={`flex items-center ${isArabic ? 'flex-row-reverse gap-2' : 'gap-2'}`}
             >
               {isArabic ? (
                 <>
-                  <ChevronRight className="h-4 w-4" />
                   السابق
+                  <ChevronRight className="h-4 w-4" />
                 </>
               ) : (
                 <>
@@ -250,7 +250,7 @@ const OnboardingWizard: React.FC = () => {
               )}
             </Button>
 
-            <div className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
+            <div className={`flex items-center ${isArabic ? 'flex-row-reverse gap-2' : 'gap-2'}`}>
               {saving && (
                 <span className="text-sm text-gray-500">
                   {isArabic ? 'جاري الحفظ...' : 'Saving...'}
@@ -259,12 +259,12 @@ const OnboardingWizard: React.FC = () => {
               <Button
                 onClick={handleNext}
                 disabled={!isStepValid() || saving}
-                className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}
+                className={`flex items-center ${isArabic ? 'flex-row-reverse gap-2' : 'gap-2'}`}
               >
                 {isArabic ? (
                   <>
-                    <ChevronLeft className="h-4 w-4" />
                     {currentStep === steps.length - 1 ? 'إنهاء الإعداد' : 'التالي'}
+                    <ChevronLeft className="h-4 w-4" />
                   </>
                 ) : (
                   <>

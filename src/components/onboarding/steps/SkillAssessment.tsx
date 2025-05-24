@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -105,9 +104,9 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({ data, updateData, isA
           dir={isArabic ? 'rtl' : 'ltr'}
         >
           {experienceOptions.map((option) => (
-            <div key={option.id} className={`flex items-center ${isArabic ? 'flex-row-reverse space-x-reverse space-x-2' : 'space-x-2'}`}>
-              <RadioGroupItem value={option.id} id={option.id} />
-              <Label htmlFor={option.id} className="font-medium cursor-pointer">
+            <div key={option.id} className={`flex items-center ${isArabic ? 'flex-row-reverse' : ''} gap-2`}>
+              <RadioGroupItem value={option.id} id={option.id} className={isArabic ? 'ml-2' : 'mr-2'} />
+              <Label htmlFor={option.id} className="font-medium cursor-pointer flex-1">
                 {option.label}
               </Label>
             </div>

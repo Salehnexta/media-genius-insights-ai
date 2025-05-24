@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
@@ -332,23 +333,7 @@
   text-align: right;
 }
 
-/* Radio button and checkbox RTL alignment */
-[dir="rtl"] .radio-group-item,
-[dir="rtl"] .checkbox {
-  margin-right: 0;
-  margin-left: 0.5rem;
-}
-
-/* Card RTL support */
-[dir="rtl"] .card-header {
-  text-align: right;
-}
-
-[dir="rtl"] .card-content {
-  text-align: right;
-}
-
-/* RTL Radio Group and Checkbox fixes */
+/* RTL Radio button and checkbox RTL alignment - Enhanced */
 [dir="rtl"] .radio-group-item,
 [dir="rtl"] .checkbox,
 .rtl .radio-group-item,
@@ -357,28 +342,55 @@
   margin-left: 0.5rem !important;
 }
 
-/* RTL Radio Group specific */
+/* RTL Radio Group specific - Enhanced */
 [dir="rtl"] [role="radiogroup"] {
   direction: rtl;
 }
 
 [dir="rtl"] [role="radiogroup"] > div {
   flex-direction: row-reverse;
+  gap: 0.5rem;
 }
 
-/* RTL Button icon alignment */
+/* RTL Button icon alignment - Enhanced */
 [dir="rtl"] .flex-row-reverse {
   flex-direction: row-reverse !important;
 }
 
-/* RTL Step navigation fixes */
-[dir="rtl"] .step-navigation {
-  flex-direction: row-reverse;
-}
-
-/* RTL Spacing fixes for Arabic */
+/* RTL Spacing fixes for Arabic - Enhanced */
 [dir="rtl"] .space-x-reverse > :not([hidden]) ~ :not([hidden]) {
   --tw-space-x-reverse: 1;
   margin-right: calc(0.5rem * var(--tw-space-x-reverse));
   margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+/* Enhanced RTL Radio Group styling */
+[dir="rtl"] [data-orientation="vertical"] > div {
+  flex-direction: row-reverse !important;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+/* RTL Navigation buttons - Enhanced */
+[dir="rtl"] .navigation-buttons {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .navigation-buttons .btn-previous {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+[dir="rtl"] .navigation-buttons .btn-next {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+/* Step numbers RTL fix */
+[dir="rtl"] .step-numbers {
+  direction: ltr;
+}
+
+[dir="rtl"] .step-numbers button {
+  direction: ltr;
 }
