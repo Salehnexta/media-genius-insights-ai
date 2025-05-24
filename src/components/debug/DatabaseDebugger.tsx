@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, XCircle, AlertTriangle, Database, User, Shield } from 'lucide-react';
+import { CheckCircle, XCircle, AlertTriangle, Database, User, Shield, Plus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -24,6 +24,7 @@ const DatabaseDebugger = () => {
   const isArabic = language === 'ar';
   const [results, setResults] = useState<TestResult[]>([]);
   const [testing, setTesting] = useState(false);
+  const [fixingSubscription, setFixingSubscription] = useState(false);
 
   const runTests = async () => {
     setTesting(true);
@@ -77,7 +78,72 @@ const DatabaseDebugger = () => {
         });
       }
 
-      // Test 3: Campaigns Table Access
+      // Test 3: Subscription Plans Access
+      try {
+        const { data: plans, error: plansError } = await supabase
+          .from('subscription_plans')
+          .select('*')
+          .order('price_sar', { ascending: true });
+
+        if (plansError) {
+          testResults.push({
+            name: 'Subscription Plans Access',
+            status: 'error',
+            message: `Plans error: ${plansError.message}`,
+            details: plansError
+          });
+        } else {
+          testResults.push({
+            name: 'Subscription Plans Access',
+            status: 'success',
+            message: `Subscription plans accessible (${plans?.length || 0} plans found)`,
+            details: plans
+          });
+        }
+      } catch (error) {
+        testResults.push({
+          name: 'Subscription Plans Access',
+          status: 'error',
+          message: `Subscription plans test failed: ${error}`,
+          details: error
+        });
+      }
+
+      // Test 4: User Subscriptions (this is where the 406 error occurs)
+      try {
+        const { data: subscriptions, error: subscriptionsError } = await supabase
+          .from('user_subscriptions')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('status', 'active');
+
+        if (subscriptionsError) {
+          testResults.push({
+            name: 'User Subscriptions Access',
+            status: 'error',
+            message: `User subscriptions error: ${subscriptionsError.message}`,
+            details: subscriptionsError
+          });
+        } else {
+          testResults.push({
+            name: 'User Subscriptions Access',
+            status: subscriptions && subscriptions.length > 0 ? 'success' : 'warning',
+            message: subscriptions && subscriptions.length > 0 
+              ? `Active subscription found (${subscriptions.length} subscriptions)`
+              : 'No active subscriptions found for user',
+            details: subscriptions
+          });
+        }
+      } catch (error) {
+        testResults.push({
+          name: 'User Subscriptions Access',
+          status: 'error',
+          message: `User subscriptions test failed: ${error}`,
+          details: error
+        });
+      }
+
+      // Test 5: Campaigns Table Access
       try {
         const { data: campaigns, error: campaignsError } = await supabase
           .from('campaigns')
@@ -108,7 +174,7 @@ const DatabaseDebugger = () => {
         });
       }
 
-      // Test 4: Content Table Access
+      // Test 6: Content Table Access
       try {
         const { data: content, error: contentError } = await supabase
           .from('content')
@@ -139,76 +205,70 @@ const DatabaseDebugger = () => {
         });
       }
 
-      // Test 5: Test Campaign Creation
+      // Test 7: AI Chat Function
       try {
-        const testCampaign = {
-          name: 'Test Campaign',
-          description: 'Database test campaign',
-          status: 'draft',
-          user_id: user.id
-        };
+        const { data, error } = await supabase.functions.invoke('ai-chat', {
+          body: { 
+            message: 'Test message for debugging',
+            context: 'general',
+            language: 'en'
+          }
+        });
 
-        const { data: newCampaign, error: createError } = await supabase
-          .from('campaigns')
-          .insert([testCampaign])
-          .select()
-          .single();
-
-        if (createError) {
+        if (error) {
           testResults.push({
-            name: 'Campaign Creation',
+            name: 'AI Chat Function',
             status: 'error',
-            message: `Campaign creation error: ${createError.message}`,
-            details: createError
+            message: `AI Chat function error: ${error.message}`,
+            details: error
           });
         } else {
           testResults.push({
-            name: 'Campaign Creation',
+            name: 'AI Chat Function',
             status: 'success',
-            message: 'Campaign created successfully',
-            details: newCampaign
+            message: 'AI Chat function working correctly',
+            details: data
           });
-
-          // Clean up test campaign
-          await supabase.from('campaigns').delete().eq('id', newCampaign.id);
         }
       } catch (error) {
         testResults.push({
-          name: 'Campaign Creation',
+          name: 'AI Chat Function',
           status: 'error',
-          message: `Campaign creation test failed: ${error}`,
+          message: `AI Chat function test failed: ${error}`,
           details: error
         });
       }
 
-      // Test 6: User-specific Data Access (RLS Test)
+      // Test 8: Image Generation Function
       try {
-        const { data: userCampaigns, error: userCampaignsError } = await supabase
-          .from('campaigns')
-          .select('id, user_id')
-          .eq('user_id', user.id)
-          .limit(3);
+        const { data, error } = await supabase.functions.invoke('generate-image', {
+          body: { 
+            prompt: 'A simple test image',
+            style: 'realistic',
+            size: '1024x1024'
+          }
+        });
 
-        if (userCampaignsError) {
+        if (error) {
           testResults.push({
-            name: 'RLS Data Access',
+            name: 'Image Generation Function',
             status: 'error',
-            message: `User data access error: ${userCampaignsError.message}`,
-            details: userCampaignsError
+            message: `Image generation error: ${error.message}`,
+            details: error
           });
         } else {
           testResults.push({
-            name: 'RLS Data Access',
+            name: 'Image Generation Function',
             status: 'success',
-            message: `User-specific data accessible (${userCampaigns?.length || 0} user campaigns found)`,
-            details: userCampaigns
+            message: 'Image generation function working correctly',
+            details: { hasImageUrl: !!data?.imageUrl }
           });
         }
       } catch (error) {
         testResults.push({
-          name: 'RLS Data Access',
+          name: 'Image Generation Function',
           status: 'error',
-          message: `RLS test failed: ${error}`,
+          message: `Image generation test failed: ${error}`,
           details: error
         });
       }
@@ -216,6 +276,49 @@ const DatabaseDebugger = () => {
 
     setResults(testResults);
     setTesting(false);
+  };
+
+  const createDefaultSubscription = async () => {
+    if (!user) return;
+    
+    setFixingSubscription(true);
+    try {
+      // Get the basic plan (first plan by price)
+      const { data: plans } = await supabase
+        .from('subscription_plans')
+        .select('*')
+        .order('price_sar', { ascending: true })
+        .limit(1);
+
+      if (plans && plans.length > 0) {
+        const basicPlan = plans[0];
+        
+        // Create a subscription for the user
+        const { data: subscription, error } = await supabase
+          .from('user_subscriptions')
+          .insert([{
+            user_id: user.id,
+            plan_id: basicPlan.id,
+            current_period_start: new Date().toISOString(),
+            current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
+            status: 'active'
+          }])
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Error creating subscription:', error);
+        } else {
+          console.log('Default subscription created:', subscription);
+          // Re-run tests to see the updated status
+          await runTests();
+        }
+      }
+    } catch (error) {
+      console.error('Failed to create default subscription:', error);
+    } finally {
+      setFixingSubscription(false);
+    }
   };
 
   const getStatusIcon = (status: TestStatus) => {
@@ -244,6 +347,10 @@ const DatabaseDebugger = () => {
     return <Badge variant={badgeVariant}>{statusText[status]}</Badge>;
   };
 
+  const hasSubscriptionIssue = results.some(r => 
+    r.name === 'User Subscriptions Access' && (r.status === 'warning' || r.status === 'error')
+  );
+
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
@@ -253,13 +360,27 @@ const DatabaseDebugger = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Button 
-          onClick={runTests} 
-          disabled={testing}
-          className={`w-full ${isArabic ? 'flex-row-reverse' : ''}`}
-        >
-          {testing ? (isArabic ? 'جاري الفحص...' : 'Running Tests...') : (isArabic ? 'فحص قاعدة البيانات' : 'Run Database Tests')}
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            onClick={runTests} 
+            disabled={testing}
+            className={`flex-1 ${isArabic ? 'flex-row-reverse' : ''}`}
+          >
+            {testing ? (isArabic ? 'جاري الفحص...' : 'Running Tests...') : (isArabic ? 'فحص قاعدة البيانات' : 'Run Database Tests')}
+          </Button>
+          
+          {hasSubscriptionIssue && user && (
+            <Button 
+              onClick={createDefaultSubscription}
+              disabled={fixingSubscription}
+              variant="outline"
+              className={`${isArabic ? 'flex-row-reverse' : ''}`}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              {fixingSubscription ? 'Creating...' : 'Fix Subscription'}
+            </Button>
+          )}
+        </div>
 
         {results.length > 0 && (
           <div className="space-y-3">
