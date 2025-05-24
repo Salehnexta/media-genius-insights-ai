@@ -1,110 +1,122 @@
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import Header from '@/components/layout/Header';
-import { Scale, Shield, Users, AlertTriangle, Calendar, Mail } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-const Terms = () => {
+const Terms: React.FC = () => {
   const { language } = useLanguage();
   const isArabic = language === 'ar';
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('dark');
-  };
 
   const sections = [
     {
-      title: isArabic ? 'قبول الشروط' : 'Acceptance of Terms',
-      icon: Scale,
+      title: isArabic ? 'الشروط والأحكام' : 'Terms and Conditions',
       content: isArabic 
-        ? 'باستخدام منصة التسويق الذكي، فإنك توافق على الالتزام بهذه الشروط والأحكام. إذا كنت لا توافق على أي من هذه الشروط، يرجى عدم استخدام خدماتنا.'
-        : 'By using our AI Marketing Intelligence platform, you agree to be bound by these Terms and Conditions. If you do not agree to any of these terms, please do not use our services.'
+        ? 'مرحباً بك في منصة التسويق الذكي. باستخدام خدماتنا، فإنك توافق على هذه الشروط والأحكام.'
+        : 'Welcome to our AI Marketing Platform. By using our services, you agree to these terms and conditions.'
     },
     {
-      title: isArabic ? 'وصف الخدمة' : 'Service Description',
-      icon: Users,
+      title: isArabic ? 'استخدام الخدمة' : 'Use of Service',
       content: isArabic
-        ? 'نحن نقدم منصة تسويق ذكية تعتمد على الذكاء الاصطناعي لتحليل البيانات وتقديم التوصيات والرؤى التسويقية. تشمل خدماتنا إنشاء المحتوى، وتحليل الأداء، وإدارة الحملات التسويقية.'
-        : 'We provide an AI-powered marketing intelligence platform that analyzes data and provides marketing recommendations and insights. Our services include content generation, performance analysis, and marketing campaign management.'
+        ? 'يحق لك استخدام منصتنا للأغراض التجارية المشروعة. يُمنع استخدام الخدمة لأي أنشطة غير قانونية أو ضارة.'
+        : 'You may use our platform for legitimate business purposes. Use of the service for any illegal or harmful activities is prohibited.'
     },
     {
-      title: isArabic ? 'التزامات المستخدم' : 'User Obligations',
-      icon: Shield,
+      title: isArabic ? 'المحتوى المُنتج بالذكاء الاصطناعي' : 'AI-Generated Content',
       content: isArabic
-        ? 'يجب على المستخدمين تقديم معلومات دقيقة وصحيحة، واستخدام المنصة للأغراض المشروعة فقط، وعدم انتهاك حقوق الملكية الفكرية للآخرين.'
-        : 'Users must provide accurate information, use the platform for lawful purposes only, and not violate intellectual property rights of others.'
+        ? 'المحتوى المُنتج بواسطة الذكاء الاصطناعي مقدم "كما هو". أنت مسؤول عن مراجعة وتحرير أي محتوى قبل النشر.'
+        : 'AI-generated content is provided "as is". You are responsible for reviewing and editing any content before publication.'
     },
     {
       title: isArabic ? 'الملكية الفكرية' : 'Intellectual Property',
-      icon: AlertTriangle,
       content: isArabic
-        ? 'جميع المحتويات والتقنيات المستخدمة في المنصة محمية بحقوق الطبع والنشر والعلامات التجارية. يحتفظ المستخدمون بحقوق المحتوى الذي ينشئونه.'
-        : 'All platform content and technology are protected by copyright and trademarks. Users retain rights to content they create.'
+        ? 'تحتفظ الشركة بجميع حقوق الملكية الفكرية للمنصة. المحتوى الذي تقوم بإنشاؤه يبقى ملكاً لك.'
+        : 'We retain all intellectual property rights to the platform. Content you create remains your property.'
     },
     {
-      title: isArabic ? 'سياسة الاسترداد' : 'Refund Policy',
-      icon: Calendar,
+      title: isArabic ? 'قيود الاستخدام' : 'Usage Limitations',
       content: isArabic
-        ? 'نقدم ضمان استرداد الأموال خلال 30 يوماً من تاريخ الاشتراك. الطلبات المقدمة بعد هذه المدة لن تكون مؤهلة للاسترداد.'
-        : 'We offer a 30-day money-back guarantee from the subscription date. Requests after this period will not be eligible for refunds.'
+        ? 'استخدام الخدمة محدود بحسب خطة اشتراكك. الاستخدام المفرط قد يؤدي إلى رسوم إضافية أو تقييد الحساب.'
+        : 'Service usage is limited by your subscription plan. Excessive usage may result in additional charges or account restrictions.'
+    },
+    {
+      title: isArabic ? 'الدفع والفوترة' : 'Payment and Billing',
+      content: isArabic
+        ? 'الدفع مطلوب مقدماً شهرياً. الأسعار قابلة للتغيير مع إشعار مسبق 30 يوماً.'
+        : 'Payment is required monthly in advance. Prices are subject to change with 30 days notice.'
+    },
+    {
+      title: isArabic ? 'إنهاء الخدمة' : 'Service Termination',
+      content: isArabic
+        ? 'يمكنك إلغاء اشتراكك في أي وقت. نحتفظ بالحق في إنهاء الحسابات التي تنتهك شروط الخدمة.'
+        : 'You may cancel your subscription at any time. We reserve the right to terminate accounts that violate our terms of service.'
+    },
+    {
+      title: isArabic ? 'إخلاء المسؤولية' : 'Disclaimer',
+      content: isArabic
+        ? 'الخدمة مقدمة "كما هي" بدون ضمانات. لا نتحمل مسؤولية أي أضرار ناتجة عن استخدام الخدمة.'
+        : 'The service is provided "as is" without warranties. We are not liable for any damages resulting from use of the service.'
+    },
+    {
+      title: isArabic ? 'القانون الساري' : 'Governing Law',
+      content: isArabic
+        ? 'تخضع هذه الشروط لقوانين المملكة العربية السعودية.'
+        : 'These terms are governed by the laws of Saudi Arabia.'
+    },
+    {
+      title: isArabic ? 'تعديل الشروط' : 'Terms Modification',
+      content: isArabic
+        ? 'نحتفظ بالحق في تعديل هذه الشروط في أي وقت. سيتم إشعارك بأي تغييرات جوهرية.'
+        : 'We reserve the right to modify these terms at any time. You will be notified of any material changes.'
     }
   ];
 
   return (
-    <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
-      <Header isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-      
-      <main className="container mx-auto px-6 py-8 max-w-4xl">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            {isArabic ? 'شروط الخدمة' : 'Terms of Service'}
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300 text-lg">
-            {isArabic ? 'آخر تحديث: 25 يناير 2025' : 'Last updated: January 25, 2025'}
-          </p>
-        </div>
-
-        <div className="space-y-6">
-          {sections.map((section, index) => (
-            <Card key={index}>
-              <CardHeader>
-                <CardTitle className={`flex items-center gap-3 ${isArabic ? 'flex-row-reverse' : ''}`}>
-                  <section.icon className="h-6 w-6 text-blue-600" />
-                  {section.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  {section.content}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        <Separator className="my-8" />
-
-        <Card>
-          <CardHeader>
-            <CardTitle className={`flex items-center gap-3 ${isArabic ? 'flex-row-reverse' : ''}`}>
-              <Mail className="h-6 w-6 text-blue-600" />
-              {isArabic ? 'تواصل معنا' : 'Contact Us'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              {isArabic 
-                ? 'إذا كانت لديك أي أسئلة حول هذه الشروط، يرجى التواصل معنا على: support@aimarketing.sa'
-                : 'If you have any questions about these terms, please contact us at: support@aimarketing.sa'
-              }
+    <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : ''}`}>
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              {isArabic ? 'الشروط والأحكام' : 'Terms of Service'}
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300">
+              {isArabic ? 'آخر تحديث:' : 'Last updated:'} {new Date().toLocaleDateString()}
             </p>
-          </CardContent>
-        </Card>
-      </main>
+          </div>
+
+          {/* Terms Sections */}
+          <div className="space-y-6">
+            {sections.map((section, index) => (
+              <Card key={index}>
+                <CardHeader>
+                  <CardTitle className="text-xl">{section.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                    {section.content}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Contact Information */}
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle>{isArabic ? 'اتصل بنا' : 'Contact Us'}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600 dark:text-gray-300">
+                {isArabic 
+                  ? 'إذا كان لديك أسئلة حول هذه الشروط، يرجى التواصل معنا على:'
+                  : 'If you have questions about these terms, please contact us at:'
+                }
+              </p>
+              <p className="mt-2 font-medium">support@aimarketing.sa</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 };
