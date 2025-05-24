@@ -1,20 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Switch } from "@/components/ui/switch"
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { ModeToggle } from "@/components/ModeToggle"
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { ModeToggle } from '@/components/ModeToggle';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,17 +13,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  Home,
-  Menu,
-  Settings,
-  User,
-  LogOut,
-  Target,
-  Bot,
-  Brain
-} from "lucide-react"
+} from '@/components/ui/dropdown-menu';
+import { User, Settings, LogOut } from 'lucide-react';
+import NavigationMenu from './NavigationMenu';
+import LanguageToggle from './LanguageToggle';
+import MobileMenu from './MobileMenu';
 
 interface HeaderProps {
   isDarkMode: boolean;
@@ -44,7 +29,6 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleDarkMode, hideNavigat
   const { user, signOut } = useAuth();
   const { language, setLanguage } = useLanguage();
   const isArabic = language === 'ar';
-  const location = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -61,33 +45,6 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleDarkMode, hideNavigat
     setLanguage(isArabic ? 'en' : 'ar');
   };
 
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
-
-  const navigationItems = [
-    {
-      label: isArabic ? 'لوحة التحكم' : 'Dashboard',
-      href: '/',
-      icon: Home
-    },
-    {
-      label: isArabic ? 'الحملات' : 'Campaigns',
-      href: '/campaigns',
-      icon: Target
-    },
-    {
-      label: isArabic ? 'الوكلاء الذكيين' : 'AI Agents',
-      href: '/agents',
-      icon: Bot
-    },
-    {
-      label: isArabic ? 'الرؤى والتحليلات' : 'Insights & Analytics',
-      href: '/insights',
-      icon: Brain
-    }
-  ];
-
   return (
     <header className="bg-white dark:bg-gray-900 border-b dark:border-gray-800 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
@@ -97,26 +54,11 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleDarkMode, hideNavigat
 
         <div className="flex items-center gap-4">
           {/* Desktop Navigation */}
-          {!hideNavigation && (
-            <nav className="hidden md:flex items-center gap-4">
-              {navigationItems.map((item) => (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={`text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors flex items-center gap-1 ${location.pathname === item.href ? 'text-blue-600 dark:text-blue-400' : ''}`}
-                >
-                  <item.icon className="h-4 w-4" />
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-          )}
+          {!hideNavigation && <NavigationMenu isArabic={isArabic} />}
 
           <div className="flex items-center gap-2">
             {/* Language Switch */}
-            <Button variant="ghost" size="sm" onClick={toggleLanguage}>
-              {isArabic ? 'English' : 'عربي'}
-            </Button>
+            <LanguageToggle isArabic={isArabic} onToggle={toggleLanguage} />
 
             {/* Dark Mode Toggle */}
             <ModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
@@ -167,39 +109,13 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleDarkMode, hideNavigat
 
             {/* Mobile Menu Button */}
             {!hideNavigation && (
-              <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" className="md:hidden h-8 w-8 p-0">
-                    <Menu className="h-5 w-5" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="sm:max-w-sm">
-                  <SheetHeader>
-                    <SheetTitle>{isArabic ? 'القائمة' : 'Menu'}</SheetTitle>
-                    <SheetDescription>
-                      {isArabic ? 'استكشف الخيارات المتاحة' : 'Explore available options'}
-                    </SheetDescription>
-                  </SheetHeader>
-                  <div className="grid gap-4 py-4">
-                    {navigationItems.map((item) => (
-                      <Link
-                        key={item.href}
-                        to={item.href}
-                        className={`flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 ${location.pathname === item.href ? 'text-blue-600 dark:text-blue-400' : ''}`}
-                        onClick={closeMenu}
-                      >
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.label}</span>
-                      </Link>
-                    ))}
-                    {user && (
-                      <Button variant="destructive" size="sm" onClick={handleLogout} className="mt-4 w-full">
-                        {isArabic ? 'تسجيل الخروج' : 'Log Out'}
-                      </Button>
-                    )}
-                  </div>
-                </SheetContent>
-              </Sheet>
+              <MobileMenu
+                isArabic={isArabic}
+                user={user}
+                isMenuOpen={isMenuOpen}
+                onMenuToggle={setIsMenuOpen}
+                onLogout={handleLogout}
+              />
             )}
           </div>
         </div>
