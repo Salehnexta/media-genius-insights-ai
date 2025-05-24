@@ -180,27 +180,38 @@ const DatabaseDebugger = () => {
           details: error
         });
       }
-    }
 
-    // Test 6: RLS Policies Test
-    try {
-      const { data: policies, error: policiesError } = await supabase
-        .rpc('pg_policies')
-        .select('*');
+      // Test 6: User-specific Data Access (RLS Test)
+      try {
+        const { data: userCampaigns, error: userCampaignsError } = await supabase
+          .from('campaigns')
+          .select('id, user_id')
+          .eq('user_id', user.id)
+          .limit(3);
 
-      testResults.push({
-        name: 'RLS Policies',
-        status: policiesError ? 'warning' : 'success',
-        message: policiesError ? 'Could not verify RLS policies' : 'RLS policies check completed',
-        details: policies
-      });
-    } catch (error) {
-      testResults.push({
-        name: 'RLS Policies',
-        status: 'warning',
-        message: 'RLS policies verification not available',
-        details: null
-      });
+        if (userCampaignsError) {
+          testResults.push({
+            name: 'RLS Data Access',
+            status: 'error',
+            message: `User data access error: ${userCampaignsError.message}`,
+            details: userCampaignsError
+          });
+        } else {
+          testResults.push({
+            name: 'RLS Data Access',
+            status: 'success',
+            message: `User-specific data accessible (${userCampaigns?.length || 0} user campaigns found)`,
+            details: userCampaigns
+          });
+        }
+      } catch (error) {
+        testResults.push({
+          name: 'RLS Data Access',
+          status: 'error',
+          message: `RLS test failed: ${error}`,
+          details: error
+        });
+      }
     }
 
     setResults(testResults);
