@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -40,7 +39,7 @@ const DashboardHeader: React.FC = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/profile')}
+              onClick={() => navigate('/enhanced-profile')}
               className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}
             >
               <User className="h-4 w-4" />
