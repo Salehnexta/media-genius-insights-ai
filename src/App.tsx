@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import LandingPage from "./pages/LandingPage";
 import LandingPageAr from "./pages/LandingPageAr";
+import Campaigns from "./pages/Campaigns";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Index />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/campaigns" 
+                element={
+                  <ProtectedRoute>
+                    <Campaigns />
                   </ProtectedRoute>
                 } 
               />
