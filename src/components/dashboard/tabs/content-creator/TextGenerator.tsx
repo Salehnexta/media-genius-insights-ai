@@ -8,6 +8,7 @@ import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import SmartInput from '@/components/ui/SmartInput';
 import SmartTextarea from '@/components/ui/SmartTextarea';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface TextGeneratorProps {
   prompt: string;
@@ -34,11 +35,13 @@ const TextGenerator: React.FC<TextGeneratorProps> = ({
   isMobile,
   userInfo
 }) => {
+  const { t, language } = useLanguage();
+  const isArabic = language === 'ar';
 
   const generateContent = async () => {
     if (!prompt.trim()) {
       toast({
-        title: "Error",
+        title: t('ai.error'),
         description: "Please enter a content prompt",
         variant: "destructive"
       });
@@ -52,7 +55,7 @@ const TextGenerator: React.FC<TextGeneratorProps> = ({
           prompt, 
           platform, 
           userInfo,
-          language: 'en' 
+          language 
         }
       });
 
@@ -61,13 +64,13 @@ const TextGenerator: React.FC<TextGeneratorProps> = ({
       setGeneratedContent(data.content);
       toast({
         title: "Success",
-        description: "Content generated successfully!"
+        description: t('ai.success')
       });
     } catch (error) {
       console.error('Error generating content:', error);
       toast({
         title: "Error",
-        description: "Failed to generate content. Please try again.",
+        description: t('ai.error'),
         variant: "destructive"
       });
     } finally {
@@ -78,7 +81,7 @@ const TextGenerator: React.FC<TextGeneratorProps> = ({
   const copyToClipboard = () => {
     navigator.clipboard.writeText(generatedContent);
     toast({
-      title: "Copied!",
+      title: t('ai.copied'),
       description: "Content copied to clipboard"
     });
   };
@@ -92,18 +95,18 @@ const TextGenerator: React.FC<TextGeneratorProps> = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
           <Wand2 className="h-5 w-5" />
-          AI Content Generator
+          {t('ai.contentGenerator')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         
         <div className="space-y-2">
-          <label className="text-sm font-medium">Platform</label>
+          <label className="text-sm font-medium">{t('ai.platform')}</label>
           <Select value={platform} onValueChange={setPlatform}>
             <SelectTrigger>
-              <SelectValue placeholder="Select platform" />
+              <SelectValue placeholder={t('ai.platform.placeholder')} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="twitter">Twitter</SelectItem>
@@ -115,11 +118,11 @@ const TextGenerator: React.FC<TextGeneratorProps> = ({
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium">Content Prompt</label>
+          <label className="text-sm font-medium">{t('ai.contentPrompt')}</label>
           <SmartInput
             value={prompt}
             onChange={setPrompt}
-            placeholder="Describe the content you want to create..."
+            placeholder={t('ai.contentPrompt.placeholder')}
             fieldType="content"
             context={contextData}
             className="w-full"
@@ -134,23 +137,23 @@ const TextGenerator: React.FC<TextGeneratorProps> = ({
           {isGenerating ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Generating...
+              {t('ai.generating')}
             </>
           ) : (
             <>
               <Wand2 className="h-4 w-4 mr-2" />
-              Generate Content
+              {t('ai.generateContent')}
             </>
           )}
         </Button>
 
         {generatedContent && (
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">Generated Content</label>
+            <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
+              <label className="text-sm font-medium">{t('ai.generatedContent')}</label>
               <Button variant="outline" size="sm" onClick={copyToClipboard}>
                 <Copy className="h-4 w-4 mr-2" />
-                Copy
+                {t('ai.copy')}
               </Button>
             </div>
             <SmartTextarea

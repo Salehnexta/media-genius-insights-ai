@@ -4,6 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Lightbulb, Loader2 } from 'lucide-react';
 import { aiAgentService } from '@/services/aiAgentService';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SmartTextareaProps {
   value: string;
@@ -26,6 +27,7 @@ const SmartTextarea: React.FC<SmartTextareaProps> = ({
   disabled,
   rows = 4
 }) => {
+  const { t } = useLanguage();
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -108,7 +110,7 @@ const SmartTextarea: React.FC<SmartTextareaProps> = ({
         >
           <div className="p-2">
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-2 font-medium">
-              AI Suggestions:
+              {t('ai.suggestions')}
             </div>
             {suggestions.map((suggestion, index) => (
               <button

@@ -14,7 +14,7 @@ interface AIInsightsPanelProps {
 
 const AIInsightsPanel: React.FC<AIInsightsPanelProps> = ({ className = '' }) => {
   const { user } = useAuth();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const isArabic = language === 'ar';
   const [insights, setInsights] = useState<AIInsight[]>([]);
   const [loading, setLoading] = useState(false);
@@ -77,7 +77,7 @@ const AIInsightsPanel: React.FC<AIInsightsPanelProps> = ({ className = '' }) => 
           <div className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
             <Brain className="h-5 w-5 text-purple-600" />
             <CardTitle className="text-lg">
-              {isArabic ? 'رؤى الذكاء الاصطناعي' : 'AI Insights'}
+              {t('ai.insights')}
             </CardTitle>
           </div>
           <Button
@@ -92,7 +92,7 @@ const AIInsightsPanel: React.FC<AIInsightsPanelProps> = ({ className = '' }) => 
         </div>
         {lastUpdated && (
           <p className="text-xs text-gray-500">
-            {isArabic ? 'آخر تحديث:' : 'Last updated:'} {lastUpdated.toLocaleTimeString()}
+            {t('ai.insights.lastUpdated')} {lastUpdated.toLocaleTimeString()}
           </p>
         )}
       </CardHeader>
@@ -140,7 +140,7 @@ const AIInsightsPanel: React.FC<AIInsightsPanelProps> = ({ className = '' }) => 
           <div className="text-center py-6 text-gray-500">
             <Brain className="h-8 w-8 mx-auto mb-2 opacity-50" />
             <p className="text-sm">
-              {isArabic ? 'لا توجد رؤى متاحة حالياً' : 'No insights available yet'}
+              {t('ai.insights.noInsights')}
             </p>
           </div>
         )}

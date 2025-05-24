@@ -18,7 +18,7 @@ const PersonalizedRecommendations: React.FC<PersonalizedRecommendationsProps> = 
   maxItems = 3 
 }) => {
   const { user } = useAuth();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const isArabic = language === 'ar';
   const [recommendations, setRecommendations] = useState<AIInsight[]>([]);
   const [completedActions, setCompletedActions] = useState<Set<string>>(new Set());
@@ -70,7 +70,7 @@ const PersonalizedRecommendations: React.FC<PersonalizedRecommendationsProps> = 
         <div className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
           <Target className="h-5 w-5 text-green-600" />
           <CardTitle className="text-lg">
-            {isArabic ? 'توصيات شخصية' : 'Personalized Recommendations'}
+            {t('ai.recommendations')}
           </CardTitle>
         </div>
       </CardHeader>
@@ -129,14 +129,14 @@ const PersonalizedRecommendations: React.FC<PersonalizedRecommendationsProps> = 
                       className={`h-7 text-xs ${isArabic ? 'flex-row-reverse' : ''}`}
                     >
                       <ArrowRight className="h-3 w-3 mr-1" />
-                      {isArabic ? 'تطبيق' : 'Apply'}
+                      {t('ai.apply')}
                     </Button>
                   )}
                   
                   {isCompleted(rec.id) && (
                     <div className={`flex items-center text-green-600 text-xs ${isArabic ? 'flex-row-reverse' : ''}`}>
                       <CheckCircle className="h-3 w-3 mr-1" />
-                      {isArabic ? 'مكتمل' : 'Completed'}
+                      {t('ai.completed')}
                     </div>
                   )}
                 </div>
@@ -147,7 +147,7 @@ const PersonalizedRecommendations: React.FC<PersonalizedRecommendationsProps> = 
           <div className="text-center py-6 text-gray-500">
             <Target className="h-8 w-8 mx-auto mb-2 opacity-50" />
             <p className="text-sm">
-              {isArabic ? 'لا توجد توصيات متاحة حالياً' : 'No recommendations available'}
+              {t('ai.recommendations.noRecommendations')}
             </p>
           </div>
         )}
