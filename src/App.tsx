@@ -14,6 +14,7 @@ import Profile from "./pages/Profile";
 import LandingPage from "./pages/LandingPage";
 import LandingPageAr from "./pages/LandingPageAr";
 import Campaigns from "./pages/Campaigns";
+import Debug from "./pages/Debug";
 import NotFound from "./pages/NotFound";
 
 // Create a stable QueryClient instance
@@ -68,6 +69,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <Campaigns />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/debug" 
+                  element={
+                    <ProtectedRoute>
+                      <Debug />
                     </ProtectedRoute>
                   } 
                 />
