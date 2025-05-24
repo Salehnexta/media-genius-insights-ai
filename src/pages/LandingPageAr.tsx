@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, BarChart3, Brain, Target, TrendingUp, Users, Zap, CheckCircle, Star, Globe, Shield, Play } from 'lucide-react';
+import { ArrowLeft, BarChart3, Brain, Target, TrendingUp, Users, Zap, CheckCircle, Star, Globe, Shield, Play, CreditCard } from 'lucide-react';
 
 const LandingPageAr = () => {
   return (
@@ -23,12 +23,13 @@ const LandingPageAr = () => {
             <nav className="hidden md:flex items-center space-x-8 space-x-reverse">
               <a href="#features" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 transition-colors">الميزات</a>
               <a href="#about" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 transition-colors">نبذة عنا</a>
+              <Link to="/ar/pricing" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 transition-colors">الأسعار</Link>
               <a href="#testimonials" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 transition-colors">آراء العملاء</a>
             </nav>
             <Link to="/" className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 transition-colors">
               English
             </Link>
-            <Link to="/auth">
+            <Link to="/ar/auth">
               <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
                 <ArrowLeft className="ml-2 h-4 w-4" />
                 ابدأ الآن
@@ -57,7 +58,7 @@ const LandingPageAr = () => {
             انضم إلى آلاف المسوقين الذين يتخذون قرارات مبنية على البيانات.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 space-x-reverse">
-            <Link to="/auth">
+            <Link to="/ar/register">
               <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg">
                 <ArrowLeft className="ml-2 h-5 w-5" />
                 ابدأ الفترة التجريبية المجانية
@@ -371,7 +372,7 @@ const LandingPageAr = () => {
               ابدأ الفترة التجريبية المجانية اليوم وشاهد الفرق الذي يمكن أن يحدثه الذكاء الاصطناعي.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 space-x-reverse">
-              <Link to="/auth">
+              <Link to="/ar/register">
                 <Button size="lg" variant="secondary" className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg">
                   <ArrowLeft className="ml-2 h-5 w-5" />
                   ابدأ الفترة التجريبية المجانية
@@ -406,9 +407,9 @@ const LandingPageAr = () => {
               <h3 className="font-semibold text-lg">المنتج</h3>
               <ul className="space-y-3 text-gray-400">
                 <li><a href="#features" className="hover:text-white transition-colors">الميزات</a></li>
-                <li><Link to="/dashboard" className="hover:text-white transition-colors">لوحة التحكم</Link></li>
-                <li><Link to="/campaigns" className="hover:text-white transition-colors">الحملات</Link></li>
-                <li><Link to="/subscription" className="hover:text-white transition-colors">الأسعار</Link></li>
+                <li><Link to="/ar/dashboard" className="hover:text-white transition-colors">لوحة التحكم</Link></li>
+                <li><Link to="/ar/campaigns" className="hover:text-white transition-colors">الحملات</Link></li>
+                <li><Link to="/ar/pricing" className="hover:text-white transition-colors">الأسعار</Link></li>
               </ul>
             </div>
             
@@ -417,7 +418,7 @@ const LandingPageAr = () => {
               <ul className="space-y-3 text-gray-400">
                 <li><a href="#about" className="hover:text-white transition-colors">نبذة عنا</a></li>
                 <li><a href="#testimonials" className="hover:text-white transition-colors">آراء العملاء</a></li>
-                <li><Link to="/profile" className="hover:text-white transition-colors">اتصل بنا</Link></li>
+                <li><Link to="/ar/profile" className="hover:text-white transition-colors">اتصل بنا</Link></li>
                 <li><a href="#" className="hover:text-white transition-colors">المدونة</a></li>
               </ul>
             </div>
@@ -425,9 +426,9 @@ const LandingPageAr = () => {
             <div className="space-y-4">
               <h3 className="font-semibold text-lg">القانونية والدعم</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><Link to="/privacy" className="hover:text-white transition-colors">سياسة الخصوصية</Link></li>
-                <li><Link to="/terms" className="hover:text-white transition-colors">شروط الخدمة</Link></li>
-                <li><Link to="/debug" className="hover:text-white transition-colors">مركز المساعدة</Link></li>
+                <li><Link to="/ar/privacy" className="hover:text-white transition-colors">سياسة الخصوصية</Link></li>
+                <li><Link to="/ar/terms" className="hover:text-white transition-colors">شروط الخدمة</Link></li>
+                <li><Link to="/ar/debug" className="hover:text-white transition-colors">مركز المساعدة</Link></li>
                 <li><a href="#" className="hover:text-white transition-colors">الحالة</a></li>
               </ul>
             </div>
@@ -441,8 +442,12 @@ const LandingPageAr = () => {
               <Link to="/" className="text-gray-400 hover:text-white transition-colors text-sm">
                 English
               </Link>
-              <Link to="/auth" className="text-blue-400 hover:text-blue-300 transition-colors text-sm">
+              <Link to="/ar/auth" className="text-blue-400 hover:text-blue-300 transition-colors text-sm">
                 تسجيل الدخول
+              </Link>
+              <Link to="/ar/subscription" className="text-green-400 hover:text-green-300 transition-colors text-sm flex items-center gap-1">
+                <CreditCard className="h-4 w-4" />
+                الدفع
               </Link>
             </div>
           </div>

@@ -10,15 +10,19 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import AuthAr from "./pages/AuthAr";
+import RegisterAr from "./pages/RegisterAr";
 import Profile from "./pages/Profile";
 import LandingPage from "./pages/LandingPage";
 import LandingPageAr from "./pages/LandingPageAr";
 import Onboarding from "./pages/Onboarding";
 import Campaigns from "./pages/Campaigns";
 import Subscription from "./pages/Subscription";
+import SubscriptionAr from "./pages/SubscriptionAr";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Pricing from "./pages/Pricing";
+import PricingAr from "./pages/PricingAr";
 import Debug from "./pages/Debug";
 import NotFound from "./pages/NotFound";
 
@@ -45,9 +49,13 @@ const App = () => {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/ar" element={<LandingPageAr />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/ar/auth" element={<AuthAr />} />
+                <Route path="/ar/register" element={<RegisterAr />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/pricing" element={<Pricing />} />
+                <Route path="/ar/pricing" element={<PricingAr />} />
+                <Route path="/ar/subscription" element={<SubscriptionAr />} />
                 <Route 
                   path="/onboarding" 
                   element={

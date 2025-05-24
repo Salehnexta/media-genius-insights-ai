@@ -18,11 +18,11 @@ interface LanguageProviderProps {
 }
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  // Initialize language from localStorage or URL path
+  // Initialize language from localStorage or URL path, default to Arabic
   const getInitialLanguage = (): Language => {
-    // Check if current path starts with /ar
+    // Check if current path starts with /ar or is root
     const currentPath = window.location.pathname;
-    if (currentPath.startsWith('/ar')) {
+    if (currentPath.startsWith('/ar') || currentPath === '/') {
       return 'ar';
     }
     
@@ -32,7 +32,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
       return savedLanguage;
     }
     
-    return 'en';
+    return 'ar'; // Default to Arabic
   };
 
   const [language, setLanguage] = useState<Language>(getInitialLanguage);
