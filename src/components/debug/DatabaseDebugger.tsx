@@ -218,13 +218,13 @@ const DatabaseDebugger = () => {
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: 'success' | 'error' | 'warning') => {
     const variants = {
       success: 'default' as const,
       error: 'destructive' as const,
       warning: 'secondary' as const
     };
-    return <Badge variant={variants[status as keyof typeof variants] || 'secondary'}>{status}</Badge>;
+    return <Badge variant={variants[status]}>{status}</Badge>;
   };
 
   return (

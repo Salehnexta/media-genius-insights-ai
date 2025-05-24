@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoading(false);
 
         // Create profile if user signs up
-        if (event === 'SIGNED_UP' && session?.user) {
+        if (event === 'SIGNED_IN' && session?.user) {
           setTimeout(() => {
             createUserProfile(session.user);
           }, 0);
