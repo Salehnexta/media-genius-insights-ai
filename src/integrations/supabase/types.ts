@@ -613,7 +613,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      can_access_onboarding_data: {
+        Args: { target_user_id: string }
+        Returns: boolean
+      }
+      can_access_profile: {
+        Args: { target_user_id: string }
+        Returns: boolean
+      }
+      can_access_user_preferences: {
+        Args: { target_user_id: string }
+        Returns: boolean
+      }
+      get_current_user_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

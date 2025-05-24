@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -30,21 +31,27 @@ const defaultData: OnboardingData = {
 };
 
 export const useOnboardingData = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [data, setData] = useState<OnboardingData>(defaultData);
 
-  // Load existing data on mount
+  // Load existing data when user is available
   useEffect(() => {
-    if (user) {
+    if (user && !authLoading) {
       loadOnboardingData();
+    } else if (!user && !authLoading) {
+      // Reset to default data when user is not available
+      setData(defaultData);
     }
-  }, [user]);
+  }, [user, authLoading]);
 
   const loadOnboardingData = async () => {
-    if (!user) return;
+    if (!user) {
+      console.log('No user available for loading onboarding data');
+      return;
+    }
 
     setLoading(true);
     try {
@@ -56,8 +63,10 @@ export const useOnboardingData = () => {
         .eq('user_id', user.id)
         .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
         console.error('Error loading onboarding data:', error);
+        // Don't throw here, just log and use defaults
+        setData(defaultData);
         return;
       }
 
@@ -88,7 +97,7 @@ export const useOnboardingData = () => {
         setData(defaultData);
       }
     } catch (error) {
-      console.error('Error loading onboarding data:', error);
+      console.error('Unexpected error loading onboarding data:', error);
       setData(defaultData);
     } finally {
       setLoading(false);
@@ -106,6 +115,7 @@ export const useOnboardingData = () => {
 
   const saveOnboardingData = async (dataToSave: OnboardingData) => {
     if (!user) {
+      console.error('No user available for saving onboarding data');
       toast({
         title: "Authentication required",
         description: "Please log in to save your onboarding data",
@@ -116,6 +126,8 @@ export const useOnboardingData = () => {
 
     setSaving(true);
     try {
+      console.log('Saving onboarding data for user:', user.id, dataToSave);
+
       // Check if onboarding data already exists
       const { data: existingOnboarding } = await supabase
         .from('onboarding_data')
@@ -225,6 +237,7 @@ export const useOnboardingData = () => {
         });
       }
 
+      console.log('Onboarding data saved successfully');
       return true;
     } catch (error) {
       console.error('Error saving onboarding data:', error);
@@ -254,9 +267,9 @@ export const useOnboardingData = () => {
         .eq('user_id', user.id)
         .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
         console.error('Error in getOnboardingData:', error);
-        throw error;
+        return null;
       }
       
       if (data) {
@@ -268,12 +281,7 @@ export const useOnboardingData = () => {
       }
     } catch (error) {
       console.error('Error fetching onboarding data:', error);
-      // For PGRST116 (no rows found), return null instead of throwing
-      if (error.code === 'PGRST116') {
-        console.log('No onboarding data exists for this user yet');
-        return null;
-      }
-      throw error;
+      return null;
     }
   };
 
