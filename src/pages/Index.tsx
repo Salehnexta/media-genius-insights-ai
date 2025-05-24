@@ -17,14 +17,13 @@ const Index: React.FC = () => {
   const isArabic = language === 'ar';
 
   useEffect(() => {
-    console.log('Index useEffect triggered:', {
-      authLoading,
-      user: !!user,
-      userId: user?.id,
-      onboardingLoading,
-      hasCompletedOnboarding,
-      onboardingDataCompleted: onboardingData?.completed
-    });
+    console.log('=== INDEX USEEFFECT DEBUG ===');
+    console.log('Auth loading:', authLoading);
+    console.log('User exists:', !!user);
+    console.log('User ID:', user?.id);
+    console.log('Onboarding loading:', onboardingLoading);
+    console.log('Has completed onboarding:', hasCompletedOnboarding);
+    console.log('Onboarding data completed field:', onboardingData?.completed);
     
     if (!authLoading && !user) {
       console.log('No user found, redirecting to auth');
@@ -42,13 +41,18 @@ const Index: React.FC = () => {
     if (!user) return;
     
     try {
+      console.log('=== CHECKING ONBOARDING STATUS ===');
       // Get raw data from database to check completed_at field
       const rawData = await getOnboardingData();
       console.log('Raw onboarding data from database:', rawData);
       
       // Check if completed_at field exists and is not null
       const isCompleted = rawData && rawData.completed_at !== null;
-      console.log('Onboarding completed status (from completed_at):', isCompleted);
+      console.log('=== COMPLETION STATUS DEBUG ===');
+      console.log('Raw data exists:', !!rawData);
+      console.log('completed_at value:', rawData?.completed_at);
+      console.log('completed_at is null:', rawData?.completed_at === null);
+      console.log('Final isCompleted result:', isCompleted);
       
       setHasCompletedOnboarding(isCompleted);
       

@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { transformSupabaseToLocal, transformLocalToSupabase } from './transformers';
 import { OnboardingData } from './types';
@@ -59,7 +60,11 @@ const deleteDuplicatesInBatches = async (duplicateIds: string[], batchSize = 10)
 };
 
 export const saveOnboardingData = async (userId: string, data: OnboardingData) => {
-  console.log('Saving onboarding data for user:', userId, data);
+  console.log('=== SAVE ONBOARDING DATA DEBUG ===');
+  console.log('User ID:', userId);
+  console.log('Input data:', data);
+  console.log('data.completed:', data.completed, typeof data.completed);
+  console.log('Will set completed_at to:', data.completed ? new Date().toISOString() : null);
 
   // Check if there are any existing records
   const { data: existingRecords } = await supabase
@@ -77,11 +82,18 @@ export const saveOnboardingData = async (userId: string, data: OnboardingData) =
     savePayload.completed_at = null;
   }
   
-  console.log('Save payload:', savePayload);
+  console.log('=== TRANSFORMATION DEBUG ===');
+  console.log('Save payload after transformation:', savePayload);
+  console.log('completed_at value:', savePayload.completed_at);
+  console.log('completed_at type:', typeof savePayload.completed_at);
 
   if (existingRecords && existingRecords.length > 0) {
     // Update the most recent record
     const mostRecentId = existingRecords[0].id;
+    console.log('=== UPDATING EXISTING RECORD ===');
+    console.log('Record ID:', mostRecentId);
+    console.log('Final payload being sent to Supabase:', savePayload);
+    
     const { error: onboardingError } = await supabase
       .from('onboarding_data')
       .update(savePayload)
@@ -91,6 +103,8 @@ export const saveOnboardingData = async (userId: string, data: OnboardingData) =
       console.error('Update error:', onboardingError);
       throw onboardingError;
     }
+
+    console.log('=== UPDATE SUCCESSFUL ===');
 
     // Clean up duplicates if there are more than 5 records (batch delete)
     if (existingRecords.length > 5) {
@@ -120,6 +134,9 @@ export const saveOnboardingData = async (userId: string, data: OnboardingData) =
     }
   } else {
     // Create new record
+    console.log('=== CREATING NEW RECORD ===');
+    console.log('Final payload being sent to Supabase:', savePayload);
+    
     const { error: onboardingError } = await supabase
       .from('onboarding_data')
       .insert({
@@ -131,7 +148,11 @@ export const saveOnboardingData = async (userId: string, data: OnboardingData) =
       console.error('Insert error:', onboardingError);
       throw onboardingError;
     }
+
+    console.log('=== INSERT SUCCESSFUL ===');
   }
+  
+  console.log('=== SAVE OPERATION COMPLETED ===');
 };
 
 export const saveUserPreferences = async (userId: string, data: OnboardingData) => {
@@ -183,6 +204,7 @@ export const saveUserPreferences = async (userId: string, data: OnboardingData) 
 };
 
 export const getOnboardingData = async (userId: string) => {
+  console.log('=== GET ONBOARDING DATA DEBUG ===');
   console.log('Fetching onboarding data for user:', userId);
   
   try {
@@ -200,7 +222,10 @@ export const getOnboardingData = async (userId: string) => {
     }
     
     if (data) {
-      console.log('Onboarding data fetched successfully:', data);
+      console.log('Raw onboarding data from database:', data);
+      console.log('completed_at field:', data.completed_at);
+      console.log('completed_at is null?', data.completed_at === null);
+      console.log('completed_at type:', typeof data.completed_at);
       return data;
     } else {
       console.log('No onboarding data found for user - this is normal for new users');

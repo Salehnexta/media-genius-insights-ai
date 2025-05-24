@@ -37,7 +37,7 @@ export const useOnboardingNavigation = (isArabic: boolean) => {
         setCurrentStep(prev => prev + 1);
       } else {
         // This is the final step - complete onboarding
-        console.log('Completing onboarding...');
+        console.log('=== COMPLETING ONBOARDING ===');
         console.log('Current data before completion:', data);
         
         // Mark onboarding as complete and update local state
@@ -46,6 +46,7 @@ export const useOnboardingNavigation = (isArabic: boolean) => {
           completed: true
         };
         console.log('Data with completion status:', completedData);
+        console.log('completedData.completed:', completedData.completed, typeof completedData.completed);
         
         // Update local state first
         updateData(completedData);
@@ -53,7 +54,8 @@ export const useOnboardingNavigation = (isArabic: boolean) => {
         // Use setTimeout to allow the state update to complete before saving
         setTimeout(async () => {
           try {
-            console.log('Saving completed onboarding data...');
+            console.log('=== SAVING COMPLETED DATA ===');
+            console.log('About to call saveFunction...');
             const finalSaved = await saveFunction();
             console.log('Final save result:', finalSaved);
             
