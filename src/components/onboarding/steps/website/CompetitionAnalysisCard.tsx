@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { TrendingUp, Users, Link2 } from 'lucide-react';
+import { TrendingUp, Users } from 'lucide-react';
 import { RealWebsiteAnalysisResult } from '@/services/realWebsiteAnalysis';
 
 interface CompetitionAnalysisCardProps {
@@ -33,8 +33,8 @@ const CompetitionAnalysisCard: React.FC<CompetitionAnalysisCardProps> = ({ analy
         <CardTitle className={`flex items-center ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
           <TrendingUp className="w-5 h-5" />
           {t('onboarding.website.competition.title')}
-          <Badge className={getRankingBadge(analysis.competitiveAnalysis.marketPosition)}>
-            {analysis.competitiveAnalysis.marketPosition}
+          <Badge className={getRankingBadge(analysis.marketPosition || 'unknown')}>
+            {analysis.marketPosition || 'Unknown'}
           </Badge>
         </CardTitle>
       </CardHeader>
@@ -42,7 +42,7 @@ const CompetitionAnalysisCard: React.FC<CompetitionAnalysisCardProps> = ({ analy
         <div className={`grid grid-cols-3 gap-4 ${isArabic ? 'text-right' : ''}`}>
           <div className="text-center">
             <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-              #{analysis.competitiveAnalysis.marketRanking}
+              #{analysis.marketRanking || 'N/A'}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-300">
               {t('onboarding.website.competition.ranking')}
@@ -51,7 +51,7 @@ const CompetitionAnalysisCard: React.FC<CompetitionAnalysisCardProps> = ({ analy
 
           <div className="text-center">
             <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-              {analysis.competitiveAnalysis.keywordRankings}
+              {analysis.keywordRankings || 0}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-300">
               {t('onboarding.website.competition.keywords')}
@@ -60,7 +60,7 @@ const CompetitionAnalysisCard: React.FC<CompetitionAnalysisCardProps> = ({ analy
 
           <div className="text-center">
             <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-              {analysis.competitiveAnalysis.backlinks}
+              {analysis.backlinks || 0}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-300">
               {t('onboarding.website.competition.backlinks')}
@@ -73,7 +73,7 @@ const CompetitionAnalysisCard: React.FC<CompetitionAnalysisCardProps> = ({ analy
             Competitive Advantages
           </h5>
           <ul className="space-y-1">
-            {analysis.competitiveAnalysis.competitiveAdvantages.map((advantage: string, index: number) => (
+            {(analysis.competitiveAdvantages || []).map((advantage: string, index: number) => (
               <li key={index} className={`flex items-start ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'} text-sm text-gray-600 dark:text-gray-300`}>
                 <Users className="w-4 h-4 mt-0.5 flex-shrink-0 text-blue-500" />
                 <span>{advantage}</span>

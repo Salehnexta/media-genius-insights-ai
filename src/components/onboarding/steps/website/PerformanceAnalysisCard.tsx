@@ -39,7 +39,7 @@ const PerformanceAnalysisCard: React.FC<PerformanceAnalysisCardProps> = ({ analy
               <span>{t('onboarding.website.performance.load-time')}</span>
             </div>
             <p className="text-lg font-semibold text-gray-900 dark:text-white">
-              {analysis.performanceMetrics.loadTime}ms
+              {analysis.loadTime || 'N/A'}ms
             </p>
           </div>
 
@@ -59,7 +59,7 @@ const PerformanceAnalysisCard: React.FC<PerformanceAnalysisCardProps> = ({ analy
             Performance Insights
           </h5>
           <ul className="space-y-1">
-            {analysis.performanceMetrics.recommendations.map((recommendation: string, index: number) => (
+            {(analysis.performanceRecommendations || []).map((recommendation: string, index: number) => (
               <li key={index} className="text-sm text-gray-600 dark:text-gray-300">
                 • {recommendation}
               </li>

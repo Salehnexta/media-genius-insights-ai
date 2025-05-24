@@ -37,11 +37,11 @@ const SEOAnalysisCard: React.FC<SEOAnalysisCardProps> = ({ analysis, isArabic })
             Technical Stack Detected
           </h5>
           <div className={`flex flex-wrap gap-1 ${isArabic ? 'justify-end' : ''}`}>
-            {analysis.technicalDetails.techStack.map((tech: string, index: number) => (
+            {analysis.techStack?.map((tech: string, index: number) => (
               <Badge key={index} variant="outline" className="text-xs">
                 {tech}
               </Badge>
-            ))}
+            )) || []}
           </div>
         </div>
 
@@ -50,7 +50,7 @@ const SEOAnalysisCard: React.FC<SEOAnalysisCardProps> = ({ analysis, isArabic })
             {t('onboarding.website.seo.strengths')}
           </h5>
           <ul className="space-y-1">
-            {analysis.seoAnalysis.strengths.map((strength: string, index: number) => (
+            {(analysis.seoStrengths || []).map((strength: string, index: number) => (
               <li key={index} className={`flex items-start ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'} text-sm text-green-700 dark:text-green-300`}>
                 <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <span>{strength}</span>
@@ -64,7 +64,7 @@ const SEOAnalysisCard: React.FC<SEOAnalysisCardProps> = ({ analysis, isArabic })
             Optimization Opportunities
           </h5>
           <ul className="space-y-1">
-            {analysis.seoAnalysis.issues.map((issue: string, index: number) => (
+            {(analysis.seoIssues || []).map((issue: string, index: number) => (
               <li key={index} className={`flex items-start ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'} text-sm text-yellow-700 dark:text-yellow-300`}>
                 <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <span>{issue}</span>
