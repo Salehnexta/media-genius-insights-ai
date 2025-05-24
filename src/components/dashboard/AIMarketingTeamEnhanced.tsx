@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { Bot, Brain, Palette, Share2, Search, Mail, Image, BarChart3, Clock, CheckCircle, AlertCircle, MessageCircle, Settings, Play, Pause } from 'lucide-react';
+import { Bot, Brain, Palette, Share2, Search, Mail, Image, BarChart3, Clock, CheckCircle, AlertCircle, MessageCircle, Settings, Play, Pause, TrendingUp, Users, Target } from 'lucide-react';
 import AgentWorkspace from '@/components/agents/AgentWorkspace';
 
 const AIMarketingTeamEnhanced: React.FC = () => {
@@ -17,114 +17,72 @@ const AIMarketingTeamEnhanced: React.FC = () => {
     {
       id: 'marketing-manager',
       name: isArabic ? 'مدير التسويق الذكي' : 'Marketing Manager AI',
-      role: isArabic ? 'التنسيق والاستراتيجية' : 'Strategy & Coordination',
+      role: isArabic ? 'القيادة والاستراتيجية' : 'Team Leader & Strategy',
       icon: <Brain className="h-6 w-6" />,
       status: 'active',
-      currentTask: isArabic ? 'تطوير استراتيجية الربع الجديد' : 'Developing Q1 strategy',
-      completedTasks: 8,
+      currentTask: isArabic ? 'تطوير استراتيجية الربع الجديد وتحليل الأداء' : 'Developing Q1 strategy and performance analysis',
+      completedTasks: 24,
       bgColor: 'bg-blue-500',
-      expertise: isArabic ? 'التخطيط الاستراتيجي' : 'Strategic Planning',
-      capabilities: ['Strategy Planning', 'Team Coordination', 'ROI Analysis', 'Budget Management'],
-      progress: 85,
+      expertise: isArabic ? 'القيادة الاستراتيجية' : 'Strategic Leadership',
+      capabilities: ['Strategic Planning', 'Budget Management', 'ROI Analysis', 'Team Coordination', 'Executive Reporting'],
+      progress: 92,
       specialization: 'marketing-strategy'
     },
     {
-      id: 'communication-manager',
-      name: isArabic ? 'مدير التواصل الذكي' : 'Communication Manager AI',
-      role: isArabic ? 'إدارة التواصل والمنصات' : 'Social Media & Communication',
-      icon: <Share2 className="h-6 w-6" />,
-      status: 'active',
-      currentTask: isArabic ? 'جدولة منشورات الأسبوع' : 'Scheduling weekly posts',
-      completedTasks: 18,
-      bgColor: 'bg-pink-500',
-      expertise: isArabic ? 'التفاعل الاجتماعي' : 'Social Engagement',
-      capabilities: ['Social Scheduling', 'Community Management', 'Crisis Communication', 'Brand Voice'],
-      progress: 92,
-      specialization: 'social-media'
-    },
-    {
-      id: 'content-strategist',
-      name: isArabic ? 'استراتيجي المحتوى' : 'Content Strategist AI',
-      role: isArabic ? 'استراتيجية المحتوى' : 'Content Strategy',
-      icon: <Bot className="h-6 w-6" />,
-      status: 'working',
-      currentTask: isArabic ? 'تحليل الترندات الجديدة' : 'Analyzing new trends',
-      completedTasks: 24,
-      bgColor: 'bg-green-500',
-      expertise: isArabic ? 'استراتيجية المحتوى' : 'Content Strategy',
-      capabilities: ['Content Planning', 'Trend Analysis', 'SEO Content', 'Editorial Calendar'],
-      progress: 78,
-      specialization: 'content-strategy'
-    },
-    {
-      id: 'brand-manager',
-      name: isArabic ? 'مدير العلامة التجارية' : 'Brand Manager AI',
-      role: isArabic ? 'هوية العلامة والرسائل' : 'Brand Identity & Guidelines',
-      icon: <Palette className="h-6 w-6" />,
-      status: 'active',
-      currentTask: isArabic ? 'تحديث دليل العلامة التجارية' : 'Updating brand guidelines',
-      completedTasks: 12,
-      bgColor: 'bg-purple-500',
-      expertise: isArabic ? 'بناء العلامة التجارية' : 'Brand Building',
-      capabilities: ['Brand Guidelines', 'Visual Identity', 'Brand Positioning', 'Competitor Analysis'],
-      progress: 88,
-      specialization: 'brand-management'
-    },
-    {
-      id: 'analytics-expert',
-      name: isArabic ? 'خبير التحليلات' : 'Analytics Expert AI',
-      role: isArabic ? 'تتبع الأداء والتحليل' : 'Performance Analytics',
-      icon: <BarChart3 className="h-6 w-6" />,
-      status: 'active',
-      currentTask: isArabic ? 'تحليل أداء الحملات' : 'Analyzing campaign performance',
-      completedTasks: 16,
-      bgColor: 'bg-red-500',
-      expertise: isArabic ? 'تحليل البيانات' : 'Data Analysis',
-      capabilities: ['Data Analysis', 'Report Generation', 'A/B Testing', 'Predictive Analytics'],
-      progress: 95,
-      specialization: 'analytics'
-    },
-    {
-      id: 'graphic-designer',
-      name: isArabic ? 'المصمم الجرافيكي الذكي' : 'Graphic Designer AI',
-      role: isArabic ? 'الأصول المرئية والتصميم' : 'Visual Assets & Design',
-      icon: <Image className="h-6 w-6" />,
-      status: 'active',
-      currentTask: isArabic ? 'تصميم 10 منشورات' : 'Designing 10 social posts',
-      completedTasks: 21,
-      bgColor: 'bg-teal-500',
-      expertise: isArabic ? 'التصميم المرئي' : 'Visual Design',
-      capabilities: ['Design Generation', 'Brand Assets', 'Image Optimization', 'Template Creation'],
-      progress: 73,
-      specialization: 'graphic-design'
-    },
-    {
-      id: 'email-marketer',
-      name: isArabic ? 'خبير التسويق الإلكتروني' : 'Email Marketing AI',
-      role: isArabic ? 'حملات البريد الإلكتروني' : 'Email Campaigns',
-      icon: <Mail className="h-6 w-6" />,
-      status: 'standby',
-      currentTask: isArabic ? 'تحضير النشرة الشهرية' : 'Preparing monthly newsletter',
-      completedTasks: 9,
-      bgColor: 'bg-indigo-500',
-      expertise: isArabic ? 'التسويق عبر البريد' : 'Email Marketing',
-      capabilities: ['Campaign Automation', 'List Segmentation', 'A/B Testing', 'Deliverability'],
-      progress: 67,
-      specialization: 'email-marketing'
-    },
-    {
-      id: 'seo-expert',
-      name: isArabic ? 'خبير السيو الذكي' : 'SEO Expert AI',
-      role: isArabic ? 'تحسين محركات البحث' : 'Search Optimization',
+      id: 'content-seo',
+      name: isArabic ? 'أخصائي المحتوى والسيو' : 'Content & SEO Specialist',
+      role: isArabic ? 'المحتوى وتحسين محركات البحث' : 'Content Creation & SEO',
       icon: <Search className="h-6 w-6" />,
       status: 'working',
-      currentTask: isArabic ? 'تحليل الكلمات المفتاحية' : 'Analyzing keywords',
-      completedTasks: 15,
+      currentTask: isArabic ? 'إنشاء محتوى المدونة وتحليل الكلمات المفتاحية' : 'Creating blog content and keyword analysis',
+      completedTasks: 31,
+      bgColor: 'bg-green-500',
+      expertise: isArabic ? 'المحتوى والسيو' : 'Content & SEO',
+      capabilities: ['Long-form Content', 'SEO Optimization', 'Keyword Research', 'Content Analytics', 'Editorial Management'],
+      progress: 84,
+      specialization: 'content-seo'
+    },
+    {
+      id: 'social-creator',
+      name: isArabic ? 'منشئ المحتوى الاجتماعي' : 'Social Media Content Creator',
+      role: isArabic ? 'إنشاء ونشر المحتوى الاجتماعي' : 'Social Content & Publishing',
+      icon: <Image className="h-6 w-6" />,
+      status: 'active',
+      currentTask: isArabic ? 'تصميم منشورات الأسبوع وجدولة النشر' : 'Creating weekly posts and scheduling',
+      completedTasks: 28,
+      bgColor: 'bg-purple-500',
+      expertise: isArabic ? 'المحتوى الاجتماعي' : 'Social Content',
+      capabilities: ['Social Media Posts', 'Visual Content', 'Publishing Automation', 'Content Calendar', 'Performance Tracking'],
+      progress: 89,
+      specialization: 'social-creator'
+    },
+    {
+      id: 'social-cx',
+      name: isArabic ? 'مدير التجربة الاجتماعية' : 'Social Media & CX Manager',
+      role: isArabic ? 'المراقبة وتجربة العملاء' : 'Social Monitoring & CX',
+      icon: <Users className="h-6 w-6" />,
+      status: 'active',
+      currentTask: isArabic ? 'مراقبة المحادثات وتحليل المشاعر' : 'Monitoring conversations and sentiment analysis',
+      completedTasks: 19,
+      bgColor: 'bg-pink-500',
+      expertise: isArabic ? 'تجربة العملاء' : 'Customer Experience',
+      capabilities: ['Social Monitoring', 'Sentiment Analysis', 'Community Management', 'Crisis Detection', 'Competitive Intelligence'],
+      progress: 76,
+      specialization: 'social-cx'
+    },
+    {
+      id: 'campaign-performance',
+      name: isArabic ? 'أخصائي الحملات والأداء' : 'Campaign & Performance Specialist',
+      role: isArabic ? 'الحملات وتحليل الأداء' : 'Campaigns & Performance',
+      icon: <Target className="h-6 w-6" />,
+      status: 'active',
+      currentTask: isArabic ? 'تحسين حملات الإعلانات المدفوعة' : 'Optimizing paid advertising campaigns',
+      completedTasks: 22,
       bgColor: 'bg-orange-500',
-      expertise: isArabic ? 'تحسين البحث' : 'Search Optimization',
-      capabilities: ['Keyword Research', 'Technical SEO', 'Content Optimization', 'Ranking Monitor'],
-      progress: 81,
-      specialization: 'seo'
+      expertise: isArabic ? 'الحملات التسويقية' : 'Campaign Marketing',
+      capabilities: ['Campaign Planning', 'Paid Advertising', 'Performance Analytics', 'ROAS Optimization', 'Email Marketing'],
+      progress: 87,
+      specialization: 'campaign-performance'
     }
   ];
 
@@ -182,8 +140,8 @@ const AIMarketingTeamEnhanced: React.FC = () => {
         </h2>
         <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
           {isArabic 
-            ? 'فريق تسويق كامل مدعوم بالذكاء الاصطناعي - انقر على أي عضو للتفاعل معه'
-            : 'A complete AI-powered marketing team - Click any member to interact'
+            ? 'فريق تسويق كامل مدعوم بالذكاء الاصطناعي من 5 أعضاء - انقر على أي عضو للتفاعل معه'
+            : 'A complete 5-member AI-powered marketing team - Click any member to interact'
           }
         </p>
       </div>
@@ -194,7 +152,7 @@ const AIMarketingTeamEnhanced: React.FC = () => {
           <CardContent className="p-4">
             <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
               <div>
-                <p className="text-2xl font-bold text-green-600">8</p>
+                <p className="text-2xl font-bold text-green-600">5</p>
                 <p className="text-sm text-gray-600">{isArabic ? 'أعضاء نشطون' : 'Active Members'}</p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-500" />
@@ -206,7 +164,7 @@ const AIMarketingTeamEnhanced: React.FC = () => {
           <CardContent className="p-4">
             <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
               <div>
-                <p className="text-2xl font-bold text-blue-600">123</p>
+                <p className="text-2xl font-bold text-blue-600">124</p>
                 <p className="text-sm text-gray-600">{isArabic ? 'مهام مكتملة' : 'Tasks Completed'}</p>
               </div>
               <Bot className="h-8 w-8 text-blue-500" />
@@ -218,7 +176,7 @@ const AIMarketingTeamEnhanced: React.FC = () => {
           <CardContent className="p-4">
             <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
               <div>
-                <p className="text-2xl font-bold text-purple-600">82%</p>
+                <p className="text-2xl font-bold text-purple-600">86%</p>
                 <p className="text-sm text-gray-600">{isArabic ? 'متوسط الأداء' : 'Avg Performance'}</p>
               </div>
               <BarChart3 className="h-8 w-8 text-purple-500" />
@@ -240,7 +198,7 @@ const AIMarketingTeamEnhanced: React.FC = () => {
       </div>
 
       {/* Team Members Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {teamMembers.map((member) => (
           <Card 
             key={member.id} 
@@ -271,7 +229,7 @@ const AIMarketingTeamEnhanced: React.FC = () => {
                   <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
                     {isArabic ? 'المهمة الحالية:' : 'Current Task:'}
                   </p>
-                  <p className="text-sm">{member.currentTask}</p>
+                  <p className="text-sm line-clamp-2">{member.currentTask}</p>
                 </div>
 
                 {/* Progress */}
@@ -318,7 +276,7 @@ const AIMarketingTeamEnhanced: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className={`text-center ${isArabic ? 'text-right' : ''}`}>
               <h3 className="font-semibold mb-2">{isArabic ? 'مشاريع نشطة' : 'Active Projects'}</h3>
-              <p className="text-2xl font-bold text-blue-600 mb-1">12</p>
+              <p className="text-2xl font-bold text-blue-600 mb-1">8</p>
               <p className="text-sm text-gray-600">
                 {isArabic 
                   ? 'مشاريع تسويقية قيد التنفيذ'
@@ -328,7 +286,7 @@ const AIMarketingTeamEnhanced: React.FC = () => {
             </div>
             <div className={`text-center ${isArabic ? 'text-right' : ''}`}>
               <h3 className="font-semibold mb-2">{isArabic ? 'مهام منجزة اليوم' : 'Tasks Completed Today'}</h3>
-              <p className="text-2xl font-bold text-green-600 mb-1">47</p>
+              <p className="text-2xl font-bold text-green-600 mb-1">23</p>
               <p className="text-sm text-gray-600">
                 {isArabic 
                   ? 'مهام تم إنجازها بنجاح'
@@ -338,7 +296,7 @@ const AIMarketingTeamEnhanced: React.FC = () => {
             </div>
             <div className={`text-center ${isArabic ? 'text-right' : ''}`}>
               <h3 className="font-semibold mb-2">{isArabic ? 'كفاءة الفريق' : 'Team Efficiency'}</h3>
-              <p className="text-2xl font-bold text-purple-600 mb-1">94%</p>
+              <p className="text-2xl font-bold text-purple-600 mb-1">86%</p>
               <p className="text-sm text-gray-600">
                 {isArabic 
                   ? 'معدل الكفاءة الإجمالي'

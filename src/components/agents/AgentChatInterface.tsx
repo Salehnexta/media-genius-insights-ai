@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Send, Bot, User, Loader2, Zap, TrendingUp, Target, Lightbulb } from 'lucide-react';
+import { Send, Bot, User, Loader2, Zap, TrendingUp, Target, Lightbulb, Search, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
@@ -34,28 +34,33 @@ const AgentChatInterface: React.FC<AgentChatInterfaceProps> = ({ agent, isArabic
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Agent-specific quick actions
+  // Agent-specific quick actions for the 5 core agents
   const getQuickActions = () => {
     const actions = {
       'marketing-manager': [
         { id: 1, text: isArabic ? 'وضع استراتيجية تسويقية' : 'Create marketing strategy', icon: <Target className="h-4 w-4" /> },
-        { id: 2, text: isArabic ? 'تحليل أداء الحملات' : 'Analyze campaign performance', icon: <TrendingUp className="h-4 w-4" /> },
-        { id: 3, text: isArabic ? 'تخطيط الميزانية' : 'Budget planning', icon: <Zap className="h-4 w-4" /> }
+        { id: 2, text: isArabic ? 'تحليل الأداء العام' : 'Analyze overall performance', icon: <TrendingUp className="h-4 w-4" /> },
+        { id: 3, text: isArabic ? 'إدارة الميزانية' : 'Budget management', icon: <Zap className="h-4 w-4" /> }
       ],
-      'social-media': [
-        { id: 1, text: isArabic ? 'جدولة منشورات' : 'Schedule posts', icon: <Zap className="h-4 w-4" /> },
-        { id: 2, text: isArabic ? 'تحليل المشاركة' : 'Analyze engagement', icon: <TrendingUp className="h-4 w-4" /> },
+      'content-seo': [
+        { id: 1, text: isArabic ? 'إنشاء محتوى المدونة' : 'Create blog content', icon: <Lightbulb className="h-4 w-4" /> },
+        { id: 2, text: isArabic ? 'تحسين السيو' : 'SEO optimization', icon: <Search className="h-4 w-4" /> },
+        { id: 3, text: isArabic ? 'بحث الكلمات المفتاحية' : 'Keyword research', icon: <Target className="h-4 w-4" /> }
+      ],
+      'social-creator': [
+        { id: 1, text: isArabic ? 'إنشاء منشورات اجتماعية' : 'Create social posts', icon: <Zap className="h-4 w-4" /> },
+        { id: 2, text: isArabic ? 'جدولة المحتوى' : 'Schedule content', icon: <Target className="h-4 w-4" /> },
+        { id: 3, text: isArabic ? 'تحليل الأداء' : 'Performance analysis', icon: <TrendingUp className="h-4 w-4" /> }
+      ],
+      'social-cx': [
+        { id: 1, text: isArabic ? 'مراقبة المحادثات' : 'Monitor conversations', icon: <Users className="h-4 w-4" /> },
+        { id: 2, text: isArabic ? 'تحليل المشاعر' : 'Sentiment analysis', icon: <TrendingUp className="h-4 w-4" /> },
         { id: 3, text: isArabic ? 'إدارة الأزمات' : 'Crisis management', icon: <Target className="h-4 w-4" /> }
       ],
-      'content-strategy': [
-        { id: 1, text: isArabic ? 'إنشاء تقويم محتوى' : 'Create content calendar', icon: <Target className="h-4 w-4" /> },
-        { id: 2, text: isArabic ? 'تحليل الترندات' : 'Analyze trends', icon: <TrendingUp className="h-4 w-4" /> },
-        { id: 3, text: isArabic ? 'تحسين SEO' : 'SEO optimization', icon: <Zap className="h-4 w-4" /> }
-      ],
-      'brand-management': [
-        { id: 1, text: isArabic ? 'تطوير هوية العلامة' : 'Develop brand identity', icon: <Target className="h-4 w-4" /> },
-        { id: 2, text: isArabic ? 'تحليل المنافسين' : 'Competitor analysis', icon: <TrendingUp className="h-4 w-4" /> },
-        { id: 3, text: isArabic ? 'وضع خطوط إرشادية' : 'Create guidelines', icon: <Lightbulb className="h-4 w-4" /> }
+      'campaign-performance': [
+        { id: 1, text: isArabic ? 'تخطيط الحملات' : 'Campaign planning', icon: <Target className="h-4 w-4" /> },
+        { id: 2, text: isArabic ? 'إدارة الإعلانات المدفوعة' : 'Manage paid ads', icon: <Zap className="h-4 w-4" /> },
+        { id: 3, text: isArabic ? 'تحليل الأداء' : 'Performance analytics', icon: <TrendingUp className="h-4 w-4" /> }
       ]
     };
     
@@ -76,17 +81,20 @@ const AgentChatInterface: React.FC<AgentChatInterfaceProps> = ({ agent, isArabic
   const getWelcomeMessage = () => {
     const messages = {
       'marketing-manager': isArabic 
-        ? 'مرحباً! أنا مدير التسويق الذكي، مستعد لمساعدتك في وضع الاستراتيجيات وتنسيق الحملات التسويقية. كيف يمكنني مساعدتك اليوم؟'
-        : 'Hello! I\'m your AI Marketing Manager, ready to help you with strategy development and campaign coordination. How can I assist you today?',
-      'social-media': isArabic
-        ? 'مرحباً! أنا مدير التواصل الاجتماعي، أساعدك في إدارة المنصات وجدولة المنشورات. ما هي احتياجاتك؟'
-        : 'Hi! I\'m your Social Media Manager, here to help with platform management and content scheduling. What do you need?',
-      'content-strategy': isArabic
-        ? 'أهلاً! أنا استراتيجي المحتوى، أساعدك في التخطيط وإنشاء محتوى فعال. بماذا تريد أن نبدأ؟'
-        : 'Welcome! I\'m your Content Strategist, here to help with planning and creating effective content. What should we start with?',
-      'brand-management': isArabic
-        ? 'مرحباً! أنا مدير العلامة التجارية، أساعدك في تطوير وإدارة هوية علامتك التجارية. كيف يمكنني المساعدة؟'
-        : 'Hello! I\'m your Brand Manager, ready to help develop and manage your brand identity. How can I help?'
+        ? 'مرحباً! أنا مدير التسويق الذكي، مسؤول عن التخطيط الاستراتيجي وتنسيق الفريق. كيف يمكنني مساعدتك في تطوير استراتيجية تسويقية فعالة؟'
+        : 'Hello! I\'m your AI Marketing Manager, responsible for strategic planning and team coordination. How can I help you develop an effective marketing strategy?',
+      'content-seo': isArabic
+        ? 'مرحباً! أنا أخصائي المحتوى والسيو، أساعدك في إنشاء محتوى عالي الجودة وتحسين ظهورك في محركات البحث. بماذا تريد أن نبدأ؟'
+        : 'Hi! I\'m your Content & SEO Specialist, here to help you create high-quality content and improve your search visibility. What should we start with?',
+      'social-creator': isArabic
+        ? 'أهلاً! أنا منشئ المحتوى الاجتماعي، أساعدك في إنشاء محتوى جذاب للمنصات الاجتماعية وجدولة النشر. ما هي احتياجاتك؟'
+        : 'Welcome! I\'m your Social Media Content Creator, here to help you create engaging social content and manage publishing schedules. What do you need?',
+      'social-cx': isArabic
+        ? 'مرحباً! أنا مدير التجربة الاجتماعية، أقوم بمراقبة المحادثات وتحليل المشاعر وإدارة العلاقات مع العملاء. كيف يمكنني المساعدة؟'
+        : 'Hello! I\'m your Social Media & CX Manager, responsible for monitoring conversations, analyzing sentiment, and managing customer relationships. How can I help?',
+      'campaign-performance': isArabic
+        ? 'مرحباً! أنا أخصائي الحملات والأداء، أساعدك في تخطيط وتنفيذ الحملات التسويقية وتحسين العائد على الاستثمار. بماذا تريد أن نبدأ؟'
+        : 'Hello! I\'m your Campaign & Performance Specialist, here to help you plan and execute marketing campaigns while optimizing ROI. What should we start with?'
     };
     
     return messages[agent.specialization as keyof typeof messages] || messages['marketing-manager'];
