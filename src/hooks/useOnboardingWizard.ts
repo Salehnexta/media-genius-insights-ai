@@ -17,6 +17,7 @@ export const useOnboardingWizard = (isArabic: boolean) => {
   // Use refs to prevent stale closures and memory leaks
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const isMountedRef = useRef(true);
+  const lastSaveDataRef = useRef<string>('');
 
   // Memoized save function to prevent unnecessary re-renders
   const memoizedSaveData = useCallback(async () => {
@@ -31,7 +32,7 @@ export const useOnboardingWizard = (isArabic: boolean) => {
     }
   }, [saveData, isArabic]);
 
-  // Auto-save with proper cleanup and error handling
+  // Improved auto-save with better debouncing and duplicate prevention
   useEffect(() => {
     // Clear existing timer
     if (autoSaveTimerRef.current) {
@@ -40,7 +41,7 @@ export const useOnboardingWizard = (isArabic: boolean) => {
     }
 
     // Only auto-save if we have meaningful data and component is mounted
-    if (!data || !isMountedRef.current) return;
+    if (!data || !isMountedRef.current || saving) return;
     
     const hasData = data.skillLevel || data.businessName || data.website || 
                    (data.socialAccounts && Object.keys(data.socialAccounts).length > 0) ||
@@ -49,16 +50,32 @@ export const useOnboardingWizard = (isArabic: boolean) => {
 
     if (!hasData) return;
 
+    // Create a hash of the current data to prevent saving identical data
+    const currentDataHash = JSON.stringify(data);
+    
+    // Don't save if data hasn't changed
+    if (currentDataHash === lastSaveDataRef.current) {
+      return;
+    }
+
+    // Increased debounce time to 5 seconds to reduce frequency
     const timer = setTimeout(async () => {
-      if (!isMountedRef.current) return;
+      if (!isMountedRef.current || saving) return;
+      
+      // Double-check data hasn't changed during the delay
+      const latestDataHash = JSON.stringify(data);
+      if (latestDataHash === lastSaveDataRef.current) {
+        return;
+      }
       
       console.log('Auto-saving onboarding data...');
       try {
         await memoizedSaveData();
+        lastSaveDataRef.current = latestDataHash;
       } catch (error) {
         console.error('Auto-save failed:', error);
       }
-    }, 2000);
+    }, 5000); // Increased from 2000 to 5000ms
 
     autoSaveTimerRef.current = timer;
 
@@ -67,7 +84,7 @@ export const useOnboardingWizard = (isArabic: boolean) => {
         clearTimeout(timer);
       }
     };
-  }, [data, memoizedSaveData]);
+  }, [data, memoizedSaveData, saving]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -101,6 +118,8 @@ export const useOnboardingWizard = (isArabic: boolean) => {
           throw new Error(isArabic ? 'فشل في حفظ البيانات' : 'Failed to save data');
         }
         
+        // Update the last saved data hash to prevent duplicate saves
+        lastSaveDataRef.current = JSON.stringify(data);
         setCurrentStep(prev => prev + 1);
       } else {
         // This is the final step - complete onboarding
