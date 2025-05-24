@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -77,6 +78,9 @@ export const useOnboardingData = () => {
           ? existingData.social_accounts as Record<string, string>
           : {};
 
+        // Check if onboarding is completed based on completed_at field
+        const isCompleted = existingData.completed_at !== null;
+
         setData({
           skillLevel: existingData.skill_level || '',
           experience: existingData.experience || '',
@@ -87,7 +91,7 @@ export const useOnboardingData = () => {
           competitors: existingData.competitors || [],
           goals: existingData.goals || [],
           budget: existingData.budget || '',
-          completed: !!existingData.completed_at
+          completed: isCompleted
         });
       } else {
         console.log('No existing onboarding data found - using defaults');
@@ -145,13 +149,18 @@ export const useOnboardingData = () => {
         updated_at: new Date().toISOString()
       };
 
+      console.log('Save payload:', savePayload);
+
       if (existingOnboarding) {
         const { error: onboardingError } = await supabase
           .from('onboarding_data')
           .update(savePayload)
           .eq('user_id', user.id);
 
-        if (onboardingError) throw onboardingError;
+        if (onboardingError) {
+          console.error('Update error:', onboardingError);
+          throw onboardingError;
+        }
       } else {
         const { error: onboardingError } = await supabase
           .from('onboarding_data')
@@ -160,7 +169,10 @@ export const useOnboardingData = () => {
             ...savePayload
           });
 
-        if (onboardingError) throw onboardingError;
+        if (onboardingError) {
+          console.error('Insert error:', onboardingError);
+          throw onboardingError;
+        }
       }
 
       // Create AI context for personalization

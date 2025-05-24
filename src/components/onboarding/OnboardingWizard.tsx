@@ -147,7 +147,11 @@ const OnboardingWizard: React.FC = () => {
   const handleNext = useCallback(async () => {
     if (isNavigating || !isMountedRef.current) return;
     
-    console.log('Handling next step from:', currentStep);
+    console.log('=== HANDLE NEXT DEBUG ===');
+    console.log('Current step:', currentStep);
+    console.log('Total steps:', steps.length);
+    console.log('Is final step:', currentStep === steps.length - 1);
+    
     setIsNavigating(true);
     setError(null);
     
@@ -163,34 +167,32 @@ const OnboardingWizard: React.FC = () => {
       } else {
         // This is the final step - complete onboarding
         console.log('Completing onboarding...');
+        console.log('Current data before completion:', data);
         
-        // Mark onboarding as complete and update local state first
+        // Mark onboarding as complete
         const completedData = { ...data, completed: true };
-        console.log('Updating data with completion status:', completedData);
+        console.log('Data with completion status:', completedData);
+        
+        // Update local state first
         updateData(completedData);
         
-        // Wait a moment for state to update, then save
-        setTimeout(async () => {
-          try {
-            // Save with the completion status
-            const finalSaved = await saveData();
-            console.log('Final save result:', finalSaved);
-            
-            if (finalSaved) {
-              console.log('Onboarding completed successfully, navigating to dashboard');
-              // Navigate to dashboard with replace to prevent back navigation
-              navigate('/', { replace: true });
-            } else {
-              throw new Error(isArabic ? 'فشل في إكمال الإعداد' : 'Failed to complete onboarding');
-            }
-          } catch (saveError) {
-            console.error('Error during final save:', saveError);
-            setError(saveError instanceof Error ? saveError.message : 
-              (isArabic ? 'فشل في إكمال الإعداد' : 'Failed to complete onboarding'));
-          }
-        }, 100);
+        // Save with completion status
+        console.log('Saving completed onboarding data...');
+        const finalSaved = await memoizedSaveData();
+        console.log('Final save result:', finalSaved);
         
-        return; // Don't set isNavigating to false here since we're doing async work
+        if (finalSaved) {
+          console.log('Onboarding completed successfully, navigating to dashboard');
+          toast({
+            title: isArabic ? 'تم الانتهاء!' : 'Completed!',
+            description: isArabic ? 'تم إكمال الإعداد بنجاح' : 'Onboarding completed successfully',
+          });
+          
+          // Navigate to dashboard with replace to prevent back navigation
+          navigate('/', { replace: true });
+        } else {
+          throw new Error(isArabic ? 'فشل في إكمال الإعداد' : 'Failed to complete onboarding');
+        }
       }
     } catch (error) {
       console.error('Error in handleNext:', error);
@@ -208,7 +210,7 @@ const OnboardingWizard: React.FC = () => {
         setIsNavigating(false);
       }
     }
-  }, [currentStep, steps.length, memoizedSaveData, data, updateData, navigate, isNavigating, isArabic, toast, saveData]);
+  }, [currentStep, steps.length, memoizedSaveData, data, updateData, navigate, isNavigating, isArabic, toast]);
 
   const handlePrevious = useCallback(() => {
     if (isNavigating || currentStep === 0) return;
@@ -310,6 +312,16 @@ const OnboardingWizard: React.FC = () => {
             onPrevious={handlePrevious}
             onNext={handleNext}
           />
+
+          {/* Debug Panel */}
+          <div className="mt-8 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-xs">
+            <h3 className="font-bold mb-2">Debug Info:</h3>
+            <p>Current Step: {currentStep + 1}/{steps.length}</p>
+            <p>Is Final Step: {currentStep === steps.length - 1 ? 'Yes' : 'No'}</p>
+            <p>Data Completed: {data?.completed ? 'Yes' : 'No'}</p>
+            <p>Saving: {saving ? 'Yes' : 'No'}</p>
+            <p>Navigating: {isNavigating ? 'Yes' : 'No'}</p>
+          </div>
         </div>
       </div>
     </div>
