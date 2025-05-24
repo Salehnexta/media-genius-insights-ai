@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -11,9 +12,8 @@ const Index: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
   const { language } = useLanguage();
   const navigate = useNavigate();
-  const { getOnboardingData, loading: onboardingLoading } = useOnboardingData();
+  const { data: onboardingData, loading: onboardingLoading } = useOnboardingData();
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean | null>(null);
-  const [isChecking, setIsChecking] = useState(false);
   const isArabic = language === 'ar';
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const Index: React.FC = () => {
       userId: user?.id,
       onboardingLoading,
       hasCompletedOnboarding,
-      isChecking
+      onboardingDataCompleted: onboardingData?.completed
     });
     
     if (!authLoading && !user) {
@@ -32,54 +32,31 @@ const Index: React.FC = () => {
       return;
     }
 
-    if (user && !onboardingLoading && !isChecking && hasCompletedOnboarding === null) {
-      console.log('Checking onboarding status...');
+    if (user && !onboardingLoading && hasCompletedOnboarding === null) {
+      console.log('Checking onboarding status from hook data...');
       checkOnboardingStatus();
     }
-  }, [user, authLoading, onboardingLoading, navigate, isChecking, hasCompletedOnboarding]);
+  }, [user, authLoading, onboardingLoading, navigate, hasCompletedOnboarding, onboardingData]);
 
-  const checkOnboardingStatus = async () => {
-    if (isChecking || !user) {
-      console.log('Skipping onboarding check - already checking or no user');
-      return;
-    }
-
-    setIsChecking(true);
+  const checkOnboardingStatus = () => {
+    console.log('Processing onboarding data:', onboardingData);
     
-    try {
-      console.log('Fetching onboarding data for user:', user.id);
-      const onboardingData = await getOnboardingData();
-      console.log('Onboarding data result:', onboardingData);
-      
-      // ✅ FIXED: Check for the correct field name that OnboardingWizard actually saves
-      // Handle both field names for robustness (completed boolean and completed_at timestamp)
-      const isCompleted = onboardingData && (
-        onboardingData.completed === true || 
-        onboardingData.completed_at !== null
-      );
-      console.log('Onboarding completed status:', isCompleted);
-      console.log('Checking fields - completed:', onboardingData?.completed, 'completed_at:', onboardingData?.completed_at);
-      
-      setHasCompletedOnboarding(isCompleted);
-      
-      if (!isCompleted) {
-        console.log('Onboarding not completed, redirecting to onboarding...');
-        navigate('/onboarding');
-      } else {
-        console.log('Onboarding completed, staying on dashboard');
-      }
-    } catch (error) {
-      console.error('Error checking onboarding status:', error);
-      // On error, assume onboarding is not completed
-      setHasCompletedOnboarding(false);
+    // Use the hook's processed data which already handles the completed field correctly
+    const isCompleted = onboardingData?.completed === true;
+    console.log('Onboarding completed status:', isCompleted);
+    
+    setHasCompletedOnboarding(isCompleted);
+    
+    if (!isCompleted) {
+      console.log('Onboarding not completed, redirecting to onboarding...');
       navigate('/onboarding');
-    } finally {
-      setIsChecking(false);
+    } else {
+      console.log('Onboarding completed, staying on dashboard');
     }
   };
 
   // Show loading while checking authentication or onboarding status
-  if (authLoading || onboardingLoading || hasCompletedOnboarding === null || isChecking) {
+  if (authLoading || onboardingLoading || hasCompletedOnboarding === null) {
     console.log('Showing loading state');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
