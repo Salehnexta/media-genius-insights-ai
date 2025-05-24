@@ -16,6 +16,7 @@ export interface Agent {
   completedTasks: number;
   progress: number;
   bgColor: string;
+  chatColor: string;
 }
 
 const MarketingDashboard: React.FC = () => {
@@ -35,7 +36,8 @@ const MarketingDashboard: React.FC = () => {
       currentTask: isArabic ? 'تحليل أداء الربع الأول' : 'Analyzing Q1 performance',
       completedTasks: 24,
       progress: 85,
-      bgColor: 'bg-blue-500'
+      bgColor: 'bg-blue-500',
+      chatColor: 'text-blue-600'
     },
     {
       id: 'content-seo',
@@ -48,7 +50,8 @@ const MarketingDashboard: React.FC = () => {
       currentTask: isArabic ? 'كتابة دليل التسويق بالذكاء الاصطناعي' : 'Writing AI Marketing Guide',
       completedTasks: 31,
       progress: 85,
-      bgColor: 'bg-green-500'
+      bgColor: 'bg-green-500',
+      chatColor: 'text-green-600'
     },
     {
       id: 'social-creator',
@@ -61,7 +64,8 @@ const MarketingDashboard: React.FC = () => {
       currentTask: isArabic ? 'إنشاء محتوى الأسبوع' : 'Creating weekly content',
       completedTasks: 28,
       progress: 75,
-      bgColor: 'bg-purple-500'
+      bgColor: 'bg-purple-500',
+      chatColor: 'text-purple-600'
     },
     {
       id: 'social-cx',
@@ -74,7 +78,8 @@ const MarketingDashboard: React.FC = () => {
       currentTask: isArabic ? 'مراقبة المحادثات' : 'Monitoring conversations',
       completedTasks: 19,
       progress: 96,
-      bgColor: 'bg-pink-500'
+      bgColor: 'bg-pink-500',
+      chatColor: 'text-pink-600'
     },
     {
       id: 'campaign-performance',
@@ -87,7 +92,8 @@ const MarketingDashboard: React.FC = () => {
       currentTask: isArabic ? 'تحسين حملات الإعلانات' : 'Optimizing ad campaigns',
       completedTasks: 22,
       progress: 94,
-      bgColor: 'bg-orange-500'
+      bgColor: 'bg-orange-500',
+      chatColor: 'text-orange-600'
     }
   ];
 
