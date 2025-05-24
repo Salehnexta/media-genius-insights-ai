@@ -12,7 +12,11 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const location = useLocation();
+  const isRegisterAr = location.pathname === '/register-ar';
+  const isAuthAr = location.pathname === '/auth-ar';
+  
+  const [isLogin, setIsLogin] = useState(!isRegisterAr); // Start with signup if on /register-ar
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -22,10 +26,17 @@ const Auth = () => {
   
   const { signIn, signUp, user } = useAuth();
   const { toast } = useToast();
-  const { t, language } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const navigate = useNavigate();
-  const location = useLocation();
-  const isArabic = language === 'ar';
+  
+  // Set language based on route
+  useEffect(() => {
+    if (isRegisterAr || isAuthAr) {
+      setLanguage('ar');
+    }
+  }, [isRegisterAr, isAuthAr, setLanguage]);
+  
+  const isArabic = language === 'ar' || isRegisterAr || isAuthAr;
 
   const from = location.state?.from?.pathname || '/dashboard';
 
@@ -96,6 +107,20 @@ const Auth = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleMode = () => {
+    if (isArabic) {
+      // For Arabic routes, navigate to the appropriate Arabic route
+      if (isLogin) {
+        navigate('/register-ar');
+      } else {
+        navigate('/auth-ar');
+      }
+    } else {
+      // For English routes, just toggle the state
+      setIsLogin(!isLogin);
     }
   };
 
@@ -234,7 +259,7 @@ const Auth = () => {
               </span>
               <Button
                 variant="link"
-                onClick={() => setIsLogin(!isLogin)}
+                onClick={handleToggleMode}
                 className="text-blue-600 hover:text-blue-700 p-0 ml-1"
               >
                 {isLogin 
