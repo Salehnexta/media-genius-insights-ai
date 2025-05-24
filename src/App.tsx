@@ -35,7 +35,11 @@ function App() {
         <Router>
           <div className="min-h-screen bg-background">
             <Routes>
-              <Route path="/" element={<Index />} />
+              <Route path="/" element={
+                <LanguageProvider>
+                  <Index />
+                </LanguageProvider>
+              } />
               <Route path="/auth" element={
                 <LanguageProvider>
                   <Auth />
