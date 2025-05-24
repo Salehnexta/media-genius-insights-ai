@@ -75,7 +75,19 @@ const Profile = () => {
         .single();
 
       if (error && error.code !== 'PGRST116') throw error;
-      if (data) setProfile(data);
+      if (data) {
+        setProfile({
+          full_name: data.full_name || '',
+          username: data.username || '',
+          company_name: data.company_name || '',
+          industry: data.industry || '',
+          website: data.website || '',
+          avatar_url: data.avatar_url || '',
+          bio: data.bio || '',
+          phone: data.phone || '',
+          location: data.location || ''
+        });
+      }
     } catch (error: any) {
       console.error('Error fetching profile:', error);
     }
