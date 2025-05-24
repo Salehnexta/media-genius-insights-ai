@@ -18,7 +18,8 @@ interface ChatInterfaceProps {
 }
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpanded = false }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const isArabic = language === 'ar';
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -135,27 +136,37 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
     : messages;
 
   return (
-    <div className={`flex flex-col h-full border rounded-lg shadow-sm bg-white dark:bg-gray-900 ${isMobile ? 'border-0 shadow-none rounded-none' : ''}`}>
+    <div className={`flex flex-col h-full border rounded-lg shadow-sm bg-white dark:bg-gray-900 ${isMobile ? 'border-0 shadow-none rounded-none' : ''} ${isArabic ? 'rtl' : ''}`}>
       {/* Messages Area */}
       <div className={`flex-1 p-4 ${isMobile ? 'px-3' : ''} overflow-y-auto space-y-4`}>
         {displayMessages.map(message => (
           <div 
             key={message.id} 
-            className={`flex ${message.sender === 'ai' ? 'justify-start' : 'justify-end'} animate-fade-in`}
+            className={`flex ${message.sender === 'ai' ? (isArabic ? 'justify-end' : 'justify-start') : (isArabic ? 'justify-start' : 'justify-end')} animate-fade-in`}
           >
-            <div className={`flex max-w-[85%] items-start space-x-2`}>
-              {message.sender === 'ai' && (
+            <div className={`flex max-w-[85%] items-start ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
+              {message.sender === 'ai' && !isArabic && (
                 <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
                   <Bot size={16} />
                 </div>
               )}
-              <div className={message.sender === 'ai' ? 'chat-bubble-ai' : 'chat-bubble-user'}>
+              <div className={`${message.sender === 'ai' ? 'chat-bubble-ai' : 'chat-bubble-user'} ${isArabic ? 'text-right' : ''}`}>
                 <p className="text-sm">{message.content}</p>
                 <p className={`text-xs ${message.sender === 'ai' ? 'text-gray-500 dark:text-gray-400' : 'text-blue-100'} mt-1`}>
                   {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
-              {message.sender === 'user' && (
+              {message.sender === 'user' && !isArabic && (
+                <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white">
+                  <User size={16} />
+                </div>
+              )}
+              {message.sender === 'ai' && isArabic && (
+                <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                  <Bot size={16} />
+                </div>
+              )}
+              {message.sender === 'user' && isArabic && (
                 <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white">
                   <User size={16} />
                 </div>
@@ -168,7 +179,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
         {/* Suggestion Cards - Only show in full chat view */}
         {(!isMobile || isExpanded) && messages.length <= 2 && (
           <div className="mt-6">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            <p className={`text-sm text-gray-600 dark:text-gray-400 mb-4 ${isArabic ? 'text-right' : ''}`}>
               {t('chat.suggestion.today')}
             </p>
             <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2'} gap-3`}>
@@ -176,9 +187,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
                 <button
                   key={card.id}
                   onClick={() => handleSuggestionClick(card)}
-                  className={`${card.bgColor} text-white p-4 rounded-2xl text-left hover:scale-105 transition-transform duration-200 shadow-lg`}
+                  className={`${card.bgColor} text-white p-4 rounded-2xl ${isArabic ? 'text-right' : 'text-left'} hover:scale-105 transition-transform duration-200 shadow-lg`}
                 >
-                  <div className="flex items-center justify-between mb-2">
+                  <div className={`flex items-center ${isArabic ? 'justify-start' : 'justify-between'} mb-2`}>
                     {card.icon}
                   </div>
                   <h3 className="font-semibold text-sm mb-1">{card.title}</h3>
@@ -192,22 +203,22 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
       
       {/* Input Area */}
       <div className="p-3 border-t">
-        <div className="flex space-x-2">
+        <div className={`flex ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
           <Input
             placeholder={t('chat.placeholder')}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            className="flex-1"
+            className={`flex-1 ${isArabic ? 'text-right' : ''}`}
           />
-          <Button onClick={handleSend} type="submit" className={isMobile ? 'px-3' : ''}>
-            <Send className="h-4 w-4 mr-2" />
+          <Button onClick={handleSend} type="submit" className={`${isMobile ? 'px-3' : ''} ${isArabic ? 'flex-row-reverse' : ''}`}>
+            <Send className={`h-4 w-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
             {!isMobile && t('chat.send')}
           </Button>
         </div>
         {(!isMobile || isExpanded) && (
-          <div className="flex justify-between mt-2">
-            <div className="text-xs text-gray-500 dark:text-gray-400">
+          <div className={`flex ${isArabic ? 'flex-row-reverse' : ''} justify-between mt-2`}>
+            <div className={`text-xs text-gray-500 dark:text-gray-400 ${isArabic ? 'text-right' : ''}`}>
               {t('chat.example')}
             </div>
             <div className="text-xs text-blue-500">{t('chat.language.indicator')}</div>
