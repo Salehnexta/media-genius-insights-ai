@@ -338,7 +338,7 @@ export const collaborativeSocialCXManager: CollaborativeAgent = {
     canCollaborate: true,
     collaborationTypes: ['sentiment-monitoring', 'crisis-management', 'community-management'],
     expertiseAreas: ['social-monitoring', 'sentiment-analysis', 'customer-experience', 'crisis-detection'],
-    communicationStyle: 'empathetic'
+    communicationStyle: 'formal'
   },
 
   async processTask(task: AgentTask): Promise<any> {
