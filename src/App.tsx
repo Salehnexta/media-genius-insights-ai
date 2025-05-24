@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -115,7 +116,11 @@ function App() {
                   <Debug />
                 </ProtectedRoute>
               } />
-              <Route path="*" element={<NotFound />} />
+              <Route path="*" element={
+                <LanguageProvider>
+                  <NotFound />
+                </LanguageProvider>
+              } />
             </Routes>
           </div>
         </Router>
