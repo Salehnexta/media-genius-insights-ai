@@ -11,6 +11,17 @@ interface CollaborativeAgent {
   processTask: (task: AgentTask) => Promise<any>;
   handleCollaboration: (collaborationType: string, context: Record<string, any>) => Promise<any>;
   getExpertise: () => string[];
+  // Add custom method signatures to fix TypeScript errors
+  createCampaignStrategy?: (data: Record<string, any>) => Promise<any>;
+  coordinateTeamEfforts?: (data: Record<string, any>) => Promise<any>;
+  conductPerformanceReview?: (data: Record<string, any>) => Promise<any>;
+  alignStrategicObjectives?: (data: Record<string, any>) => Promise<any>;
+  createContentStrategy?: (data: Record<string, any>) => Promise<any>;
+  optimizeForSEO?: (data: Record<string, any>) => Promise<any>;
+  buildContentCalendar?: (data: Record<string, any>) => Promise<any>;
+  analyzePerformance?: (data: Record<string, any>) => Promise<any>;
+  createPredictiveModel?: (data: Record<string, any>) => Promise<any>;
+  calculateROI?: (data: Record<string, any>) => Promise<any>;
 }
 
 // Marketing Manager - Strategic coordination and team leadership
@@ -30,16 +41,16 @@ export const collaborativeMarketingManager: CollaborativeAgent = {
     
     switch (task.taskType) {
       case 'campaign_planning':
-        return this.createCampaignStrategy(task.data);
+        return this.createCampaignStrategy!(task.data);
       
       case 'team_coordination':
-        return this.coordinateTeamEfforts(task.data);
+        return this.coordinateTeamEfforts!(task.data);
       
       case 'performance_review':
-        return this.conductPerformanceReview(task.data);
+        return this.conductPerformanceReview!(task.data);
       
       case 'strategic_alignment':
-        return this.alignStrategicObjectives(task.data);
+        return this.alignStrategicObjectives!(task.data);
       
       default:
         return { result: 'Task processed by Marketing Manager' };
@@ -161,13 +172,13 @@ export const collaborativeContentStrategist: CollaborativeAgent = {
     
     switch (task.taskType) {
       case 'content_creation':
-        return this.createContentStrategy(task.data);
+        return this.createContentStrategy!(task.data);
       
       case 'seo_optimization':
-        return this.optimizeForSEO(task.data);
+        return this.optimizeForSEO!(task.data);
       
       case 'content_calendar':
-        return this.buildContentCalendar(task.data);
+        return this.buildContentCalendar!(task.data);
       
       default:
         return { result: 'Content task processed successfully' };
@@ -274,13 +285,13 @@ export const collaborativeAnalyticsExpert: CollaborativeAgent = {
     
     switch (task.taskType) {
       case 'performance_analysis':
-        return this.analyzePerformance(task.data);
+        return this.analyzePerformance!(task.data);
       
       case 'predictive_modeling':
-        return this.createPredictiveModel(task.data);
+        return this.createPredictiveModel!(task.data);
       
       case 'roi_calculation':
-        return this.calculateROI(task.data);
+        return this.calculateROI!(task.data);
       
       default:
         return { result: 'Analytics task processed successfully' };
@@ -300,11 +311,11 @@ export const collaborativeAnalyticsExpert: CollaborativeAgent = {
           'high'
         );
         
-        // Provide data to Content Strategist
+        // Provide data to Content Strategist - fix the collaboration type
         const contentCollaboration = await agentCollaborationService.createCollaborationRequest(
           this.id,
           'content-strategist',
-          'insight-generation',
+          'data_sharing',
           'Content performance insights for optimization',
           context,
           'medium'
