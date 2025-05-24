@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -40,7 +41,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleDarkMode, hideNavigation = false }) => {
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
   const { language, setLanguage } = useLanguage();
   const isArabic = language === 'ar';
   const location = useLocation();
@@ -52,7 +53,7 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleDarkMode, hideNavigat
   }, [language, isArabic]);
 
   const handleLogout = async () => {
-    await logout();
+    await signOut();
     navigate('/auth');
   };
 
@@ -118,7 +119,7 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleDarkMode, hideNavigat
             </Button>
 
             {/* Dark Mode Toggle */}
-            <ModeToggle />
+            <ModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
 
             {/* Profile Dropdown */}
             {user ? (
@@ -126,15 +127,15 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleDarkMode, hideNavigat
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="h-8 w-8 p-0 rounded-full">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user?.image_url || ""} alt={user?.full_name || "User"} />
-                      <AvatarFallback>{user?.full_name?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                      <AvatarImage src={user?.user_metadata?.avatar_url || ""} alt={user?.user_metadata?.full_name || "User"} />
+                      <AvatarFallback>{user?.user_metadata?.full_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user?.full_name}</p>
+                      <p className="text-sm font-medium leading-none">{user?.user_metadata?.full_name || user?.email}</p>
                       <p className="text-xs leading-none text-muted-foreground">
                         {user?.email}
                       </p>
