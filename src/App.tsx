@@ -26,6 +26,7 @@ import Insights from '@/pages/Insights';
 import ZapierSettings from '@/pages/ZapierSettings';
 import Debug from '@/pages/Debug';
 import NotFound from '@/pages/NotFound';
+import Admin from '@/pages/Admin';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
 const queryClient = new QueryClient();
