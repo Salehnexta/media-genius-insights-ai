@@ -184,20 +184,20 @@ const AgentChatInterface: React.FC<AgentChatInterfaceProps> = ({ agent, isArabic
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Chat Interface */}
-      <div className="lg:col-span-2">
-        <Card className="h-[600px] flex flex-col">
-          <CardHeader>
-            <CardTitle className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
-              <Bot className="h-5 w-5" />
-              {isArabic ? 'محادثة مع' : 'Chat with'} {agent.name}
+    <div className="flex h-screen">
+      {/* Fixed Chat Interface - Always 480px wide */}
+      <div className="w-[480px] flex-shrink-0 border-r bg-gray-50 dark:bg-gray-900">
+        <Card className="h-full flex flex-col border-0 rounded-none bg-white dark:bg-gray-900">
+          <CardHeader className="border-b px-6 py-4">
+            <CardTitle className={`flex items-center gap-2 text-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
+              <Bot className="h-5 w-5 text-blue-600" />
+              <span>{isArabic ? 'محادثة مع' : 'Chat with'} {agent.name}</span>
             </CardTitle>
           </CardHeader>
           
-          <CardContent className="flex-1 flex flex-col p-4">
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto space-y-4 mb-4">
+          <CardContent className="flex-1 flex flex-col p-0">
+            {/* Messages - Fixed height with scroll */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ maxHeight: 'calc(100vh - 200px)' }}>
               {messages.map(message => (
                 <div 
                   key={message.id} 
@@ -205,18 +205,18 @@ const AgentChatInterface: React.FC<AgentChatInterfaceProps> = ({ agent, isArabic
                 >
                   <div className={`flex max-w-[80%] items-start ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
                     {message.sender === 'ai' && !isArabic && (
-                      <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                      <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 flex-shrink-0">
                         {message.loading ? <Loader2 size={16} className="animate-spin" /> : <Bot size={16} />}
                       </div>
                     )}
-                    <div className={`${message.sender === 'ai' ? 'bg-gray-100 dark:bg-gray-800' : 'bg-blue-500 text-white'} rounded-lg p-3`}>
+                    <div className={`${message.sender === 'ai' ? 'bg-gray-100 dark:bg-gray-800' : 'bg-blue-500 text-white'} rounded-lg p-3 max-w-full`}>
                       {message.loading ? (
                         <div className="flex items-center space-x-2">
                           <Loader2 size={16} className="animate-spin" />
                           <span className="text-sm">{isArabic ? 'جاري التفكير...' : 'Thinking...'}</span>
                         </div>
                       ) : (
-                        <p className="text-sm">{message.content}</p>
+                        <p className="text-sm break-words">{message.content}</p>
                       )}
                       {!message.loading && (
                         <p className={`text-xs ${message.sender === 'ai' ? 'text-gray-500 dark:text-gray-400' : 'text-blue-100'} mt-1`}>
@@ -225,17 +225,17 @@ const AgentChatInterface: React.FC<AgentChatInterfaceProps> = ({ agent, isArabic
                       )}
                     </div>
                     {message.sender === 'user' && !isArabic && (
-                      <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                      <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white flex-shrink-0">
                         <User size={16} />
                       </div>
                     )}
                     {message.sender === 'ai' && isArabic && (
-                      <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                      <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 flex-shrink-0">
                         {message.loading ? <Loader2 size={16} className="animate-spin" /> : <Bot size={16} />}
                       </div>
                     )}
                     {message.sender === 'user' && isArabic && (
-                      <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                      <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white flex-shrink-0">
                         <User size={16} />
                       </div>
                     )}
@@ -245,33 +245,36 @@ const AgentChatInterface: React.FC<AgentChatInterfaceProps> = ({ agent, isArabic
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
-            <div className={`flex ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
-              <Input
-                placeholder={isArabic ? 'اكتب رسالتك...' : 'Type your message...'}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && !isLoading && handleSend()}
-                disabled={isLoading}
-                className={isArabic ? 'text-right' : ''}
-              />
-              <Button 
-                onClick={() => handleSend()} 
-                disabled={isLoading || !input.trim()}
-              >
-                {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Send className="h-4 w-4" />
-                )}
-              </Button>
+            {/* Input Area - Fixed height */}
+            <div className="border-t p-4 bg-white dark:bg-gray-900">
+              <div className={`flex gap-2 ${isArabic ? 'space-x-reverse' : ''}`}>
+                <Input
+                  placeholder={isArabic ? 'اكتب رسالتك...' : 'Type your message...'}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && !isLoading && handleSend()}
+                  disabled={isLoading}
+                  className={`flex-1 ${isArabic ? 'text-right' : ''}`}
+                />
+                <Button 
+                  onClick={() => handleSend()} 
+                  disabled={isLoading || !input.trim()}
+                  className="px-4"
+                >
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Quick Actions & Capabilities */}
-      <div className="space-y-6">
+      {/* Right Panel - Takes remaining space */}
+      <div className="flex-1 p-6 space-y-6 overflow-y-auto">
         {/* Quick Actions */}
         <Card>
           <CardHeader>
