@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -35,15 +34,18 @@ export const useOnboardingNavigation = (isArabic: boolean) => {
         }
         
         setCurrentStep(prev => prev + 1);
+        setIsNavigating(false);
       } else {
         // This is the final step - complete onboarding
         console.log('=== COMPLETING ONBOARDING ===');
         console.log('Current data before completion:', data);
         
-        // Mark onboarding as complete and update local state
+        // Mark onboarding as complete - this is the critical fix
         const completedData = { 
           ...data, 
-          completed: true
+          completed: true,
+          // Also set a completion timestamp for immediate use
+          completedAt: new Date().toISOString()
         };
         console.log('Data with completion status:', completedData);
         console.log('completedData.completed:', completedData.completed, typeof completedData.completed);
@@ -51,36 +53,29 @@ export const useOnboardingNavigation = (isArabic: boolean) => {
         // Update local state first
         updateData(completedData);
         
-        // Use setTimeout to allow the state update to complete before saving
-        setTimeout(async () => {
-          try {
-            console.log('=== SAVING COMPLETED DATA ===');
-            console.log('About to call saveFunction...');
-            const finalSaved = await saveFunction();
-            console.log('Final save result:', finalSaved);
-            
-            if (finalSaved) {
-              console.log('Onboarding completed successfully, navigating to dashboard');
-              toast({
-                title: isArabic ? 'تم الانتهاء!' : 'Completed!',
-                description: isArabic ? 'تم إكمال الإعداد بنجاح' : 'Onboarding completed successfully',
-              });
-              
-              // Small delay to ensure save is processed
-              setTimeout(() => {
-                // Navigate to dashboard with replace to prevent back navigation
-                navigate('/', { replace: true });
-              }, 500);
-            } else {
-              throw new Error(isArabic ? 'فشل في إكمال الإعداد' : 'Failed to complete onboarding');
-            }
-          } catch (error) {
-            console.error('Error completing onboarding:', error);
-            setError(error instanceof Error ? error.message : 'Failed to complete onboarding');
-          } finally {
-            setIsNavigating(false);
-          }
-        }, 100);
+        // Save the completed data
+        console.log('=== SAVING COMPLETED DATA ===');
+        console.log('About to call saveFunction with completed data...');
+        const finalSaved = await saveFunction();
+        console.log('Final save result:', finalSaved);
+        
+        if (finalSaved) {
+          console.log('Onboarding completed successfully, navigating to dashboard');
+          toast({
+            title: isArabic ? 'تم الانتهاء!' : 'Completed!',
+            description: isArabic ? 'تم إكمال الإعداد بنجاح' : 'Onboarding completed successfully',
+          });
+          
+          // Force navigation with a slight delay to ensure save is processed
+          setTimeout(() => {
+            console.log('Forcing navigation to dashboard...');
+            navigate('/', { replace: true });
+            // Also force a page reload to clear any cached state
+            window.location.href = '/';
+          }, 1000);
+        } else {
+          throw new Error(isArabic ? 'فشل في إكمال الإعداد' : 'Failed to complete onboarding');
+        }
       }
     } catch (error) {
       console.error('Error in handleNext:', error);
@@ -93,10 +88,7 @@ export const useOnboardingNavigation = (isArabic: boolean) => {
         description: errorMessage,
         variant: 'destructive'
       });
-    } finally {
-      if (currentStep < totalSteps - 1) {
-        setIsNavigating(false);
-      }
+      setIsNavigating(false);
     }
   }, [currentStep, isNavigating, isArabic, toast, navigate]);
 

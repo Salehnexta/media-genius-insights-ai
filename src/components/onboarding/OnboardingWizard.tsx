@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useOnboardingWizard } from '@/hooks/useOnboardingWizard';
@@ -59,6 +58,21 @@ const OnboardingWizard: React.FC = () => {
   const handleRetry = () => {
     setError(null);
     window.location.reload();
+  };
+
+  const handleForceComplete = async () => {
+    console.log('=== FORCE COMPLETE TRIGGERED ===');
+    if (data) {
+      // Force completion by updating data and navigating
+      const completedData = { ...data, completed: true };
+      updateData(completedData);
+      
+      // Force navigation after a short delay
+      setTimeout(() => {
+        console.log('Force navigating to dashboard...');
+        window.location.href = '/';
+      }, 500);
+    }
   };
 
   // Loading state
@@ -124,6 +138,7 @@ const OnboardingWizard: React.FC = () => {
             dataCompleted={data?.completed}
             saving={saving}
             isNavigating={isNavigating}
+            onForceComplete={handleForceComplete}
           />
         </div>
       </div>

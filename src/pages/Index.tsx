@@ -23,6 +23,7 @@ const Index: React.FC = () => {
     console.log('User ID:', user?.id);
     console.log('Onboarding loading:', onboardingLoading);
     console.log('Has completed onboarding:', hasCompletedOnboarding);
+    console.log('Onboarding data from hook:', onboardingData);
     console.log('Onboarding data completed field:', onboardingData?.completed);
     
     if (!authLoading && !user) {
@@ -32,41 +33,76 @@ const Index: React.FC = () => {
     }
 
     if (user && !onboardingLoading && hasCompletedOnboarding === null) {
-      console.log('Checking onboarding status from database...');
+      console.log('Checking onboarding status...');
       checkOnboardingStatus();
     }
-  }, [user, authLoading, onboardingLoading, navigate, hasCompletedOnboarding]);
+  }, [user, authLoading, onboardingLoading, navigate, hasCompletedOnboarding, onboardingData]);
 
   const checkOnboardingStatus = async () => {
     if (!user) return;
     
     try {
       console.log('=== CHECKING ONBOARDING STATUS ===');
-      // Get raw data from database to check completed_at field
+      
+      // First check the hook data which should be already processed
+      if (onboardingData) {
+        console.log('Using hook data for completion check');
+        console.log('Hook data completed status:', onboardingData.completed);
+        
+        const isCompleted = onboardingData.completed === true;
+        console.log('Final completion status from hook:', isCompleted);
+        
+        setHasCompletedOnboarding(isCompleted);
+        
+        if (!isCompleted) {
+          console.log('Onboarding not completed, staying on onboarding page');
+          // Don't redirect if we're already on onboarding page
+          if (window.location.pathname !== '/onboarding') {
+            navigate('/onboarding');
+          }
+        } else {
+          console.log('Onboarding completed, staying on dashboard');
+        }
+        return;
+      }
+      
+      // Fallback: Get raw data from database if hook data not available
+      console.log('Hook data not available, fetching from database...');
       const rawData = await getOnboardingData();
       console.log('Raw onboarding data from database:', rawData);
       
-      // Check if completed_at field exists and is not null
-      const isCompleted = rawData && rawData.completed_at !== null;
-      console.log('=== COMPLETION STATUS DEBUG ===');
-      console.log('Raw data exists:', !!rawData);
-      console.log('completed_at value:', rawData?.completed_at);
-      console.log('completed_at is null:', rawData?.completed_at === null);
-      console.log('Final isCompleted result:', isCompleted);
-      
-      setHasCompletedOnboarding(isCompleted);
-      
-      if (!isCompleted) {
-        console.log('Onboarding not completed, redirecting to onboarding...');
-        navigate('/onboarding');
+      if (rawData) {
+        // Check completion status from raw database data
+        const isCompleted = rawData.completed_at !== null && rawData.completed_at !== undefined;
+        console.log('=== RAW DATA COMPLETION CHECK ===');
+        console.log('completed_at value:', rawData.completed_at);
+        console.log('completed_at is null:', rawData.completed_at === null);
+        console.log('Final isCompleted result from raw data:', isCompleted);
+        
+        setHasCompletedOnboarding(isCompleted);
+        
+        if (!isCompleted) {
+          console.log('Onboarding not completed, staying on onboarding page');
+          if (window.location.pathname !== '/onboarding') {
+            navigate('/onboarding');
+          }
+        } else {
+          console.log('Onboarding completed, staying on dashboard');
+        }
       } else {
-        console.log('Onboarding completed, staying on dashboard');
+        console.log('No onboarding data found, redirecting to onboarding');
+        setHasCompletedOnboarding(false);
+        if (window.location.pathname !== '/onboarding') {
+          navigate('/onboarding');
+        }
       }
     } catch (error) {
       console.error('Error checking onboarding status:', error);
       // If there's an error, assume onboarding not completed
       setHasCompletedOnboarding(false);
-      navigate('/onboarding');
+      if (window.location.pathname !== '/onboarding') {
+        navigate('/onboarding');
+      }
     }
   };
 
