@@ -18,7 +18,7 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ isArabic }) => {
 
   const navigationItems: NavigationItem[] = [
     {
-      label: isArabic ? 'لوحة التحكم' : 'Dashboard',
+      label: isArabic ? 'الرئيسية' : 'Home',
       href: '/',
       icon: Home
     },

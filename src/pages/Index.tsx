@@ -1,10 +1,9 @@
 
 import React from 'react';
-import { useLanguage } from '@/contexts/LanguageContext';
-import Dashboard from './Dashboard';
+import { Navigate } from 'react-router-dom';
 
 const Index: React.FC = () => {
-  return <Dashboard />;
+  return <Navigate to="/agents" replace />;
 };
 
 export default Index;

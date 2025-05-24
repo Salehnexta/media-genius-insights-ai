@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { AdminProvider } from '@/contexts/AdminContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
-import Index from '@/pages/Index';
 import Auth from '@/pages/Auth';
 import AuthAr from '@/pages/AuthAr';
 import RegisterAr from '@/pages/RegisterAr';
@@ -40,9 +39,13 @@ function App() {
           <div className="min-h-screen bg-background">
             <Routes>
               <Route path="/" element={
-                <LanguageProvider>
-                  <Index />
-                </LanguageProvider>
+                <ProtectedRoute>
+                  <AdminProvider>
+                    <LanguageProvider>
+                      <Agents />
+                    </LanguageProvider>
+                  </AdminProvider>
+                </ProtectedRoute>
               } />
               <Route path="/dashboard" element={
                 <ProtectedRoute>
