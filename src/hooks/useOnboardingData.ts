@@ -49,13 +49,17 @@ export const useOnboardingData = () => {
 
     setLoading(true);
     try {
+      // Use maybeSingle() instead of single() to avoid 406 errors
       const { data: existingData, error } = await supabase
         .from('onboarding_data')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error) {
+        console.error('Error loading onboarding data:', error);
+        return;
+      }
 
       if (existingData) {
         // Safely cast social_accounts from Json type to Record<string, string>
@@ -105,27 +109,54 @@ export const useOnboardingData = () => {
 
     setSaving(true);
     try {
-      // Save onboarding data
-      const { error: onboardingError } = await supabase
+      // Check if onboarding data already exists
+      const { data: existingOnboarding } = await supabase
         .from('onboarding_data')
-        .upsert({
-          user_id: user.id,
-          skill_level: dataToSave.skillLevel,
-          experience: dataToSave.experience,
-          business_name: dataToSave.businessName,
-          industry: dataToSave.industry,
-          website: dataToSave.website,
-          social_accounts: dataToSave.socialAccounts,
-          competitors: dataToSave.competitors,
-          goals: dataToSave.goals,
-          budget: dataToSave.budget,
-          completed_at: dataToSave.completed ? new Date().toISOString() : null,
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'user_id'
-        });
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle();
 
-      if (onboardingError) throw onboardingError;
+      if (existingOnboarding) {
+        // Update existing record
+        const { error: onboardingError } = await supabase
+          .from('onboarding_data')
+          .update({
+            skill_level: dataToSave.skillLevel,
+            experience: dataToSave.experience,
+            business_name: dataToSave.businessName,
+            industry: dataToSave.industry,
+            website: dataToSave.website,
+            social_accounts: dataToSave.socialAccounts,
+            competitors: dataToSave.competitors,
+            goals: dataToSave.goals,
+            budget: dataToSave.budget,
+            completed_at: dataToSave.completed ? new Date().toISOString() : null,
+            updated_at: new Date().toISOString()
+          })
+          .eq('user_id', user.id);
+
+        if (onboardingError) throw onboardingError;
+      } else {
+        // Insert new record
+        const { error: onboardingError } = await supabase
+          .from('onboarding_data')
+          .insert({
+            user_id: user.id,
+            skill_level: dataToSave.skillLevel,
+            experience: dataToSave.experience,
+            business_name: dataToSave.businessName,
+            industry: dataToSave.industry,
+            website: dataToSave.website,
+            social_accounts: dataToSave.socialAccounts,
+            competitors: dataToSave.competitors,
+            goals: dataToSave.goals,
+            budget: dataToSave.budget,
+            completed_at: dataToSave.completed ? new Date().toISOString() : null,
+            updated_at: new Date().toISOString()
+          });
+
+        if (onboardingError) throw onboardingError;
+      }
 
       // Create AI context for personalization
       const aiContext = {
@@ -144,25 +175,41 @@ export const useOnboardingData = () => {
         .from('user_preferences')
         .select('id')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
-      // Save user preferences with AI context
-      const { error: preferencesError } = await supabase
-        .from('user_preferences')
-        .upsert({
-          user_id: user.id,
-          ai_context: aiContext,
-          personalization_data: {
-            onboardingCompleted: dataToSave.completed,
-            completedAt: dataToSave.completed ? new Date().toISOString() : null,
-            businessName: dataToSave.businessName
-          },
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'user_id'
-        });
+      if (existingPrefs) {
+        // Update existing preferences
+        const { error: preferencesError } = await supabase
+          .from('user_preferences')
+          .update({
+            ai_context: aiContext,
+            personalization_data: {
+              onboardingCompleted: dataToSave.completed,
+              completedAt: dataToSave.completed ? new Date().toISOString() : null,
+              businessName: dataToSave.businessName
+            },
+            updated_at: new Date().toISOString()
+          })
+          .eq('user_id', user.id);
 
-      if (preferencesError) throw preferencesError;
+        if (preferencesError) throw preferencesError;
+      } else {
+        // Insert new preferences
+        const { error: preferencesError } = await supabase
+          .from('user_preferences')
+          .insert({
+            user_id: user.id,
+            ai_context: aiContext,
+            personalization_data: {
+              onboardingCompleted: dataToSave.completed,
+              completedAt: dataToSave.completed ? new Date().toISOString() : null,
+              businessName: dataToSave.businessName
+            },
+            updated_at: new Date().toISOString()
+          });
+
+        if (preferencesError) throw preferencesError;
+      }
 
       if (dataToSave.completed) {
         toast({
@@ -194,9 +241,9 @@ export const useOnboardingData = () => {
         .from('onboarding_data')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error) throw error;
       return data;
     } catch (error) {
       console.error('Error fetching onboarding data:', error);
