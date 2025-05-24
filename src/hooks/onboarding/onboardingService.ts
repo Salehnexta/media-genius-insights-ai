@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { transformSupabaseToLocal, transformLocalToSupabase } from './transformers';
 import { OnboardingData } from './types';
@@ -70,6 +69,14 @@ export const saveOnboardingData = async (userId: string, data: OnboardingData) =
     .order('updated_at', { ascending: false });
 
   const savePayload = transformLocalToSupabase(data);
+  
+  // Ensure completion status is properly set
+  if (data.completed) {
+    savePayload.completed_at = data.completedAt || new Date().toISOString();
+  } else {
+    savePayload.completed_at = null;
+  }
+  
   console.log('Save payload:', savePayload);
 
   if (existingRecords && existingRecords.length > 0) {
