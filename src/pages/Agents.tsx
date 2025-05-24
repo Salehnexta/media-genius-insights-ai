@@ -1,13 +1,13 @@
+
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import AdminPanelAccess from '@/components/agents/AdminPanelAccess';
 import AgentWorkspaceArea from '@/components/agents/AgentWorkspaceArea';
+import EnhancedChatSection from '@/components/dashboard/EnhancedChatSection';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { 
@@ -23,7 +23,9 @@ import {
   Target,
   DollarSign,
   Eye,
-  ThumbsUp
+  ThumbsUp,
+  ArrowUp,
+  Zap
 } from 'lucide-react';
 
 export interface Agent {
@@ -41,19 +43,11 @@ export interface Agent {
   chatColor: string;
 }
 
-interface Message {
-  id: string;
-  content: string;
-  sender: 'agent' | 'user';
-  timestamp: Date;
-}
-
 const Agents: React.FC = () => {
   const { language } = useLanguage();
   const isArabic = language === 'ar';
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [inputMessage, setInputMessage] = useState('');
+  const [activeTab, setActiveTab] = useState('overview');
 
   const agents: Agent[] = [
     {
@@ -143,492 +137,286 @@ const Agents: React.FC = () => {
       <DashboardHeader />
       
       <div className="flex h-[calc(100vh-4rem)]" dir={isArabic ? 'rtl' : 'ltr'}>
-        {/* Left Sidebar with Tabs - Fixed 35% */}
-        <div className="w-[35%] min-w-[400px] bg-white dark:bg-gray-900 border-r flex flex-col" style={{ order: isArabic ? 2 : 1 }}>
-          
-          <Tabs defaultValue="marketing-manager" className="flex-1 flex flex-col h-full" dir={isArabic ? 'rtl' : 'ltr'}>
-            <div className="p-4 border-b">
-              <div className={`flex items-center justify-between mb-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
-                <h2 className={`text-lg font-semibold text-gray-900 dark:text-white ${isArabic ? 'text-right font-arabic' : ''}`}>
-                  {isArabic ? 'فريق التسويق الذكي' : 'AI Marketing Team'}
-                </h2>
-                <AdminPanelAccess />
-              </div>
-              
-              <TabsList className="grid w-full grid-cols-5 h-12" dir={isArabic ? 'rtl' : 'ltr'}>
-                {agents.map((agent) => (
-                  <TabsTrigger 
-                    key={agent.id} 
-                    value={agent.id}
-                    className="text-xs p-2 flex flex-col items-center gap-1"
-                    onClick={() => setSelectedAgent(agent)}
-                  >
-                    <span className="text-lg">{agent.icon}</span>
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </div>
+        {/* Main Dashboard Area - 65% */}
+        <div className="flex-1 p-6">
+          <div className={`flex items-center justify-between mb-6 ${isArabic ? 'flex-row-reverse' : ''}`}>
+            <h1 className={`text-2xl font-bold text-gray-900 dark:text-white ${isArabic ? 'text-right font-arabic' : ''}`}>
+              {isArabic ? 'فريق التسويق الذكي' : 'AI Marketing Team'}
+            </h1>
+            <AdminPanelAccess />
+          </div>
 
-            {/* Marketing Manager Tab */}
-            <TabsContent value="marketing-manager" className="flex-1 p-4 space-y-4 overflow-auto">
-              <div className="text-center">
-                <div className="text-3xl mb-2">🧠</div>
-                <h3 className={`font-semibold ${isArabic ? 'text-right' : ''}`}>{isArabic ? 'مدير التسويق الذكي' : 'Marketing Manager'}</h3>
-                <p className={`text-sm text-gray-600 ${isArabic ? 'text-right' : ''}`}>{isArabic ? 'الاستراتيجية وتنسيق الحملات' : 'Strategy & Campaign Coordination'}</p>
-                <Badge className="mt-2 bg-green-500">{isArabic ? 'نشط' : 'Active'}</Badge>
-              </div>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6" dir={isArabic ? 'rtl' : 'ltr'}>
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="overview">{isArabic ? 'نظرة عامة' : 'Overview'}</TabsTrigger>
+              <TabsTrigger value="campaigns">{isArabic ? 'الحملات' : 'Campaigns'}</TabsTrigger>
+              <TabsTrigger value="content">{isArabic ? 'المحتوى' : 'Content'}</TabsTrigger>
+              <TabsTrigger value="analytics">{isArabic ? 'التحليلات' : 'Analytics'}</TabsTrigger>
+              <TabsTrigger value="agents">{isArabic ? 'الوكلاء' : 'Agents'}</TabsTrigger>
+            </TabsList>
 
-              {/* Metric Cards Row */}
-              <div className="grid grid-cols-2 gap-3">
+            <TabsContent value="overview" className="space-y-6">
+              {/* Key Metrics */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-                  <CardContent className="p-3">
+                  <CardContent className="p-6">
                     <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
                       <div className={isArabic ? 'text-right' : ''}>
-                        <p className="text-xs opacity-90">{isArabic ? 'إجمالي المشاهدات' : 'Total Views'}</p>
-                        <p className="text-lg font-bold">2.4M</p>
-                        <div className="flex items-center gap-1 text-xs">
-                          <ArrowUp className="h-3 w-3" />
+                        <p className="text-sm opacity-90">{isArabic ? 'إجمالي المشاهدات' : 'Total Views'}</p>
+                        <p className="text-2xl font-bold">2.4M</p>
+                        <div className="flex items-center gap-1 text-sm">
+                          <ArrowUp className="h-4 w-4" />
                           <span>+12.5%</span>
                         </div>
                       </div>
-                      <Eye className="h-6 w-6 opacity-75" />
+                      <Eye className="h-8 w-8 opacity-75" />
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white">
-                  <CardContent className="p-3">
+                  <CardContent className="p-6">
                     <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
                       <div className={isArabic ? 'text-right' : ''}>
-                        <p className="text-xs opacity-90">{isArabic ? 'معدل التفاعل' : 'Engagement Rate'}</p>
-                        <p className="text-lg font-bold">3.2%</p>
-                        <div className="flex items-center gap-1 text-xs">
-                          <ArrowUp className="h-3 w-3" />
+                        <p className="text-sm opacity-90">{isArabic ? 'معدل التفاعل' : 'Engagement Rate'}</p>
+                        <p className="text-2xl font-bold">3.2%</p>
+                        <div className="flex items-center gap-1 text-sm">
+                          <ArrowUp className="h-4 w-4" />
                           <span>+0.8%</span>
                         </div>
                       </div>
-                      <TrendingUp className="h-6 w-6 opacity-75" />
+                      <TrendingUp className="h-8 w-8 opacity-75" />
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
-                  <CardContent className="p-3">
+                  <CardContent className="p-6">
                     <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
                       <div className={isArabic ? 'text-right' : ''}>
-                        <p className="text-xs opacity-90">{isArabic ? 'الوصول' : 'Reach'}</p>
-                        <p className="text-lg font-bold">156K</p>
-                        <div className="flex items-center gap-1 text-xs">
-                          <ArrowUp className="h-3 w-3" />
+                        <p className="text-sm opacity-90">{isArabic ? 'الوصول' : 'Reach'}</p>
+                        <p className="text-2xl font-bold">156K</p>
+                        <div className="flex items-center gap-1 text-sm">
+                          <ArrowUp className="h-4 w-4" />
                           <span>+8.3%</span>
                         </div>
                       </div>
-                      <Users className="h-6 w-6 opacity-75" />
+                      <Users className="h-8 w-8 opacity-75" />
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white">
-                  <CardContent className="p-3">
+                  <CardContent className="p-6">
                     <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
                       <div className={isArabic ? 'text-right' : ''}>
-                        <p className="text-xs opacity-90">{isArabic ? 'التحويلات' : 'Conversions'}</p>
-                        <p className="text-lg font-bold">1.2K</p>
-                        <div className="flex items-center gap-1 text-xs">
-                          <ArrowUp className="h-3 w-3" />
+                        <p className="text-sm opacity-90">{isArabic ? 'التحويلات' : 'Conversions'}</p>
+                        <p className="text-2xl font-bold">1.2K</p>
+                        <div className="flex items-center gap-1 text-sm">
+                          <ArrowUp className="h-4 w-4" />
                           <span>+15.2%</span>
                         </div>
                       </div>
-                      <Target className="h-6 w-6 opacity-75" />
+                      <Target className="h-8 w-8 opacity-75" />
                     </div>
                   </CardContent>
                 </Card>
               </div>
 
-              {/* Action Cards */}
-              <div className="grid grid-cols-2 gap-3">
-                <Card className="bg-gradient-to-br from-purple-500 to-purple-700 text-white cursor-pointer hover:scale-105 transition-transform">
-                  <CardContent className="p-4">
-                    <div className={`flex flex-col items-center text-center ${isArabic ? 'text-right' : ''}`}>
-                      <Zap className="h-8 w-8 mb-2" />
-                      <h4 className="font-semibold">{isArabic ? 'إنشاء الحملات' : 'Create Campaigns'}</h4>
-                      <p className="text-xs opacity-90">{isArabic ? 'أفكار لحملات جديدة' : 'New campaign ideas'}</p>
+              {/* Charts Row */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className={isArabic ? 'text-right' : ''}>{isArabic ? 'اتجاهات الأداء' : 'Performance Trends'}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[300px] flex items-center justify-center text-gray-500">
+                      <BarChart3 className="h-16 w-16" />
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-gradient-to-br from-blue-500 to-blue-700 text-white cursor-pointer hover:scale-105 transition-transform">
-                  <CardContent className="p-4">
-                    <div className={`flex flex-col items-center text-center ${isArabic ? 'text-right' : ''}`}>
-                      <BarChart className="h-8 w-8 mb-2" />
-                      <h4 className="font-semibold">{isArabic ? 'تحليل الحملات' : 'Campaign Analytics'}</h4>
-                      <p className="text-xs opacity-90">{isArabic ? 'تحليل أداء حملاتك التسويقية' : 'Analyze marketing performance'}</p>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className={isArabic ? 'text-right' : ''}>{isArabic ? 'تحليل المشاعر' : 'Sentiment Analysis'}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div>
+                        <div className={`flex justify-between text-sm mb-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                          <span className="text-green-600">{isArabic ? 'إيجابي' : 'Positive'}</span>
+                          <span>78%</span>
+                        </div>
+                        <Progress value={78} className="h-3" />
+                      </div>
+                      <div>
+                        <div className={`flex justify-between text-sm mb-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                          <span className="text-gray-600">{isArabic ? 'محايد' : 'Neutral'}</span>
+                          <span>18%</span>
+                        </div>
+                        <Progress value={18} className="h-3" />
+                      </div>
+                      <div>
+                        <div className={`flex justify-between text-sm mb-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                          <span className="text-red-600">{isArabic ? 'سلبي' : 'Negative'}</span>
+                          <span>4%</span>
+                        </div>
+                        <Progress value={4} className="h-3" />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
-
-                <Card className="bg-gradient-to-br from-orange-500 to-orange-700 text-white cursor-pointer hover:scale-105 transition-transform">
-                  <CardContent className="p-4">
-                    <div className={`flex flex-col items-center text-center ${isArabic ? 'text-right' : ''}`}>
-                      <TrendingUp className="h-8 w-8 mb-2" />
-                      <h4 className="font-semibold">{isArabic ? 'الاتجاهات' : 'Trends'}</h4>
-                      <p className="text-xs opacity-90">{isArabic ? 'آخر الاتجاهات في السوق' : 'Latest market trends'}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-gradient-to-br from-green-500 to-green-700 text-white cursor-pointer hover:scale-105 transition-transform">
-                  <CardContent className="p-4">
-                    <div className={`flex flex-col items-center text-center ${isArabic ? 'text-right' : ''}`}>
-                      <Users2 className="h-8 w-8 mb-2" />
-                      <h4 className="font-semibold">{isArabic ? 'تحليل الجمهور' : 'Audience Analysis'}</h4>
-                      <p className="text-xs opacity-90">{isArabic ? 'فهم جمهورك المستهدف' : 'Understand your audience'}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Performance Section */}
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className={`text-sm ${isArabic ? 'text-right' : ''}`}>{isArabic ? 'بيانات الأداء الأسبوعي' : 'Weekly Performance'}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="space-y-2">
-                    <div className={`flex justify-between text-sm ${isArabic ? 'flex-row-reverse' : ''}`}>
-                      <span>{isArabic ? 'المشاهدات' : 'Views'}</span>
-                      <span>34.2K</span>
-                    </div>
-                    <div className={`flex justify-between text-sm ${isArabic ? 'flex-row-reverse' : ''}`}>
-                      <span>{isArabic ? 'التفاعل' : 'Engagement'}</span>
-                      <span>8.4%</span>
-                    </div>
-                    <div className={`flex justify-between text-sm text-green-600 ${isArabic ? 'flex-row-reverse' : ''}`}>
-                      <span>{isArabic ? 'النمو' : 'Growth'}</span>
-                      <span>+23%</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Best Campaigns */}
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className={`text-sm ${isArabic ? 'text-right' : ''}`}>{isArabic ? 'أفضل الحملات' : 'Best Campaigns'}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div className={`flex justify-between text-sm ${isArabic ? 'flex-row-reverse' : ''}`}>
-                    <span>{isArabic ? 'حملة الصيف 2024' : 'Summer 2024'}</span>
-                    <Badge variant="secondary">94% CTR</Badge>
-                  </div>
-                  <div className={`flex justify-between text-sm ${isArabic ? 'flex-row-reverse' : ''}`}>
-                    <span>{isArabic ? 'منتج جديد' : 'New Product'}</span>
-                    <Badge variant="secondary">87% CTR</Badge>
-                  </div>
-                  <div className={`flex justify-between text-sm ${isArabic ? 'flex-row-reverse' : ''}`}>
-                    <span>{isArabic ? 'عروض رمضان' : 'Ramadan Offers'}</span>
-                    <Badge variant="secondary">92% CTR</Badge>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Chat Input */}
-              <div className="border-t pt-3">
-                <div className={`flex gap-2 ${isArabic ? 'space-x-reverse' : ''}`}>
-                  <Input
-                    placeholder={isArabic ? 'اكتب رسالتك هنا...' : 'Type your message...'}
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
-                    className={`flex-1 text-sm ${isArabic ? 'text-right' : ''}`}
-                  />
-                  <Button size="sm" className="px-3">
-                    <Send className="h-3 w-3" />
-                  </Button>
-                </div>
-                <p className={`text-xs text-gray-500 mt-2 ${isArabic ? 'text-right' : ''}`}>
-                  {isArabic ? 'مثال: "كيف يمكنني تحسين حملاتي الإعلانية؟"' : 'Example: "How can I improve my advertising campaigns?"'}
-                </p>
               </div>
             </TabsContent>
 
-            {/* Content & SEO Tab */}
-            <TabsContent value="content-seo" className="flex-1 p-4 space-y-4 overflow-auto">
-              <div className="text-center">
-                <div className="text-3xl mb-2">📝</div>
-                <h3 className={`font-semibold ${isArabic ? 'text-right' : ''}`}>{isArabic ? 'أخصائي المحتوى والسيو' : 'Content & SEO Specialist'}</h3>
-                <p className={`text-sm text-gray-600 ${isArabic ? 'text-right' : ''}`}>{isArabic ? 'إنشاء المحتوى وتحسين محركات البحث' : 'Content Creation & SEO'}</p>
-                <Badge className="mt-2 bg-green-500">{isArabic ? 'يعمل' : 'Working'}</Badge>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <Card>
-                  <CardContent className="p-3">
-                    <div className="flex items-center gap-2">
-                      <Eye className="h-4 w-4 text-blue-500" />
-                      <div>
-                        <p className="text-xs text-gray-600">{isArabic ? 'زوار المدونة' : 'Blog Traffic'}</p>
-                        <p className="font-semibold">12,456</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-3">
-                    <div className="flex items-center gap-2">
-                      <BarChart3 className="h-4 w-4 text-green-500" />
-                      <div>
-                        <p className="text-xs text-gray-600">{isArabic ? 'كلمات مفتاحية' : 'Keywords'}</p>
-                        <p className="font-semibold">156</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
+            <TabsContent value="campaigns" className="space-y-6">
               <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className={`text-sm ${isArabic ? 'text-right' : ''}`}>{isArabic ? 'المحتوى الحالي' : 'Content Pipeline'}</CardTitle>
+                <CardHeader>
+                  <CardTitle className={isArabic ? 'text-right' : ''}>{isArabic ? 'الحملات النشطة' : 'Active Campaigns'}</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
-                  <div className="flex justify-between text-xs">
-                    <span>{isArabic ? 'أفكار' : 'Ideas'}</span>
-                    <Badge variant="secondary">12</Badge>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span>{isArabic ? 'مسودات' : 'Drafts'}</span>
-                    <Badge variant="secondary">5</Badge>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span>{isArabic ? 'مراجعة' : 'Review'}</span>
-                    <Badge variant="secondary">3</Badge>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span>{isArabic ? 'منشور' : 'Live'}</span>
-                    <Badge variant="secondary">2</Badge>
+                <CardContent>
+                  <div className="space-y-4">
+                    {['Brand Awareness', 'Product Launch', 'Lead Generation'].map((campaign, index) => (
+                      <div key={campaign} className={`flex items-center justify-between p-4 border rounded-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
+                        <div className={isArabic ? 'text-right' : ''}>
+                          <h4 className="font-medium">{campaign}</h4>
+                          <p className="text-sm text-gray-600">
+                            {isArabic ? 'جارية' : 'Running'} • {Math.floor(Math.random() * 30) + 1} {isArabic ? 'يوم' : 'days'}
+                          </p>
+                        </div>
+                        <Badge variant="secondary">{[75, 45, 90][index]}%</Badge>
+                      </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
+            </TabsContent>
 
-              <div className="grid grid-cols-2 gap-2">
-                <Button size="sm" variant="outline">{isArabic ? 'كتابة مقال' : 'Write Article'}</Button>
-                <Button size="sm" variant="outline">{isArabic ? 'تحليل السيو' : 'SEO Analysis'}</Button>
+            <TabsContent value="content" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className={isArabic ? 'text-right' : ''}>{isArabic ? 'تقويم المحتوى' : 'Content Calendar'}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className={`flex justify-between text-sm ${isArabic ? 'flex-row-reverse' : ''}`}>
+                        <span>{isArabic ? 'جاهز للنشر' : 'Ready to Publish'}</span>
+                        <Badge variant="secondary">8</Badge>
+                      </div>
+                      <div className={`flex justify-between text-sm ${isArabic ? 'flex-row-reverse' : ''}`}>
+                        <span>{isArabic ? 'في المراجعة' : 'In Review'}</span>
+                        <Badge variant="secondary">3</Badge>
+                      </div>
+                      <div className={`flex justify-between text-sm ${isArabic ? 'flex-row-reverse' : ''}`}>
+                        <span>{isArabic ? 'مسودات' : 'Drafts'}</span>
+                        <Badge variant="secondary">12</Badge>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className={isArabic ? 'text-right' : ''}>{isArabic ? 'أداء المحتوى' : 'Content Performance'}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className={`flex justify-between text-sm ${isArabic ? 'flex-row-reverse' : ''}`}>
+                        <span>{isArabic ? 'مشاهدات المدونة' : 'Blog Views'}</span>
+                        <span>12,456</span>
+                      </div>
+                      <div className={`flex justify-between text-sm ${isArabic ? 'flex-row-reverse' : ''}`}>
+                        <span>{isArabic ? 'مشاركات اجتماعية' : 'Social Shares'}</span>
+                        <span>2,341</span>
+                      </div>
+                      <div className={`flex justify-between text-sm ${isArabic ? 'flex-row-reverse' : ''}`}>
+                        <span>{isArabic ? 'التفاعل' : 'Engagement'}</span>
+                        <span>4.2%</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </TabsContent>
 
-            {/* Social Content Creator Tab */}
-            <TabsContent value="social-creator" className="flex-1 p-4 space-y-4 overflow-auto">
-              <div className="text-center">
-                <div className="text-3xl mb-2">📱</div>
-                <h3 className={`font-semibold ${isArabic ? 'text-right' : ''}`}>{isArabic ? 'منشئ المحتوى الاجتماعي' : 'Social Content Creator'}</h3>
-                <p className={`text-sm text-gray-600 ${isArabic ? 'text-right' : ''}`}>{isArabic ? 'إنشاء ونشر المحتوى الاجتماعي' : 'Content Creation & Publishing'}</p>
-                <Badge className="mt-2 bg-purple-500">{isArabic ? 'نشط' : 'Active'}</Badge>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
+            <TabsContent value="analytics" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <Card>
-                  <CardContent className="p-3">
-                    <div className="flex items-center gap-2">
-                      <ThumbsUp className="h-4 w-4 text-purple-500" />
-                      <div>
-                        <p className="text-xs text-gray-600">{isArabic ? 'التفاعل' : 'Engagement'}</p>
-                        <p className="font-semibold">4.2%</p>
-                      </div>
+                  <CardHeader>
+                    <CardTitle className={isArabic ? 'text-right' : ''}>{isArabic ? 'عائد الاستثمار' : 'ROI'}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-green-600">4.2x</div>
+                      <p className="text-sm text-gray-600">{isArabic ? 'عائد الإعلانات' : 'Return on Ad Spend'}</p>
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card>
-                  <CardContent className="p-3">
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4 text-green-500" />
-                      <div>
-                        <p className="text-xs text-gray-600">{isArabic ? 'النمو' : 'Growth'}</p>
-                        <p className="font-semibold">+12%</p>
-                      </div>
+                  <CardHeader>
+                    <CardTitle className={isArabic ? 'text-right' : ''}>{isArabic ? 'الإيرادات' : 'Revenue'}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-blue-600">$52K</div>
+                      <p className="text-sm text-gray-600">{isArabic ? 'هذا الشهر' : 'This Month'}</p>
                     </div>
                   </CardContent>
                 </Card>
-              </div>
 
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className={`text-sm ${isArabic ? 'text-right' : ''}`}>{isArabic ? 'تقويم المحتوى' : 'Content Calendar'}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div className="flex justify-between text-xs">
-                    <span>{isArabic ? 'جاهز للنشر' : 'Ready'}</span>
-                    <Badge variant="secondary">8</Badge>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span>{isArabic ? 'في المراجعة' : 'Review'}</span>
-                    <Badge variant="secondary">3</Badge>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span>{isArabic ? 'مسودات' : 'Drafts'}</span>
-                    <Badge variant="secondary">12</Badge>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span>{isArabic ? 'أفكار' : 'Ideas'}</span>
-                    <Badge variant="secondary">25</Badge>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <div className="grid grid-cols-2 gap-2">
-                <Button size="sm" variant="outline">{isArabic ? 'إنشاء منشور' : 'Create Post'}</Button>
-                <Button size="sm" variant="outline">{isArabic ? 'جدولة المحتوى' : 'Schedule Content'}</Button>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className={isArabic ? 'text-right' : ''}>{isArabic ? 'العملاء الجدد' : 'New Customers'}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-purple-600">284</div>
+                      <p className="text-sm text-gray-600">{isArabic ? 'هذا الأسبوع' : 'This Week'}</p>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </TabsContent>
 
-            {/* Social CX Manager Tab */}
-            <TabsContent value="social-cx" className="flex-1 p-4 space-y-4 overflow-auto">
-              <div className="text-center">
-                <div className="text-3xl mb-2">👥</div>
-                <h3 className={`font-semibold ${isArabic ? 'text-right' : ''}`}>{isArabic ? 'مدير التجربة الاجتماعية' : 'Social CX Manager'}</h3>
-                <p className={`text-sm text-gray-600 ${isArabic ? 'text-right' : ''}`}>{isArabic ? 'المراقبة وتجربة العملاء' : 'Brand Monitoring & Customer Experience'}</p>
-                <Badge className="mt-2 bg-pink-500">{isArabic ? 'نشط' : 'Active'}</Badge>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <Card>
-                  <CardContent className="p-3">
-                    <div className="flex items-center gap-2">
-                      <MessageCircle className="h-4 w-4 text-pink-500" />
-                      <div>
-                        <p className="text-xs text-gray-600">{isArabic ? 'ذكر العلامة' : 'Mentions'}</p>
-                        <p className="font-semibold">47</p>
+            <TabsContent value="agents" className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {agents.map((agent) => (
+                  <Card key={agent.id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setSelectedAgent(agent)}>
+                    <CardContent className="p-6">
+                      <div className={`flex items-center gap-3 mb-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                        <div className="text-2xl">{agent.icon}</div>
+                        <div className={isArabic ? 'text-right' : ''}>
+                          <h3 className="font-semibold">{agent.name}</h3>
+                          <p className="text-sm text-gray-600">{agent.role}</p>
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-3">
-                    <div className="flex items-center gap-2">
-                      <ThumbsUp className="h-4 w-4 text-green-500" />
-                      <div>
-                        <p className="text-xs text-gray-600">{isArabic ? 'المشاعر الإيجابية' : 'Positive'}</p>
-                        <p className="font-semibold">78%</p>
+                      <div className="space-y-2">
+                        <div className={`flex justify-between text-sm ${isArabic ? 'flex-row-reverse' : ''}`}>
+                          <span>{isArabic ? 'المهام المكتملة' : 'Tasks Completed'}</span>
+                          <span>{agent.completedTasks}</span>
+                        </div>
+                        <div className={`flex justify-between text-sm ${isArabic ? 'flex-row-reverse' : ''}`}>
+                          <span>{isArabic ? 'التقدم' : 'Progress'}</span>
+                          <span>{agent.progress}%</span>
+                        </div>
+                        <Progress value={agent.progress} className="h-2" />
+                        <Badge className={`${agent.bgColor} text-white`}>
+                          {isArabic ? (agent.status === 'active' ? 'نشط' : agent.status === 'working' ? 'يعمل' : 'في الانتظار') : agent.status}
+                        </Badge>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className={`text-sm ${isArabic ? 'text-right' : ''}`}>{isArabic ? 'تحليل المشاعر' : 'Sentiment Analysis'}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div>
-                    <div className={`flex justify-between text-xs mb-1 ${isArabic ? 'flex-row-reverse' : ''}`}>
-                      <span className="text-green-600">{isArabic ? 'إيجابي' : 'Positive'}</span>
-                      <span>78%</span>
-                    </div>
-                    <Progress value={78} className="h-2" />
-                  </div>
-                  <div>
-                    <div className={`flex justify-between text-xs mb-1 ${isArabic ? 'flex-row-reverse' : ''}`}>
-                      <span className="text-gray-600">{isArabic ? 'محايد' : 'Neutral'}</span>
-                      <span>18%</span>
-                    </div>
-                    <Progress value={18} className="h-2" />
-                  </div>
-                  <div>
-                    <div className={`flex justify-between text-xs mb-1 ${isArabic ? 'flex-row-reverse' : ''}`}>
-                      <span className="text-red-600">{isArabic ? 'سلبي' : 'Negative'}</span>
-                      <span>4%</span>
-                    </div>
-                    <Progress value={4} className="h-2" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <div className="grid grid-cols-2 gap-2">
-                <Button size="sm" variant="outline">{isArabic ? 'تقرير المشاعر' : 'Sentiment Report'}</Button>
-                <Button size="sm" variant="outline">{isArabic ? 'مراقبة المنافسين' : 'Monitor Competitors'}</Button>
-              </div>
-            </TabsContent>
-
-            {/* Campaign Performance Tab */}
-            <TabsContent value="campaign-performance" className="flex-1 p-4 space-y-4 overflow-auto">
-              <div className="text-center">
-                <div className="text-3xl mb-2">📊</div>
-                <h3 className={`font-semibold ${isArabic ? 'text-right' : ''}`}>{isArabic ? 'أخصائي الحملات والأداء' : 'Campaign & Performance Specialist'}</h3>
-                <p className={`text-sm text-gray-600 ${isArabic ? 'text-right' : ''}`}>{isArabic ? 'إدارة الحملات وتحليل الأداء' : 'Campaign Management & Performance Analytics'}</p>
-                <Badge className="mt-2 bg-orange-500">{isArabic ? 'نشط' : 'Active'}</Badge>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <Card>
-                  <CardContent className="p-3">
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-orange-500" />
-                      <div>
-                        <p className="text-xs text-gray-600">{isArabic ? 'عائد الإعلان' : 'ROAS'}</p>
-                        <p className="font-semibold">4.2x</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-3">
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4 text-green-500" />
-                      <div>
-                        <p className="text-xs text-gray-600">{isArabic ? 'الإيرادات' : 'Revenue'}</p>
-                        <p className="font-semibold">$52K</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className={`text-sm ${isArabic ? 'text-right' : ''}`}>{isArabic ? 'الحملات النشطة' : 'Active Campaigns'}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div>
-                    <div className={`flex justify-between text-xs mb-1 ${isArabic ? 'flex-row-reverse' : ''}`}>
-                      <span>{isArabic ? 'حملة الوعي' : 'Brand Awareness'}</span>
-                      <span>75%</span>
-                    </div>
-                    <Progress value={75} className="h-2" />
-                  </div>
-                  <div>
-                    <div className={`flex justify-between text-xs mb-1 ${isArabic ? 'flex-row-reverse' : ''}`}>
-                      <span>{isArabic ? 'إطلاق المنتج' : 'Product Launch'}</span>
-                      <span>45%</span>
-                    </div>
-                    <Progress value={45} className="h-2" />
-                  </div>
-                  <div>
-                    <div className={`flex justify-between text-xs mb-1 ${isArabic ? 'flex-row-reverse' : ''}`}>
-                      <span>{isArabic ? 'جذب العملاء' : 'Lead Generation'}</span>
-                      <span>90%</span>
-                    </div>
-                    <Progress value={90} className="h-2" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <div className="grid grid-cols-2 gap-2">
-                <Button size="sm" variant="outline">{isArabic ? 'حملة جديدة' : 'New Campaign'}</Button>
-                <Button size="sm" variant="outline">{isArabic ? 'تحسين الأداء' : 'Optimize Performance'}</Button>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             </TabsContent>
           </Tabs>
         </div>
 
-        {/* Agent Workspace - 65% */}
-        <div className="flex-1 bg-gray-50 dark:bg-gray-950" style={{ order: isArabic ? 1 : 2 }}>
-          <AgentWorkspaceArea 
-            selectedAgent={selectedAgent}
-            isArabic={isArabic}
-          />
+        {/* Chat Area - 35% */}
+        <div className="w-[35%] min-w-[400px] border-l bg-white dark:bg-gray-900 p-6">
+          <EnhancedChatSection />
         </div>
       </div>
     </div>
