@@ -1,117 +1,65 @@
 
-import React, { useState, useEffect } from 'react';
-import Header from '@/components/layout/Header';
-import ChatInterface from '@/components/chat/ChatInterface';
-import DashboardTabs from '@/components/dashboard/DashboardTabs';
-import { ChevronUp, ChevronDown } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useNavigate } from 'react-router-dom';
+import { useOnboardingData } from '@/hooks/useOnboardingData';
+import DashboardHeader from '@/components/dashboard/DashboardHeader';
+import DashboardTabs from '@/components/dashboard/DashboardTabs';
+import { Loader2 } from 'lucide-react';
 
-const Index = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isChatExpanded, setIsChatExpanded] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const { t, language } = useLanguage();
-  
-  // Set up dark mode
+const Index: React.FC = () => {
+  const { user, loading: authLoading } = useAuth();
+  const { language } = useLanguage();
+  const navigate = useNavigate();
+  const { getOnboardingData, loading: onboardingLoading } = useOnboardingData();
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean | null>(null);
+  const isArabic = language === 'ar';
+
   useEffect(() => {
-    const isDark = localStorage.getItem('darkMode') === 'true';
-    setIsDarkMode(isDark);
-    if (isDark) {
-      document.documentElement.classList.add('dark');
+    if (!authLoading && !user) {
+      navigate('/auth');
+      return;
     }
-  }, []);
 
-  // Check if mobile viewport
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+    if (user && !onboardingLoading) {
+      checkOnboardingStatus();
+    }
+  }, [user, authLoading, onboardingLoading, navigate]);
 
-  const toggleDarkMode = () => {
-    const newDarkMode = !isDarkMode;
-    setIsDarkMode(newDarkMode);
-    localStorage.setItem('darkMode', newDarkMode.toString());
+  const checkOnboardingStatus = async () => {
+    const onboardingData = await getOnboardingData();
+    const completed = onboardingData?.completed_at !== null;
+    setHasCompletedOnboarding(completed);
     
-    if (newDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+    if (!completed) {
+      navigate('/onboarding');
     }
   };
 
-  const toggleChat = () => {
-    setIsChatExpanded(!isChatExpanded);
-  };
+  if (authLoading || onboardingLoading || hasCompletedOnboarding === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <p className="text-gray-600 dark:text-gray-300">
+            {isArabic ? 'جاري التحميل...' : 'Loading...'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
-    <div className={`flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950 ${language === 'ar' ? 'rtl' : ''}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-        
-        {/* Desktop Layout */}
-        {!isMobile && (
-          <div className="flex-1 overflow-auto p-6">
-            <div className={`flex gap-6 h-full ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
-              {/* Chat Interface (40% width) */}
-              <div className="w-[40%] h-full">
-                <ChatInterface />
-              </div>
-              
-              {/* Dashboard Content (60% width) */}
-              <div className="w-[60%] h-full overflow-hidden flex flex-col">
-                <DashboardTabs />
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {/* Mobile Layout */}
-        {isMobile && (
-          <div className="flex-1 flex flex-col h-full overflow-hidden">
-            {/* Dashboard always shown at the top */}
-            <div className={`flex-1 overflow-auto transition-all duration-300 ${isChatExpanded ? 'max-h-[40vh]' : 'max-h-[calc(100vh-120px)]'}`}>
-              <div className="p-4">
-                <DashboardTabs />
-              </div>
-            </div>
-            
-            {/* Chat bottom sheet */}
-            <div 
-              className={`
-                bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 rounded-t-xl shadow-lg
-                transition-all duration-300 ease-in-out
-                ${isChatExpanded ? 'h-[60vh]' : 'h-[120px]'}
-              `}
-            >
-              {/* Pull handle */}
-              <div 
-                className="h-10 flex items-center justify-center cursor-pointer border-b border-gray-200 dark:border-gray-800"
-                onClick={toggleChat}
-              >
-                <div className="w-12 h-1 bg-gray-300 dark:bg-gray-700 rounded-full my-2"></div>
-                {isChatExpanded ? 
-                  <ChevronDown className={`h-4 w-4 text-gray-500 absolute ${language === 'ar' ? 'left-4' : 'right-4'}`} /> : 
-                  <ChevronUp className={`h-4 w-4 text-gray-500 absolute ${language === 'ar' ? 'left-4' : 'right-4'}`} />
-                }
-                <span className={`text-sm text-gray-500 dark:text-gray-400 ml-4 absolute ${language === 'ar' ? 'right-4' : 'left-4'}`}>
-                  💬 {t('chat.insights')}
-                </span>
-              </div>
-              
-              {/* Chat Interface */}
-              <div className={`h-[calc(100%-40px)] overflow-hidden`}>
-                <ChatInterface isMobile={isMobile} isExpanded={isChatExpanded} />
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+    <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : ''}`}>
+      <DashboardHeader />
+      <main className="container mx-auto px-4 py-6">
+        <DashboardTabs />
+      </main>
     </div>
   );
 };

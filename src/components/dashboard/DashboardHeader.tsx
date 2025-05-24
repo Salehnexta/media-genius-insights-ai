@@ -1,46 +1,83 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Download, Filter } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { LogOut, Settings, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import LanguageToggle from '@/components/layout/LanguageToggle';
 
 const DashboardHeader: React.FC = () => {
-  const { t, language } = useLanguage();
+  const { user, signOut } = useAuth();
+  const { language, toggleLanguage } = useLanguage();
+  const navigate = useNavigate();
   const isArabic = language === 'ar';
 
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth');
+  };
+
   return (
-    <div className={`flex justify-between items-center mb-6 ${isArabic ? 'flex-row-reverse' : ''}`}>
-      <div className={isArabic ? 'text-right' : ''}>
-        <h1 className="text-2xl font-bold">{t('dashboard.title')}</h1>
-        <p className="text-muted-foreground">{t('dashboard.subtitle')}</p>
+    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+      <div className="container mx-auto px-4">
+        <div className={`flex justify-between items-center h-16 ${isArabic ? 'flex-row-reverse' : ''}`}>
+          {/* Logo */}
+          <div className={`flex items-center gap-3 ${isArabic ? 'flex-row-reverse' : ''}`}>
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">MG</span>
+            </div>
+            <span className="text-lg font-bold text-gray-900 dark:text-white">
+              {isArabic ? 'منصة التسويق الذكي' : 'AI Marketing'}
+            </span>
+          </div>
+
+          {/* User Menu */}
+          <div className={`flex items-center gap-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
+            <LanguageToggle isArabic={isArabic} onToggle={toggleLanguage} />
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/profile')}
+              className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}
+            >
+              <User className="h-4 w-4" />
+              {isArabic ? 'الملف الشخصي' : 'Profile'}
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/subscription')}
+              className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}
+            >
+              <Settings className="h-4 w-4" />
+              {isArabic ? 'الاشتراك' : 'Subscription'}
+            </Button>
+
+            <div className={`flex items-center gap-3 ${isArabic ? 'flex-row-reverse' : ''}`}>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  {user?.email?.charAt(0).toUpperCase() || 'U'}
+                </AvatarFallback>
+              </Avatar>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSignOut}
+                className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}
+              >
+                <LogOut className="h-4 w-4" />
+                {isArabic ? 'تسجيل الخروج' : 'Sign Out'}
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
-      
-      <div className={`flex items-center ${isArabic ? 'space-x-reverse space-x-3' : 'space-x-3'}`}>
-        <Select defaultValue="7days">
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select time period" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="today">{t('time.today')}</SelectItem>
-            <SelectItem value="yesterday">{t('time.yesterday')}</SelectItem>
-            <SelectItem value="7days">{t('time.7days')}</SelectItem>
-            <SelectItem value="30days">{t('time.30days')}</SelectItem>
-            <SelectItem value="90days">{t('time.90days')}</SelectItem>
-            <SelectItem value="custom">{t('time.custom')}</SelectItem>
-          </SelectContent>
-        </Select>
-        
-        <Button variant="outline" size="icon">
-          <Filter className="h-4 w-4" />
-        </Button>
-        
-        <Button variant="outline" className={isArabic ? 'flex-row-reverse' : ''}>
-          <Download className={`h-4 w-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
-          {t('export')}
-        </Button>
-      </div>
-    </div>
+    </header>
   );
 };
 
