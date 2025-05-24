@@ -15,6 +15,9 @@ import LandingPage from "./pages/LandingPage";
 import LandingPageAr from "./pages/LandingPageAr";
 import Onboarding from "./pages/Onboarding";
 import Campaigns from "./pages/Campaigns";
+import Subscription from "./pages/Subscription";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 import Debug from "./pages/Debug";
 import NotFound from "./pages/NotFound";
 
@@ -41,11 +44,21 @@ const App = () => {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/ar" element={<LandingPageAr />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/terms" element={<Terms />} />
                 <Route 
                   path="/onboarding" 
                   element={
                     <ProtectedRoute>
                       <Onboarding />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/subscription" 
+                  element={
+                    <ProtectedRoute>
+                      <Subscription />
                     </ProtectedRoute>
                   } 
                 />
