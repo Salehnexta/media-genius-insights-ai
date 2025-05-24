@@ -47,12 +47,12 @@ const DynamicPricingCards: React.FC<DynamicPricingCardsProps> = ({ onSelectPlan 
       console.error('Error fetching plans:', err);
       setError(isArabic ? 'فشل في تحميل الخطط' : 'Failed to load plans');
       
-      // Fallback to static plans
+      // Fallback to static plans with correct prices
       setPlans([
         {
           id: 'starter',
           name: isArabic ? 'المبتدئ' : 'Starter',
-          price_sar: 99,
+          price_sar: 599,
           monthly_message_limit: 1000,
           overage_price_sar: 0.20,
           features: [
@@ -64,7 +64,7 @@ const DynamicPricingCards: React.FC<DynamicPricingCardsProps> = ({ onSelectPlan 
         {
           id: 'professional',
           name: isArabic ? 'المحترف' : 'Professional',
-          price_sar: 299,
+          price_sar: 899,
           monthly_message_limit: 5000,
           overage_price_sar: 0.15,
           features: [
@@ -77,7 +77,7 @@ const DynamicPricingCards: React.FC<DynamicPricingCardsProps> = ({ onSelectPlan 
         {
           id: 'enterprise',
           name: isArabic ? 'المؤسسات' : 'Enterprise',
-          price_sar: 999,
+          price_sar: 1199,
           monthly_message_limit: 25000,
           overage_price_sar: 0.10,
           features: [

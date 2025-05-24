@@ -2,6 +2,7 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import DynamicPricingCards from '@/components/pricing/DynamicPricingCards';
+import Header from '@/components/layout/Header';
 
 const Pricing: React.FC = () => {
   const { language } = useLanguage();
@@ -9,6 +10,7 @@ const Pricing: React.FC = () => {
 
   return (
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : ''}`}>
+      <Header isDarkMode={false} toggleDarkMode={() => {}} />
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-12">
