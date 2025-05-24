@@ -1,192 +1,207 @@
-
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Moon, Sun, Menu, X, Globe } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Link, useNavigate } from 'react-router-dom';
-import UserMenu from './UserMenu';
+import { Switch } from "@/components/ui/switch"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { ModeToggle } from "@/components/ModeToggle"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  Home,
+  Menu,
+  Settings,
+  User,
+  LogOut,
+  Target,
+  Bot,
+  Brain
+} from "lucide-react"
 
 interface HeaderProps {
   isDarkMode: boolean;
   toggleDarkMode: () => void;
+  hideNavigation?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleDarkMode }) => {
-  const { user } = useAuth();
-  const { language, setLanguage, t } = useLanguage();
-  const navigate = useNavigate();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleDarkMode, hideNavigation = false }) => {
+  const { user, logout } = useAuth();
+  const { language, setLanguage } = useLanguage();
   const isArabic = language === 'ar';
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.dir = isArabic ? 'rtl' : 'ltr';
+  }, [language, isArabic]);
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/auth');
+  };
 
   const toggleLanguage = () => {
-    const newLanguage = language === 'en' ? 'ar' : 'en';
-    setLanguage(newLanguage);
+    setLanguage(isArabic ? 'en' : 'ar');
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
   };
 
   const navigationItems = [
-    { 
-      label: t('nav.dashboard'), 
-      href: '/dashboard',
-      protected: true
+    {
+      label: isArabic ? 'لوحة التحكم' : 'Dashboard',
+      href: '/',
+      icon: Home
     },
-    { 
-      label: t('nav.campaigns'), 
+    {
+      label: isArabic ? 'الحملات' : 'Campaigns',
       href: '/campaigns',
-      protected: true
+      icon: Target
     },
-    { 
-      label: isArabic ? 'الوكلاء الذكيين' : 'AI Agents', 
+    {
+      label: isArabic ? 'الوكلاء الذكيين' : 'AI Agents',
       href: '/agents',
-      protected: true
+      icon: Bot
     },
-    { 
-      label: isArabic ? 'الأسعار' : 'Pricing', 
-      href: language === 'ar' ? '/pricing-ar' : '/pricing',
-      protected: false
-    },
-    { 
-      label: isArabic ? 'الاشتراك' : 'Subscription', 
-      href: language === 'ar' ? '/subscription-ar' : '/subscription',
-      protected: true
+    {
+      label: isArabic ? 'الرؤى والتحليلات' : 'Insights & Analytics',
+      href: '/insights',
+      icon: Brain
     }
   ];
 
-  const handleNavigation = (href: string, requiresAuth: boolean) => {
-    if (requiresAuth && !user) {
-      navigate(language === 'ar' ? '/auth-ar' : '/auth');
-      return;
-    }
-    navigate(href);
-    setIsMobileMenuOpen(false);
-  };
-
   return (
-    <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
-      <div className="container mx-auto px-4 lg:px-6">
-        <div className={`flex items-center justify-between h-16 ${isArabic ? 'flex-row-reverse' : ''}`}>
-          {/* Logo */}
-          <Link 
-            to={user ? "/dashboard" : (language === 'ar' ? "/landing-ar" : "/landing")} 
-            className={`flex items-center space-x-2 ${isArabic ? 'space-x-reverse' : ''}`}
-          >
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">AI</span>
-            </div>
-            <span className="font-bold text-xl text-gray-900 dark:text-white">
-              {isArabic ? 'التسويق الذكي' : 'AI Marketing'}
-            </span>
-          </Link>
+    <header className="bg-white dark:bg-gray-900 border-b dark:border-gray-800 sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        <Link to="/" className="font-bold text-xl text-gray-900 dark:text-white">
+          AI Marketing Platform
+        </Link>
 
+        <div className="flex items-center gap-4">
           {/* Desktop Navigation */}
-          <nav className={`hidden md:flex items-center space-x-6 ${isArabic ? 'space-x-reverse' : ''}`}>
-            {navigationItems.map((item) => (
-              (!item.protected || user) && (
-                <button
+          {!hideNavigation && (
+            <nav className="hidden md:flex items-center gap-4">
+              {navigationItems.map((item) => (
+                <Link
                   key={item.href}
-                  onClick={() => handleNavigation(item.href, item.protected)}
-                  className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                  to={item.href}
+                  className={`text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors flex items-center gap-1 ${location.pathname === item.href ? 'text-blue-600 dark:text-blue-400' : ''}`}
                 >
+                  <item.icon className="h-4 w-4" />
                   {item.label}
-                </button>
-              )
-            ))}
-            
-            {/* Footer Links */}
-            <Link 
-              to="/privacy" 
-              className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm"
-            >
-              {isArabic ? 'الخصوصية' : 'Privacy'}
-            </Link>
-            <Link 
-              to="/terms" 
-              className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm"
-            >
-              {isArabic ? 'الشروط' : 'Terms'}
-            </Link>
-          </nav>
+                </Link>
+              ))}
+            </nav>
+          )}
 
-          {/* Controls */}
-          <div className={`flex items-center space-x-3 ${isArabic ? 'space-x-reverse' : ''}`}>
-            {/* Language Toggle */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleLanguage}
-              className="text-gray-600 dark:text-gray-300"
-            >
-              <Globe className="h-4 w-4 mr-1" />
-              {language === 'en' ? 'عربي' : 'EN'}
+          <div className="flex items-center gap-2">
+            {/* Language Switch */}
+            <Button variant="ghost" size="sm" onClick={toggleLanguage}>
+              {isArabic ? 'English' : 'عربي'}
             </Button>
 
             {/* Dark Mode Toggle */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleDarkMode}
-              className="text-gray-600 dark:text-gray-300"
-            >
-              {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </Button>
+            <ModeToggle />
 
-            {/* User Menu or Auth Button */}
+            {/* Profile Dropdown */}
             {user ? (
-              <UserMenu />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="h-8 w-8 p-0 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user?.image_url || ""} alt={user?.full_name || "User"} />
+                      <AvatarFallback>{user?.full_name?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{user?.full_name}</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user?.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate('/profile')}>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/subscription')}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Subscription</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
-              <Button 
-                onClick={() => navigate(language === 'ar' ? '/auth-ar' : '/auth')}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                {t('auth.signIn')}
-              </Button>
+              <Link to="/auth">
+                <Button variant="outline" size="sm">
+                  {isArabic ? 'تسجيل الدخول' : 'Sign In'}
+                </Button>
+              </Link>
             )}
 
-            {/* Mobile Menu Toggle */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="md:hidden"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
+            {/* Mobile Menu Button */}
+            {!hideNavigation && (
+              <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" className="md:hidden h-8 w-8 p-0">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="sm:max-w-sm">
+                  <SheetHeader>
+                    <SheetTitle>{isArabic ? 'القائمة' : 'Menu'}</SheetTitle>
+                    <SheetDescription>
+                      {isArabic ? 'استكشف الخيارات المتاحة' : 'Explore available options'}
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div className="grid gap-4 py-4">
+                    {navigationItems.map((item) => (
+                      <Link
+                        key={item.href}
+                        to={item.href}
+                        className={`flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 ${location.pathname === item.href ? 'text-blue-600 dark:text-blue-400' : ''}`}
+                        onClick={closeMenu}
+                      >
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.label}</span>
+                      </Link>
+                    ))}
+                    {user && (
+                      <Button variant="destructive" size="sm" onClick={handleLogout} className="mt-4 w-full">
+                        {isArabic ? 'تسجيل الخروج' : 'Log Out'}
+                      </Button>
+                    )}
+                  </div>
+                </SheetContent>
+              </Sheet>
+            )}
           </div>
         </div>
-
-        {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 dark:border-gray-800 py-4">
-            <nav className="flex flex-col space-y-3">
-              {navigationItems.map((item) => (
-                (!item.protected || user) && (
-                  <button
-                    key={item.href}
-                    onClick={() => handleNavigation(item.href, item.protected)}
-                    className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-left"
-                  >
-                    {item.label}
-                  </button>
-                )
-              ))}
-              <Link 
-                to="/privacy" 
-                className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {isArabic ? 'الخصوصية' : 'Privacy'}
-              </Link>
-              <Link 
-                to="/terms" 
-                className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {isArabic ? 'الشروط' : 'Terms'}
-              </Link>
-            </nav>
-          </div>
-        )}
       </div>
     </header>
   );
