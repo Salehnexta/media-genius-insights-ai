@@ -92,7 +92,7 @@ const OnboardingWizard: React.FC = () => {
         clearTimeout(timer);
       }
     };
-  }, [data]);
+  }, [data, saveData]);
 
   // Cleanup timer on unmount
   useEffect(() => {
