@@ -29,26 +29,19 @@ class AgentOrchestrationService {
   private workflows: Map<string, AgentWorkflow> = new Map();
   private isInitialized = false;
 
-  // Initialize the orchestration service
   async initialize() {
     if (this.isInitialized) return;
     
-    console.log('Initializing Agent Orchestration Service...');
+    console.log('Initializing Agent Orchestration Service with 5 core agents...');
     
-    // Initialize collaborative agents
     initializeCollaborativeAgents();
-    
-    // Set up workflow templates
-    this.setupWorkflowTemplates();
-    
-    // Start monitoring system
+    this.setupCore5WorkflowTemplates();
     this.startWorkflowMonitoring();
     
     this.isInitialized = true;
-    console.log('Agent Orchestration Service initialized successfully');
+    console.log('Agent Orchestration Service initialized successfully with 5 core marketing agents');
   }
 
-  // Create a new workflow
   async createWorkflow(
     name: string,
     description: string,
@@ -71,14 +64,11 @@ class AgentOrchestrationService {
     };
     
     this.workflows.set(workflowId, workflow);
-    
-    // Store in database
     await this.storeWorkflowInDatabase(workflow);
     
     return workflowId;
   }
 
-  // Execute a workflow
   async executeWorkflow(workflowId: string): Promise<void> {
     const workflow = this.workflows.get(workflowId);
     if (!workflow) throw new Error(`Workflow ${workflowId} not found`);
@@ -87,7 +77,6 @@ class AgentOrchestrationService {
     workflow.status = 'active';
     
     try {
-      // Execute steps in order, respecting dependencies
       await this.executeWorkflowSteps(workflow);
       
       workflow.status = 'completed';
@@ -100,16 +89,13 @@ class AgentOrchestrationService {
       workflow.status = 'failed';
     }
     
-    // Update database
     await this.updateWorkflowInDatabase(workflow);
   }
 
-  // Execute workflow steps
   private async executeWorkflowSteps(workflow: AgentWorkflow): Promise<void> {
     const completedSteps = new Set<string>();
     
     while (completedSteps.size < workflow.steps.length) {
-      // Find next executable steps (dependencies satisfied)
       const executableSteps = workflow.steps.filter(step => 
         step.status === 'pending' && 
         step.dependencies.every(dep => completedSteps.has(dep))
@@ -119,7 +105,6 @@ class AgentOrchestrationService {
         throw new Error('No executable steps found - possible circular dependency');
       }
       
-      // Execute steps in parallel
       const stepPromises = executableSteps.map(async (step) => {
         step.status = 'in_progress';
         
@@ -129,7 +114,6 @@ class AgentOrchestrationService {
           step.status = 'completed';
           completedSteps.add(step.id);
           
-          // Update progress
           workflow.progress = (completedSteps.size / workflow.steps.length) * 100;
           
           return result;
@@ -143,7 +127,6 @@ class AgentOrchestrationService {
     }
   }
 
-  // Execute individual workflow step
   private async executeWorkflowStep(step: WorkflowStep, workflow: AgentWorkflow): Promise<any> {
     console.log(`Executing step: ${step.description} (Agent: ${step.agentId})`);
     
@@ -152,7 +135,6 @@ class AgentOrchestrationService {
       throw new Error(`Agent ${step.agentId} not found`);
     }
     
-    // Create task for the agent
     const task = {
       id: `task-${step.id}`,
       agentId: step.agentId,
@@ -171,103 +153,105 @@ class AgentOrchestrationService {
       createdAt: new Date()
     };
     
-    // Process task through agent
     const result = await agent.processTask(task);
     
-    // Log step completion
     console.log(`Step completed: ${step.description}`, result);
     
     return result;
   }
 
-  // Setup predefined workflow templates
-  private setupWorkflowTemplates() {
-    // Campaign Launch Workflow
+  private setupCore5WorkflowTemplates() {
+    // Campaign Launch Workflow with 5 Core Agents
     this.createWorkflowTemplate('campaign-launch', [
       {
         agentId: 'marketing-manager',
-        taskType: 'campaign_planning',
-        description: 'Define campaign strategy and objectives',
+        taskType: 'strategic_planning',
+        description: 'Define campaign strategy and coordinate team',
         dependencies: []
       },
       {
-        agentId: 'content-strategist',
+        agentId: 'content-seo',
         taskType: 'content_creation',
-        description: 'Create content strategy and calendar',
+        description: 'Create content strategy and long-form assets',
         dependencies: ['step-1']
       },
       {
-        agentId: 'analytics-expert',
-        taskType: 'performance_setup',
-        description: 'Set up tracking and measurement framework',
-        dependencies: ['step-1']
-      },
-      {
-        agentId: 'social-media',
-        taskType: 'social_strategy',
-        description: 'Develop social media distribution plan',
+        agentId: 'social-creator',
+        taskType: 'social_content_creation',
+        description: 'Develop social media content and publishing plan',
         dependencies: ['step-2']
       },
       {
-        agentId: 'marketing-manager',
-        taskType: 'campaign_launch',
-        description: 'Coordinate campaign launch',
+        agentId: 'social-cx',
+        taskType: 'sentiment_monitoring',
+        description: 'Set up monitoring and community management',
+        dependencies: ['step-1']
+      },
+      {
+        agentId: 'campaign-performance',
+        taskType: 'campaign_planning',
+        description: 'Execute campaigns and track performance',
         dependencies: ['step-2', 'step-3', 'step-4']
       }
     ]);
 
-    // Content Optimization Workflow
-    this.createWorkflowTemplate('content-optimization', [
+    // Content Marketing Workflow
+    this.createWorkflowTemplate('content-marketing', [
       {
-        agentId: 'analytics-expert',
-        taskType: 'content_analysis',
-        description: 'Analyze current content performance',
+        agentId: 'marketing-manager',
+        taskType: 'team_coordination',
+        description: 'Coordinate content marketing strategy',
         dependencies: []
       },
       {
-        agentId: 'seo-expert',
-        taskType: 'seo_audit',
-        description: 'Conduct SEO analysis and recommendations',
+        agentId: 'content-seo',
+        taskType: 'editorial_workflow',
+        description: 'Create editorial calendar and content',
         dependencies: ['step-1']
       },
       {
-        agentId: 'content-strategist',
-        taskType: 'content_optimization',
-        description: 'Optimize content based on insights',
-        dependencies: ['step-1', 'step-2']
+        agentId: 'social-creator',
+        taskType: 'content_scheduling',
+        description: 'Adapt content for social platforms',
+        dependencies: ['step-2']
+      },
+      {
+        agentId: 'campaign-performance',
+        taskType: 'performance_optimization',
+        description: 'Track and optimize content performance',
+        dependencies: ['step-2', 'step-3']
       }
     ]);
 
     // Crisis Response Workflow
     this.createWorkflowTemplate('crisis-response', [
       {
-        agentId: 'social-media',
-        taskType: 'crisis_assessment',
+        agentId: 'social-cx',
+        taskType: 'crisis_detection',
         description: 'Assess crisis severity and immediate response',
         dependencies: []
       },
       {
-        agentId: 'brand-manager',
-        taskType: 'crisis_messaging',
-        description: 'Develop crisis response messaging',
+        agentId: 'marketing-manager',
+        taskType: 'team_coordination',
+        description: 'Coordinate crisis response strategy',
         dependencies: ['step-1']
       },
       {
-        agentId: 'marketing-manager',
-        taskType: 'crisis_coordination',
-        description: 'Coordinate overall crisis response',
-        dependencies: ['step-1', 'step-2']
+        agentId: 'social-creator',
+        taskType: 'social_content_creation',
+        description: 'Create crisis response content',
+        dependencies: ['step-2']
       },
       {
-        agentId: 'analytics-expert',
-        taskType: 'crisis_monitoring',
-        description: 'Monitor crisis impact and sentiment',
+        agentId: 'campaign-performance',
+        taskType: 'performance_optimization',
+        description: 'Monitor crisis impact and adjust campaigns',
         dependencies: ['step-3']
       }
     ]);
   }
 
-  // Create workflow template
   private createWorkflowTemplate(
     templateName: string, 
     steps: Omit<WorkflowStep, 'id' | 'status'>[]
@@ -276,17 +260,15 @@ class AgentOrchestrationService {
     templates[templateName] = steps;
   }
 
-  // Get workflow templates
   private getWorkflowTemplates(): Record<string, Omit<WorkflowStep, 'id' | 'status'>[]> {
     return {
       'campaign-launch': [],
-      'content-optimization': [],
+      'content-marketing': [],
       'crisis-response': [],
-      'performance-analysis': []
+      'performance-optimization': []
     };
   }
 
-  // Create workflow from template
   async createWorkflowFromTemplate(
     templateName: string,
     workflowName: string,
@@ -302,31 +284,25 @@ class AgentOrchestrationService {
     return this.createWorkflow(workflowName, description, template);
   }
 
-  // Get workflow status
   getWorkflowStatus(workflowId: string): AgentWorkflow | undefined {
     return this.workflows.get(workflowId);
   }
 
-  // Get all workflows
   getAllWorkflows(): AgentWorkflow[] {
     return Array.from(this.workflows.values());
   }
 
-  // Start workflow monitoring
   private startWorkflowMonitoring() {
-    // Monitor workflow progress every 30 seconds
     setInterval(() => {
       this.monitorActiveWorkflows();
     }, 30000);
   }
 
-  // Monitor active workflows
   private async monitorActiveWorkflows() {
     const activeWorkflows = Array.from(this.workflows.values())
       .filter(w => w.status === 'active');
     
     for (const workflow of activeWorkflows) {
-      // Check for stuck workflows (no progress in 10 minutes)
       const lastActivity = Math.max(
         ...workflow.steps.map(s => s.output?.timestamp || 0)
       );
@@ -334,12 +310,10 @@ class AgentOrchestrationService {
       const timeSinceActivity = Date.now() - lastActivity;
       if (timeSinceActivity > 10 * 60 * 1000) { // 10 minutes
         console.warn(`Workflow ${workflow.name} appears stuck`);
-        // Could trigger alerts or recovery actions here
       }
     }
   }
 
-  // Store workflow in database
   private async storeWorkflowInDatabase(workflow: AgentWorkflow) {
     try {
       await supabase
@@ -360,7 +334,6 @@ class AgentOrchestrationService {
     }
   }
 
-  // Update workflow in database
   private async updateWorkflowInDatabase(workflow: AgentWorkflow) {
     try {
       await supabase
@@ -377,7 +350,6 @@ class AgentOrchestrationService {
     }
   }
 
-  // Trigger predefined workflows based on events
   async triggerWorkflowByEvent(eventType: string, context: Record<string, any>): Promise<string | null> {
     switch (eventType) {
       case 'new-campaign-request':
@@ -387,11 +359,11 @@ class AgentOrchestrationService {
           `Launch workflow for campaign: ${context.campaignName}`
         );
       
-      case 'content-performance-drop':
+      case 'content-strategy-needed':
         return this.createWorkflowFromTemplate(
-          'content-optimization',
-          'Content Performance Optimization',
-          'Optimize content based on performance decline'
+          'content-marketing',
+          'Content Marketing Strategy',
+          'Comprehensive content marketing workflow'
         );
       
       case 'crisis-detected':
