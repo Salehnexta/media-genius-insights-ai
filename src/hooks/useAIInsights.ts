@@ -96,7 +96,20 @@ export const useAIInsights = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setInsights(data || []);
+      
+      // Transform database data to match AIInsight interface
+      const typedInsights: AIInsight[] = (data || []).map(item => ({
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        category: item.category,
+        priority: (item.priority as 'low' | 'medium' | 'high') || 'medium',
+        actionable: item.actionable,
+        metadata: item.metadata as Record<string, any>,
+        created_at: item.created_at
+      }));
+      
+      setInsights(typedInsights);
     } catch (error) {
       console.error('Error fetching insights:', error);
     } finally {
