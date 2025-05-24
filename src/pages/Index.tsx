@@ -1,10 +1,11 @@
+
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 import { useOnboardingData } from '@/hooks/useOnboardingData';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
-import DashboardTabs from '@/components/dashboard/DashboardTabs';
+import DashboardTabsNew from '@/components/dashboard/DashboardTabsNew';
 import ChatSection from '@/components/dashboard/ChatSection';
 import { Loader2 } from 'lucide-react';
 
@@ -90,7 +91,7 @@ const Index: React.FC = () => {
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
           <p className="text-gray-600 dark:text-gray-300">
-            {isArabic ? 'جاري التحميل...' : 'Loading dashboard...'}
+            {isArabic ? 'جاري تحميل فريق التسويق الذكي...' : 'Loading your AI Marketing Team...'}
           </p>
           <p className="text-sm text-gray-500 mt-2">
             Auth: {authLoading ? 'loading' : 'ready'} | 
@@ -123,7 +124,7 @@ const Index: React.FC = () => {
         <aside className={`w-[35%] p-4 bg-white dark:bg-gray-900 ${isArabic ? 'border-l' : 'border-r'}`}>
           <div className="sticky top-6">
             <h2 className={`text-xl font-bold mb-4 ${isArabic ? 'text-right' : 'text-left'}`}>
-              {isArabic ? 'مساعد التسويق الذكي' : 'AI Marketing Assistant'}
+              {isArabic ? 'مدير التسويق الذكي' : 'AI Marketing Manager'}
             </h2>
             <ChatSection />
           </div>
@@ -131,7 +132,7 @@ const Index: React.FC = () => {
         
         {/* Main Content Area - 65% */}
         <main className={`flex-1 w-[65%] px-4 py-6 ${isArabic ? 'pr-4 pl-4' : 'px-4'}`}>
-          <DashboardTabs />
+          <DashboardTabsNew />
         </main>
       </div>
     </div>

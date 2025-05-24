@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { LogOut, Settings, User } from 'lucide-react';
+import { LogOut, Settings, User, Brain, Calendar, Palette, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LanguageToggle from '@/components/layout/LanguageToggle';
 
@@ -25,12 +26,45 @@ const DashboardHeader: React.FC = () => {
           {/* Logo - Right side for Arabic, Left for English */}
           <div className={`flex items-center gap-3 ${isArabic ? 'flex-row-reverse order-last' : 'order-first'}`}>
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">MG</span>
+              <Brain className="text-white h-5 w-5" />
             </div>
             <span className="text-lg font-bold text-gray-900 dark:text-white">
-              {isArabic ? 'منصة التسويق الذكي' : 'AI Marketing'}
+              {isArabic ? 'فريق التسويق الذكي' : 'AI Marketing Team'}
             </span>
           </div>
+
+          {/* Navigation Menu */}
+          <nav className={`hidden md:flex items-center gap-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/campaigns')}
+              className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}
+            >
+              <Zap className="h-4 w-4" />
+              <span>{isArabic ? 'مركز التسويق' : 'Marketing Hub'}</span>
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/insights')}
+              className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}
+            >
+              <Calendar className="h-4 w-4" />
+              <span>{isArabic ? 'التحليلات' : 'Performance Analytics'}</span>
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/agents')}
+              className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}
+            >
+              <Brain className="h-4 w-4" />
+              <span>{isArabic ? 'لوحة الفريق' : 'Team Dashboard'}</span>
+            </Button>
+          </nav>
 
           {/* User Menu - Left side for Arabic, Right for English */}
           <div className={`flex items-center gap-4 ${isArabic ? 'flex-row-reverse order-first' : 'order-last'}`}>

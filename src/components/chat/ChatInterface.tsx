@@ -2,10 +2,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Bot, User, TrendingUp, BarChart3, Users, Target, Loader2 } from 'lucide-react';
+import { Send, Bot, User, TrendingUp, BarChart3, Users, Target, Loader2, Brain } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import AIMarketingManagerIntro from './AIMarketingManagerIntro';
 
 interface Message {
   id: string;
@@ -26,16 +27,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Initialize messages with translations
+  // Initialize messages with AI Marketing Manager introduction
   useEffect(() => {
     const initialMessages: Message[] = [
       {
         id: '1',
         content: isArabic 
-          ? 'مرحباً! أنا مساعد التسويق الذكي الخاص بك. كيف يمكنني مساعدتك اليوم؟'
-          : 'Hello! I\'m your AI Marketing Assistant. How can I help you today?',
+          ? 'مرحباً! أنا مدير التسويق الذكي، وأنا هنا لقيادة فريق التسويق الذكي الخاص بك. فريقنا يتكون من 8 خبراء تسويق ذكيين مستعدين للعمل 24/7 لنجاح عملك. كيف يمكنني مساعدتك اليوم؟'
+          : 'Hello! I\'m your AI Marketing Manager, here to lead your complete AI Marketing Team. Our team consists of 8 AI marketing experts ready to work 24/7 for your business success. How can I help you today?',
         sender: 'ai',
         timestamp: new Date(),
       }
@@ -46,35 +48,35 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
   const suggestionCards = [
     {
       id: 1,
-      title: isArabic ? 'تحليل الحملة' : 'Campaign Analysis',
-      subtitle: isArabic ? 'تحليل أداء حملاتك التسويقية' : 'Analyze your marketing campaign performance',
-      icon: <BarChart3 className="h-6 w-6" />,
+      title: isArabic ? 'استراتيجية التسويق' : 'Marketing Strategy',
+      subtitle: isArabic ? 'تطوير خطة تسويقية شاملة' : 'Develop comprehensive marketing plan',
+      icon: <Brain className="h-6 w-6" />,
       bgColor: "bg-gradient-to-br from-blue-500 to-blue-600",
-      context: "campaign"
+      context: "strategy"
     },
     {
       id: 2,
-      title: isArabic ? 'إنشاء المحتوى' : 'Content Creation',
-      subtitle: isArabic ? 'أفكار لمحتوى جذاب' : 'Ideas for engaging content',
-      icon: <Target className="h-6 w-6" />,
+      title: isArabic ? 'تعيين مهام الفريق' : 'Assign Team Tasks',
+      subtitle: isArabic ? 'توزيع المهام على أعضاء الفريق' : 'Distribute tasks to team members',
+      icon: <Users className="h-6 w-6" />,
       bgColor: "bg-gradient-to-br from-purple-500 to-purple-600",
-      context: "content"
+      context: "team-management"
     },
     {
       id: 3,
-      title: isArabic ? 'تحليل الجمهور' : 'Audience Analysis',
-      subtitle: isArabic ? 'فهم جمهورك المستهدف' : 'Understand your target audience',
-      icon: <Users className="h-6 w-6" />,
+      title: isArabic ? 'تحليل الأداء' : 'Performance Analysis',
+      subtitle: isArabic ? 'مراجعة نتائج الحملات الحالية' : 'Review current campaign results',
+      icon: <BarChart3 className="h-6 w-6" />,
       bgColor: "bg-gradient-to-br from-green-500 to-green-600",
-      context: "audience"
+      context: "analytics"
     },
     {
       id: 4,
-      title: isArabic ? 'الاتجاهات' : 'Market Trends',
-      subtitle: isArabic ? 'آخر الاتجاهات في السوق' : 'Latest market trends',
-      icon: <TrendingUp className="h-6 w-6" />,
+      title: isArabic ? 'تحسين العلامة التجارية' : 'Brand Optimization',
+      subtitle: isArabic ? 'تحسين هوية ورسائل العلامة التجارية' : 'Improve brand identity and messaging',
+      icon: <Target className="h-6 w-6" />,
       bgColor: "bg-gradient-to-br from-orange-500 to-orange-600",
-      context: "trends"
+      context: "branding"
     }
   ];
 
@@ -90,7 +92,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
         body: { 
           message, 
           context,
-          language 
+          language,
+          role: 'marketing-manager' // Specify that this is the marketing manager
         }
       });
 
@@ -106,6 +109,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
   const handleSend = async (messageText?: string, context?: string) => {
     const textToSend = messageText || input;
     if (!textToSend.trim() || isLoading) return;
+    
+    // Hide intro when user starts chatting
+    if (showIntro) {
+      setShowIntro(false);
+    }
     
     // Add user message
     const userMessage: Message = {
@@ -172,6 +180,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
 
   return (
     <div className={`flex flex-col h-full border rounded-lg shadow-sm bg-white dark:bg-gray-900 ${isMobile ? 'border-0 shadow-none rounded-none' : ''} ${isArabic ? 'rtl' : ''}`}>
+      {/* Show intro only when chat is empty and expanded */}
+      {showIntro && (!isMobile || isExpanded) && messages.length <= 1 && (
+        <div className="p-4 border-b">
+          <AIMarketingManagerIntro />
+        </div>
+      )}
+
       {/* Messages Area */}
       <div className={`flex-1 p-4 ${isMobile ? 'px-3' : ''} overflow-y-auto space-y-4`}>
         {displayMessages.map(message => (
@@ -182,14 +197,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
             <div className={`flex max-w-[85%] items-start ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
               {message.sender === 'ai' && !isArabic && (
                 <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                  {message.loading ? <Loader2 size={16} className="animate-spin" /> : <Bot size={16} />}
+                  {message.loading ? <Loader2 size={16} className="animate-spin" /> : <Brain size={16} />}
                 </div>
               )}
               <div className={`${message.sender === 'ai' ? 'chat-bubble-ai' : 'chat-bubble-user'} ${isArabic ? 'text-right' : ''}`}>
                 {message.loading ? (
                   <div className="flex items-center space-x-2">
                     <Loader2 size={16} className="animate-spin" />
-                    <span className="text-sm">{isArabic ? 'جاري الكتابة...' : 'Thinking...'}</span>
+                    <span className="text-sm">{isArabic ? 'جاري التفكير...' : 'Thinking...'}</span>
                   </div>
                 ) : (
                   <p className="text-sm">{message.content}</p>
@@ -207,7 +222,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
               )}
               {message.sender === 'ai' && isArabic && (
                 <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                  {message.loading ? <Loader2 size={16} className="animate-spin" /> : <Bot size={16} />}
+                  {message.loading ? <Loader2 size={16} className="animate-spin" /> : <Brain size={16} />}
                 </div>
               )}
               {message.sender === 'user' && isArabic && (
@@ -220,11 +235,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
         ))}
         <div ref={messagesEndRef} />
         
-        {/* Suggestion Cards - Only show in full chat view */}
-        {(!isMobile || isExpanded) && messages.length <= 1 && (
+        {/* Suggestion Cards - Only show in full chat view and after intro */}
+        {(!isMobile || isExpanded) && !showIntro && messages.length <= 1 && (
           <div className="mt-6">
             <p className={`text-sm text-gray-600 dark:text-gray-400 mb-4 ${isArabic ? 'text-right' : ''}`}>
-              {isArabic ? 'اقتراحات لتبدأ بها:' : 'Suggestions to get you started:'}
+              {isArabic ? 'اقتراحات للبدء:' : 'Quick actions to get started:'}
             </p>
             <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2'} gap-3`}>
               {suggestionCards.map(card => (
@@ -250,7 +265,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
       <div className="p-3 border-t">
         <div className={`flex ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
           <Input
-            placeholder={isArabic ? 'اكتب رسالتك هنا...' : 'Type your message here...'}
+            placeholder={isArabic ? 'تحدث مع مدير التسويق الذكي...' : 'Chat with your AI Marketing Manager...'}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !isLoading && handleSend()}
@@ -274,7 +289,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
         {(!isMobile || isExpanded) && (
           <div className={`flex ${isArabic ? 'flex-row-reverse' : ''} justify-between mt-2`}>
             <div className={`text-xs text-gray-500 dark:text-gray-400 ${isArabic ? 'text-right' : ''}`}>
-              {isArabic ? 'مثال: "كيف يمكنني تحسين حملتي الإعلانية؟"' : 'Example: "How can I improve my ad campaign?"'}
+              {isArabic ? 'مثال: "أريد استراتيجية تسويقية جديدة"' : 'Example: "I need a new marketing strategy"'}
             </div>
             <div className="text-xs text-blue-500">{isArabic ? 'مدعوم بـ GPT-4' : 'Powered by GPT-4'}</div>
           </div>
