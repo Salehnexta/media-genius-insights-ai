@@ -20,9 +20,9 @@ const Auth = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, user, loading } = useAuth();
   const { toast } = useToast();
   const { setLanguage, language } = useLanguage();
   const navigate = useNavigate();
@@ -38,10 +38,10 @@ const Auth = () => {
   const from = location.state?.from?.pathname || '/';
 
   useEffect(() => {
-    if (user) {
+    if (user && !loading) {
       navigate(from, { replace: true });
     }
-  }, [user, navigate, from]);
+  }, [user, loading, navigate, from]);
 
   const handleBackToHome = () => {
     if (isArabic) {
@@ -53,7 +53,10 @@ const Auth = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    
+    if (isSubmitting) return; // Prevent double submission
+    
+    setIsSubmitting(true);
 
     try {
       if (isLogin) {
@@ -101,7 +104,7 @@ const Auth = () => {
         variant: 'destructive'
       });
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -116,6 +119,15 @@ const Auth = () => {
       setIsLogin(!isLogin);
     }
   };
+
+  // Show loading only on initial load
+  if (loading && !user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4 ${isArabic ? 'rtl' : ''}`}>
@@ -136,7 +148,7 @@ const Auth = () => {
               confirmPassword={confirmPassword}
               fullName={fullName}
               showPassword={showPassword}
-              loading={loading}
+              loading={isSubmitting}
               onEmailChange={setEmail}
               onPasswordChange={setPassword}
               onConfirmPasswordChange={setConfirmPassword}

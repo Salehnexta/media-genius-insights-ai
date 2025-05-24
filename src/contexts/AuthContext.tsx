@@ -28,9 +28,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+
     // Set up auth state listener FIRST - critical for preventing deadlocks
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        if (!mounted) return;
+        
         console.log('Auth state change:', event, session?.user?.id);
         
         // Only synchronous operations here to prevent deadlocks
@@ -57,14 +61,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
 
     // Get initial session AFTER setting up the listener
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Initial session:', session?.user?.id);
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    const getInitialSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error('Error getting initial session:', error);
+        }
+        if (mounted) {
+          console.log('Initial session:', session?.user?.id);
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Failed to get initial session:', error);
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    getInitialSession();
 
     return () => {
+      mounted = false;
       console.log('Cleaning up auth subscription');
       subscription.unsubscribe();
     };
@@ -72,50 +92,77 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     console.log('Attempting sign in for:', email);
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+    setLoading(true);
     
-    if (error) {
-      console.error('Sign in error:', error);
-    } else {
-      console.log('Sign in successful');
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      
+      if (error) {
+        console.error('Sign in error:', error);
+      } else {
+        console.log('Sign in successful');
+      }
+      
+      return { error };
+    } catch (error: any) {
+      console.error('Sign in exception:', error);
+      return { error };
+    } finally {
+      setLoading(false);
     }
-    
-    return { error };
   };
 
   const signUp = async (email: string, password: string, options?: { full_name?: string }) => {
     console.log('Attempting sign up for:', email);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: options
+    setLoading(true);
+    
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: options
+        }
+      });
+      
+      if (error) {
+        console.error('Sign up error:', error);
+      } else {
+        console.log('Sign up successful');
       }
-    });
-    
-    if (error) {
-      console.error('Sign up error:', error);
-    } else {
-      console.log('Sign up successful');
+      
+      return { error };
+    } catch (error: any) {
+      console.error('Sign up exception:', error);
+      return { error };
+    } finally {
+      setLoading(false);
     }
-    
-    return { error };
   };
 
   const signOut = async () => {
     console.log('Attempting sign out');
-    const { error } = await supabase.auth.signOut();
+    setLoading(true);
     
-    if (error) {
-      console.error('Sign out error:', error);
-    } else {
-      console.log('Sign out successful');
+    try {
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('Sign out error:', error);
+      } else {
+        console.log('Sign out successful');
+      }
+      
+      return { error };
+    } catch (error: any) {
+      console.error('Sign out exception:', error);
+      return { error };
+    } finally {
+      setLoading(false);
     }
-    
-    return { error };
   };
 
   const value = {
