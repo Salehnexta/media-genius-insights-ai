@@ -44,15 +44,17 @@ const Index: React.FC = () => {
       const onboardingData = await getOnboardingData();
       console.log('Onboarding data result:', onboardingData);
       
-      // If no data exists, user hasn't completed onboarding
+      // Check if onboarding is completed
       const completed = onboardingData && onboardingData.completed_at !== null;
       console.log('Onboarding completed status:', completed);
       
       setHasCompletedOnboarding(completed);
       
       if (!completed) {
-        console.log('Redirecting to onboarding...');
+        console.log('Onboarding not completed, redirecting to onboarding...');
         navigate('/onboarding');
+      } else {
+        console.log('Onboarding completed, staying on dashboard');
       }
     } catch (error) {
       console.error('Error checking onboarding status:', error);
@@ -71,7 +73,7 @@ const Index: React.FC = () => {
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
           <p className="text-gray-600 dark:text-gray-300">
-            {isArabic ? 'جاري التحميل...' : 'Loading...'}
+            {isArabic ? 'جاري التحميل...' : 'Loading dashboard...'}
           </p>
         </div>
       </div>
@@ -80,6 +82,11 @@ const Index: React.FC = () => {
 
   if (!user) {
     return null;
+  }
+
+  // Only render dashboard if onboarding is completed
+  if (!hasCompletedOnboarding) {
+    return null; // This will be handled by the redirect in useEffect
   }
 
   return (

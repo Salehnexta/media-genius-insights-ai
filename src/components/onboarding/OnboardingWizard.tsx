@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -165,20 +164,33 @@ const OnboardingWizard: React.FC = () => {
         // This is the final step - complete onboarding
         console.log('Completing onboarding...');
         
-        // Mark onboarding as complete and update data
+        // Mark onboarding as complete and update local state first
         const completedData = { ...data, completed: true };
+        console.log('Updating data with completion status:', completedData);
         updateData(completedData);
         
-        // Save the completed onboarding data
-        const finalSaved = await memoizedSaveData();
-        if (!finalSaved) {
-          throw new Error(isArabic ? 'فشل في إكمال الإعداد' : 'Failed to complete onboarding');
-        }
+        // Wait a moment for state to update, then save
+        setTimeout(async () => {
+          try {
+            // Save with the completion status
+            const finalSaved = await saveData();
+            console.log('Final save result:', finalSaved);
+            
+            if (finalSaved) {
+              console.log('Onboarding completed successfully, navigating to dashboard');
+              // Navigate to dashboard with replace to prevent back navigation
+              navigate('/', { replace: true });
+            } else {
+              throw new Error(isArabic ? 'فشل في إكمال الإعداد' : 'Failed to complete onboarding');
+            }
+          } catch (saveError) {
+            console.error('Error during final save:', saveError);
+            setError(saveError instanceof Error ? saveError.message : 
+              (isArabic ? 'فشل في إكمال الإعداد' : 'Failed to complete onboarding'));
+          }
+        }, 100);
         
-        console.log('Onboarding completed successfully, navigating to dashboard');
-        
-        // Navigate to dashboard with replace to prevent back navigation
-        navigate('/', { replace: true });
+        return; // Don't set isNavigating to false here since we're doing async work
       }
     } catch (error) {
       console.error('Error in handleNext:', error);
@@ -196,7 +208,7 @@ const OnboardingWizard: React.FC = () => {
         setIsNavigating(false);
       }
     }
-  }, [currentStep, steps.length, memoizedSaveData, data, updateData, navigate, isNavigating, isArabic, toast]);
+  }, [currentStep, steps.length, memoizedSaveData, data, updateData, navigate, isNavigating, isArabic, toast, saveData]);
 
   const handlePrevious = useCallback(() => {
     if (isNavigating || currentStep === 0) return;

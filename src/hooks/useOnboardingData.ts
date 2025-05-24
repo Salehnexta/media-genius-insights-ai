@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -65,7 +64,6 @@ export const useOnboardingData = () => {
 
       if (error) {
         console.error('Error loading onboarding data:', error);
-        // Don't throw here, just log and use defaults
         setData(defaultData);
         return;
       }
@@ -73,7 +71,6 @@ export const useOnboardingData = () => {
       if (existingData) {
         console.log('Found existing onboarding data:', existingData);
         
-        // Safely cast social_accounts from Json type to Record<string, string>
         const socialAccounts = existingData.social_accounts && 
           typeof existingData.social_accounts === 'object' && 
           !Array.isArray(existingData.social_accounts) 
@@ -128,50 +125,39 @@ export const useOnboardingData = () => {
     try {
       console.log('Saving onboarding data for user:', user.id, dataToSave);
 
-      // Check if onboarding data already exists
       const { data: existingOnboarding } = await supabase
         .from('onboarding_data')
         .select('id')
         .eq('user_id', user.id)
         .maybeSingle();
 
+      const savePayload = {
+        skill_level: dataToSave.skillLevel,
+        experience: dataToSave.experience,
+        business_name: dataToSave.businessName,
+        industry: dataToSave.industry,
+        website: dataToSave.website,
+        social_accounts: dataToSave.socialAccounts,
+        competitors: dataToSave.competitors,
+        goals: dataToSave.goals,
+        budget: dataToSave.budget,
+        completed_at: dataToSave.completed ? new Date().toISOString() : null,
+        updated_at: new Date().toISOString()
+      };
+
       if (existingOnboarding) {
-        // Update existing record
         const { error: onboardingError } = await supabase
           .from('onboarding_data')
-          .update({
-            skill_level: dataToSave.skillLevel,
-            experience: dataToSave.experience,
-            business_name: dataToSave.businessName,
-            industry: dataToSave.industry,
-            website: dataToSave.website,
-            social_accounts: dataToSave.socialAccounts,
-            competitors: dataToSave.competitors,
-            goals: dataToSave.goals,
-            budget: dataToSave.budget,
-            completed_at: dataToSave.completed ? new Date().toISOString() : null,
-            updated_at: new Date().toISOString()
-          })
+          .update(savePayload)
           .eq('user_id', user.id);
 
         if (onboardingError) throw onboardingError;
       } else {
-        // Insert new record
         const { error: onboardingError } = await supabase
           .from('onboarding_data')
           .insert({
             user_id: user.id,
-            skill_level: dataToSave.skillLevel,
-            experience: dataToSave.experience,
-            business_name: dataToSave.businessName,
-            industry: dataToSave.industry,
-            website: dataToSave.website,
-            social_accounts: dataToSave.socialAccounts,
-            competitors: dataToSave.competitors,
-            goals: dataToSave.goals,
-            budget: dataToSave.budget,
-            completed_at: dataToSave.completed ? new Date().toISOString() : null,
-            updated_at: new Date().toISOString()
+            ...savePayload
           });
 
         if (onboardingError) throw onboardingError;
@@ -189,42 +175,35 @@ export const useOnboardingData = () => {
         competitorCount: dataToSave.competitors.length
       };
 
-      // Check if user preferences already exist
       const { data: existingPrefs } = await supabase
         .from('user_preferences')
         .select('id')
         .eq('user_id', user.id)
         .maybeSingle();
 
+      const prefsPayload = {
+        ai_context: aiContext,
+        personalization_data: {
+          onboardingCompleted: dataToSave.completed,
+          completedAt: dataToSave.completed ? new Date().toISOString() : null,
+          businessName: dataToSave.businessName
+        },
+        updated_at: new Date().toISOString()
+      };
+
       if (existingPrefs) {
-        // Update existing preferences
         const { error: preferencesError } = await supabase
           .from('user_preferences')
-          .update({
-            ai_context: aiContext,
-            personalization_data: {
-              onboardingCompleted: dataToSave.completed,
-              completedAt: dataToSave.completed ? new Date().toISOString() : null,
-              businessName: dataToSave.businessName
-            },
-            updated_at: new Date().toISOString()
-          })
+          .update(prefsPayload)
           .eq('user_id', user.id);
 
         if (preferencesError) throw preferencesError;
       } else {
-        // Insert new preferences
         const { error: preferencesError } = await supabase
           .from('user_preferences')
           .insert({
             user_id: user.id,
-            ai_context: aiContext,
-            personalization_data: {
-              onboardingCompleted: dataToSave.completed,
-              completedAt: dataToSave.completed ? new Date().toISOString() : null,
-              businessName: dataToSave.businessName
-            },
-            updated_at: new Date().toISOString()
+            ...prefsPayload
           });
 
         if (preferencesError) throw preferencesError;
