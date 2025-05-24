@@ -2,14 +2,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Bot, User, TrendingUp, BarChart3, Users, Target } from 'lucide-react';
+import { Send, Bot, User, TrendingUp, BarChart3, Users, Target, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 
 interface Message {
   id: string;
   content: string;
   sender: 'ai' | 'user';
   timestamp: Date;
+  loading?: boolean;
 }
 
 interface ChatInterfaceProps {
@@ -22,6 +25,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
   const isArabic = language === 'ar';
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Initialize messages with translations
@@ -49,28 +53,32 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
       title: t('suggestion.campaign.title'),
       subtitle: t('suggestion.campaign.subtitle'),
       icon: <BarChart3 className="h-6 w-6" />,
-      bgColor: "bg-gradient-to-br from-blue-500 to-blue-600"
+      bgColor: "bg-gradient-to-br from-blue-500 to-blue-600",
+      context: "campaign"
     },
     {
       id: 2,
       title: t('suggestion.content.title'),
       subtitle: t('suggestion.content.subtitle'),
       icon: <Target className="h-6 w-6" />,
-      bgColor: "bg-gradient-to-br from-purple-500 to-purple-600"
+      bgColor: "bg-gradient-to-br from-purple-500 to-purple-600",
+      context: "content"
     },
     {
       id: 3,
       title: t('suggestion.audience.title'),
       subtitle: t('suggestion.audience.subtitle'),
       icon: <Users className="h-6 w-6" />,
-      bgColor: "bg-gradient-to-br from-green-500 to-green-600"
+      bgColor: "bg-gradient-to-br from-green-500 to-green-600",
+      context: "audience"
     },
     {
       id: 4,
       title: t('suggestion.trend.title'),
       subtitle: t('suggestion.trend.subtitle'),
       icon: <TrendingUp className="h-6 w-6" />,
-      bgColor: "bg-gradient-to-br from-orange-500 to-orange-600"
+      bgColor: "bg-gradient-to-br from-orange-500 to-orange-600",
+      context: "trends"
     }
   ];
 
@@ -79,55 +87,86 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, isExpanded]);
+
+  const sendAIRequest = async (message: string, context: string = 'general') => {
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-chat', {
+        body: { 
+          message, 
+          context,
+          language 
+        }
+      });
+
+      if (error) throw error;
+
+      return data.response || data.fallback;
+    } catch (error) {
+      console.error('AI request failed:', error);
+      throw error;
+    }
+  };
   
-  const handleSend = () => {
-    if (!input.trim()) return;
+  const handleSend = async (messageText?: string, context?: string) => {
+    const textToSend = messageText || input;
+    if (!textToSend.trim() || isLoading) return;
     
     // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
-      content: input,
+      content: textToSend,
       sender: 'user',
       timestamp: new Date()
     };
     
-    setMessages([...messages, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
     setInput('');
+    setIsLoading(true);
+
+    // Add loading message
+    const loadingMessage: Message = {
+      id: (Date.now() + 1).toString(),
+      content: '',
+      sender: 'ai',
+      timestamp: new Date(),
+      loading: true
+    };
+
+    setMessages(prev => [...prev, loadingMessage]);
     
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        content: "I'm analyzing your request. Based on your current campaign performance, I recommend adjusting your ad spend distribution to focus more on platforms showing higher engagement rates.",
-        sender: 'ai',
-        timestamp: new Date()
-      };
+    try {
+      const aiResponse = await sendAIRequest(textToSend, context);
       
-      setMessages(prev => [...prev, aiResponse]);
-    }, 1000);
+      // Replace loading message with actual response
+      setMessages(prev => prev.map(msg => 
+        msg.id === loadingMessage.id 
+          ? { ...msg, content: aiResponse, loading: false }
+          : msg
+      ));
+    } catch (error) {
+      // Replace loading message with error message
+      const errorMessage = isArabic 
+        ? 'عذراً، حدث خطأ في معالجة طلبك. يرجى المحاولة مرة أخرى.'
+        : 'Sorry, I encountered an error processing your request. Please try again.';
+        
+      setMessages(prev => prev.map(msg => 
+        msg.id === loadingMessage.id 
+          ? { ...msg, content: errorMessage, loading: false }
+          : msg
+      ));
+
+      toast({
+        title: isArabic ? 'خطأ' : 'Error',
+        description: isArabic ? 'فشل في الاتصال بالذكاء الاصطناعي' : 'Failed to connect to AI service',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSuggestionClick = (suggestion: typeof suggestionCards[0]) => {
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      content: suggestion.title,
-      sender: 'user',
-      timestamp: new Date()
-    };
-    
-    setMessages([...messages, userMessage]);
-    
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        content: `I'll help you with ${suggestion.title.toLowerCase()}. Let me gather the relevant data and insights for you.`,
-        sender: 'ai',
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, aiResponse]);
-    }, 1000);
+    handleSend(suggestion.title, suggestion.context);
   };
 
   // For mobile compact mode, just show the last message
@@ -147,14 +186,23 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
             <div className={`flex max-w-[85%] items-start ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
               {message.sender === 'ai' && !isArabic && (
                 <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                  <Bot size={16} />
+                  {message.loading ? <Loader2 size={16} className="animate-spin" /> : <Bot size={16} />}
                 </div>
               )}
               <div className={`${message.sender === 'ai' ? 'chat-bubble-ai' : 'chat-bubble-user'} ${isArabic ? 'text-right' : ''}`}>
-                <p className="text-sm">{message.content}</p>
-                <p className={`text-xs ${message.sender === 'ai' ? 'text-gray-500 dark:text-gray-400' : 'text-blue-100'} mt-1`}>
-                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </p>
+                {message.loading ? (
+                  <div className="flex items-center space-x-2">
+                    <Loader2 size={16} className="animate-spin" />
+                    <span className="text-sm">{isArabic ? 'جاري الكتابة...' : 'Thinking...'}</span>
+                  </div>
+                ) : (
+                  <p className="text-sm">{message.content}</p>
+                )}
+                {!message.loading && (
+                  <p className={`text-xs ${message.sender === 'ai' ? 'text-gray-500 dark:text-gray-400' : 'text-blue-100'} mt-1`}>
+                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                )}
               </div>
               {message.sender === 'user' && !isArabic && (
                 <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white">
@@ -163,7 +211,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
               )}
               {message.sender === 'ai' && isArabic && (
                 <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                  <Bot size={16} />
+                  {message.loading ? <Loader2 size={16} className="animate-spin" /> : <Bot size={16} />}
                 </div>
               )}
               {message.sender === 'user' && isArabic && (
@@ -187,7 +235,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
                 <button
                   key={card.id}
                   onClick={() => handleSuggestionClick(card)}
-                  className={`${card.bgColor} text-white p-4 rounded-2xl ${isArabic ? 'text-right' : 'text-left'} hover:scale-105 transition-transform duration-200 shadow-lg`}
+                  disabled={isLoading}
+                  className={`${card.bgColor} text-white p-4 rounded-2xl ${isArabic ? 'text-right' : 'text-left'} hover:scale-105 transition-transform duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
                   <div className={`flex items-center ${isArabic ? 'justify-start' : 'justify-between'} mb-2`}>
                     {card.icon}
@@ -208,12 +257,22 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
             placeholder={t('chat.placeholder')}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+            onKeyDown={(e) => e.key === 'Enter' && !isLoading && handleSend()}
+            disabled={isLoading}
             className={`flex-1 ${isArabic ? 'text-right' : ''}`}
           />
-          <Button onClick={handleSend} type="submit" className={`${isMobile ? 'px-3' : ''} ${isArabic ? 'flex-row-reverse' : ''}`}>
-            <Send className={`h-4 w-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
-            {!isMobile && t('chat.send')}
+          <Button 
+            onClick={() => handleSend()} 
+            disabled={isLoading || !input.trim()}
+            type="submit" 
+            className={`${isMobile ? 'px-3' : ''} ${isArabic ? 'flex-row-reverse' : ''}`}
+          >
+            {isLoading ? (
+              <Loader2 className={`h-4 w-4 animate-spin ${isArabic ? 'ml-2' : 'mr-2'}`} />
+            ) : (
+              <Send className={`h-4 w-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
+            )}
+            {!isMobile && (isLoading ? (isArabic ? 'جاري الإرسال...' : 'Sending...') : t('chat.send'))}
           </Button>
         </div>
         {(!isMobile || isExpanded) && (

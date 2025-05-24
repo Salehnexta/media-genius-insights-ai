@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -5,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
-import { Facebook, Instagram, Linkedin, Twitter, Type, Wand2, Copy } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Twitter, Type, Wand2, Copy, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useLanguage } from '@/contexts/LanguageContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface TextGeneratorProps {
   prompt: string;
@@ -18,6 +21,7 @@ interface TextGeneratorProps {
   generatedContent: string;
   setGeneratedContent: (value: string) => void;
   isMobile?: boolean;
+  userInfo?: string;
 }
 
 const platformPrompts = {
@@ -25,13 +29,6 @@ const platformPrompts = {
   instagram: "Create a captivating Instagram caption about",
   linkedin: "Write a professional LinkedIn post discussing",
   facebook: "Create an engaging Facebook post about"
-};
-
-const mockResponses = {
-  twitter: (topic: string) => `📣 Check out our latest insights on ${topic}! We're revolutionizing how businesses approach this area. Join the conversation and share your thoughts! #MarketingInsights #Innovation`,
-  instagram: (topic: string) => `✨ Diving deep into ${topic} today!\n\nAt our agency, we're constantly exploring new frontiers to bring you the best strategies and insights.\n\nDouble-tap if you're as excited about this as we are!\n\n#MarketingMagic #BrandGrowth #IndustryLeaders`,
-  linkedin: (topic: string) => `I'm excited to share our team's latest analysis on ${topic}.\n\nOur research has revealed some fascinating trends that are reshaping how businesses approach their marketing strategies in 2025.\n\nKey takeaways:\n• Data-driven decisions are now essential\n• Customer experience remains paramount\n• Authentic storytelling drives engagement\n\nWhat strategies are you implementing in this area? I'd love to hear your thoughts in the comments below.`,
-  facebook: (topic: string) => `🔍 JUST RELEASED: Our latest findings on ${topic}!\n\nOur team has been working tirelessly to bring you cutting-edge insights that will transform your marketing approach.\n\nCheck out the full report on our website (link in bio) and let us know what you think!\n\nTag someone who needs to see this 👇`
 };
 
 const TextGenerator: React.FC<TextGeneratorProps> = ({
@@ -43,13 +40,17 @@ const TextGenerator: React.FC<TextGeneratorProps> = ({
   setIsGenerating,
   generatedContent,
   setGeneratedContent,
-  isMobile = false
+  isMobile = false,
+  userInfo = ''
 }) => {
-  const handleGenerateContent = () => {
+  const { language } = useLanguage();
+  const isArabic = language === 'ar';
+
+  const handleGenerateContent = async () => {
     if (!prompt.trim()) {
       toast({
-        title: "Error",
-        description: "Please enter a topic for your content",
+        title: isArabic ? "خطأ" : "Error",
+        description: isArabic ? "يرجى إدخال موضوع للمحتوى" : "Please enter a topic for your content",
         variant: "destructive"
       });
       return;
@@ -57,25 +58,45 @@ const TextGenerator: React.FC<TextGeneratorProps> = ({
 
     setIsGenerating(true);
     
-    // Simulate API call with a timeout
-    setTimeout(() => {
-      const response = mockResponses[platform as keyof typeof mockResponses](prompt);
-      setGeneratedContent(response);
-      setIsGenerating(false);
-      
-      toast({
-        title: "Content Generated",
-        description: `Your ${platform} content has been created!`
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-content', {
+        body: { 
+          prompt,
+          platform,
+          userInfo,
+          language
+        }
       });
-    }, 1500);
+
+      if (error) throw error;
+
+      if (data.content) {
+        setGeneratedContent(data.content);
+        toast({
+          title: isArabic ? "تم إنتاج المحتوى" : "Content Generated",
+          description: isArabic ? `تم إنشاء محتوى ${platform}!` : `Your ${platform} content has been created!`
+        });
+      } else if (data.error) {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      console.error('Content generation failed:', error);
+      toast({
+        title: isArabic ? "خطأ" : "Error",
+        description: isArabic ? "فشل في إنتاج المحتوى. يرجى المحاولة مرة أخرى." : "Failed to generate content. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleCopyContent = () => {
     if (generatedContent) {
       navigator.clipboard.writeText(generatedContent);
       toast({
-        title: "Copied!",
-        description: "Content copied to clipboard"
+        title: isArabic ? "تم النسخ!" : "Copied!",
+        description: isArabic ? "تم نسخ المحتوى إلى الحافظة" : "Content copied to clipboard"
       });
     }
   };
@@ -92,7 +113,7 @@ const TextGenerator: React.FC<TextGeneratorProps> = ({
       <CardHeader className="pb-1 sm:pb-2">
         <CardTitle className={`${isMobile ? 'text-sm' : 'text-md'} font-medium flex items-center gap-2`}>
           <Type className="h-4 w-4 sm:h-5 sm:w-5" />
-          Social Media Text Generator
+          {isArabic ? "مولد النصوص للوسائل الاجتماعية" : "Social Media Text Generator"}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -126,23 +147,30 @@ const TextGenerator: React.FC<TextGeneratorProps> = ({
                   id="content-prompt"
                   value={prompt} 
                   onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Enter your topic" 
+                  placeholder={isArabic ? "أدخل موضوعك" : "Enter your topic"} 
                   className={`flex-1 ${isMobile ? 'text-xs' : 'text-sm'}`}
+                  disabled={isGenerating}
                 />
                 <Button 
                   onClick={handleGenerateContent} 
                   disabled={isGenerating || !prompt.trim()}
                   className={isMobile ? 'text-xs px-3' : ''}
                 >
-                  <Wand2 className="h-4 w-4 mr-1 sm:mr-2" />
-                  {isGenerating ? "Generating..." : "Generate"}
+                  {isGenerating ? (
+                    <Loader2 className="h-4 w-4 mr-1 sm:mr-2 animate-spin" />
+                  ) : (
+                    <Wand2 className="h-4 w-4 mr-1 sm:mr-2" />
+                  )}
+                  {isGenerating ? (isArabic ? "جاري الإنتاج..." : "Generating...") : (isArabic ? "إنتاج" : "Generate")}
                 </Button>
               </div>
             </div>
             
             {generatedContent && (
               <div className="space-y-3">
-                <Label className={`${isMobile ? 'text-xs' : 'text-sm'}`}>Generated Content:</Label>
+                <Label className={`${isMobile ? 'text-xs' : 'text-sm'}`}>
+                  {isArabic ? "المحتوى المُنتَج:" : "Generated Content:"}
+                </Label>
                 <div className="relative">
                   <Textarea 
                     value={generatedContent}
@@ -156,14 +184,16 @@ const TextGenerator: React.FC<TextGeneratorProps> = ({
                     className="absolute top-2 right-2"
                   >
                     <Copy className="h-4 w-4 mr-1" />
-                    Copy
+                    {isArabic ? "نسخ" : "Copy"}
                   </Button>
                 </div>
                 
                 <div className="p-4 bg-muted rounded-md">
                   <div className="flex items-center gap-2 mb-2">
                     {platformIcons[platform as keyof typeof platformIcons]}
-                    <span className={`font-medium ${isMobile ? 'text-xs' : 'text-sm'}`}>Preview</span>
+                    <span className={`font-medium ${isMobile ? 'text-xs' : 'text-sm'}`}>
+                      {isArabic ? "معاينة" : "Preview"}
+                    </span>
                   </div>
                   <div className={`whitespace-pre-line ${isMobile ? 'text-xs' : 'text-sm'}`}>{generatedContent}</div>
                 </div>

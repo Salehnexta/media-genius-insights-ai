@@ -4,9 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { ImageIcon, Wand2, Download } from "lucide-react";
+import { ImageIcon, Wand2, Download, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage } from '@/contexts/LanguageContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ImageGeneratorProps {
   imagePrompt: string;
@@ -31,12 +32,13 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
   setGeneratedImage,
   isMobile = false
 }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const isArabic = language === 'ar';
 
-  const handleGenerateImage = () => {
+  const handleGenerateImage = async () => {
     if (!imagePrompt.trim()) {
       toast({
-        title: "Error",
+        title: isArabic ? "خطأ" : "Error",
         description: t('error.image.description'),
         variant: "destructive"
       });
@@ -45,30 +47,63 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
 
     setIsGeneratingImage(true);
     
-    // Simulate image generation with user info
-    setTimeout(() => {
-      const mockImageUrl = `https://picsum.photos/512/512?random=${Date.now()}`;
-      setGeneratedImage(mockImageUrl);
-      setIsGeneratingImage(false);
-      
-      toast({
-        title: t('success.image.generated'),
-        description: t('success.image.message')
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-image', {
+        body: { 
+          prompt: imagePrompt,
+          style: imageStyle,
+          size: '1024x1024'
+        }
       });
-    }, 2000);
+
+      if (error) throw error;
+
+      if (data.imageUrl) {
+        setGeneratedImage(data.imageUrl);
+        toast({
+          title: t('success.image.generated'),
+          description: t('success.image.message')
+        });
+      } else if (data.error) {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      console.error('Image generation failed:', error);
+      toast({
+        title: isArabic ? "خطأ" : "Error",
+        description: isArabic ? "فشل في إنتاج الصورة. يرجى المحاولة مرة أخرى." : "Failed to generate image. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGeneratingImage(false);
+    }
   };
 
-  const handleDownloadImage = () => {
+  const handleDownloadImage = async () => {
     if (generatedImage) {
-      const link = document.createElement('a');
-      link.href = generatedImage;
-      link.download = `social-media-image-${Date.now()}.jpg`;
-      link.click();
-      
-      toast({
-        title: t('success.downloaded'),
-        description: t('success.download.message')
-      });
+      try {
+        const response = await fetch(generatedImage);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `ai-generated-image-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
+        toast({
+          title: t('success.downloaded'),
+          description: t('success.download.message')
+        });
+      } catch (error) {
+        toast({
+          title: isArabic ? "خطأ" : "Error",
+          description: isArabic ? "فشل في تحميل الصورة" : "Failed to download image",
+          variant: "destructive"
+        });
+      }
     }
   };
 
@@ -100,6 +135,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
                   onChange={(e) => setImagePrompt(e.target.value)}
                   placeholder={t('content.image.placeholder')}
                   className={`min-h-[60px] ${isMobile ? 'text-xs' : 'text-sm'} sm:min-h-[80px]`}
+                  disabled={isGeneratingImage}
                 />
               </div>
               
@@ -109,7 +145,8 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
                   id="image-style"
                   value={imageStyle}
                   onChange={(e) => setImageStyle(e.target.value)}
-                  className={`w-full p-2 border border-input rounded-md bg-background ${isMobile ? 'text-xs' : 'text-sm'}`}
+                  disabled={isGeneratingImage}
+                  className={`w-full p-2 border border-input rounded-md bg-background ${isMobile ? 'text-xs' : 'text-sm'} disabled:opacity-50`}
                 >
                   {styleOptions.map(option => (
                     <option key={option.value} value={option.value}>{option.label}</option>
@@ -123,7 +160,11 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({
                 className={`w-full ${isMobile ? 'text-xs' : 'text-sm'}`}
                 size="sm"
               >
-                <Wand2 className="h-4 w-4 mr-2" />
+                {isGeneratingImage ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Wand2 className="h-4 w-4 mr-2" />
+                )}
                 {isGeneratingImage ? t('content.image.generating') : t('content.image.generate')}
               </Button>
             </div>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import UserInfoSection from './content-creator/UserInfoSection';
 import PublishingCalendar from './content-creator/PublishingCalendar';
@@ -88,6 +87,7 @@ const ContentCreatorTab: React.FC<ContentCreatorTabProps> = ({ chartConfig }) =>
           generatedContent={generatedContent}
           setGeneratedContent={setGeneratedContent}
           isMobile={isMobile}
+          userInfo={userInfo}
         />
 
       </div>
