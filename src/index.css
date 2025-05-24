@@ -78,20 +78,13 @@
 
 .chat-sidebar {
   @apply w-[35%] min-w-[400px] border-r bg-white dark:bg-gray-900;
-  position: fixed;
-  left: 0;
-  top: 4rem;
-  height: calc(100vh - 4rem);
-  z-index: 30;
 }
 
 .agent-workspace {
   @apply flex-1 bg-gray-50 dark:bg-gray-950;
-  margin-left: 35%;
-  min-width: 65%;
 }
 
-/* RTL/LTR Workspace Content */
+/* RTL/LTR Content */
 .workspace-rtl {
   direction: rtl;
 }
@@ -105,16 +98,9 @@
 }
 
 /* Arabic font improvements */
-.workspace-rtl {
+.font-arabic {
   font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
-}
-
-.workspace-rtl h1,
-.workspace-rtl h2,
-.workspace-rtl h3,
-.workspace-rtl h4 {
-  font-weight: 600;
 }
 
 /* Responsive adjustments */
@@ -124,7 +110,6 @@
   }
   
   .agent-workspace {
-    margin-left: 40%;
     min-width: 60%;
   }
 }
@@ -136,14 +121,11 @@
   
   .chat-sidebar {
     @apply w-full;
-    position: relative;
-    top: 0;
     height: 50vh;
   }
   
   .agent-workspace {
     @apply w-full;
-    margin-left: 0;
     min-height: 50vh;
   }
 }
