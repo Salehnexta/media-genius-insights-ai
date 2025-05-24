@@ -84,8 +84,8 @@ export const useRealWebsiteAnalysis = () => {
         throw error;
       }
 
-      // Cast the JSON data back to our type
-      return data?.analysis_data as RealWebsiteAnalysisResult || null;
+      // Cast the JSON data back to our type through unknown
+      return data?.analysis_data ? (data.analysis_data as unknown as RealWebsiteAnalysisResult) : null;
     } catch (error) {
       console.error('Error fetching website analysis:', error);
       return null;

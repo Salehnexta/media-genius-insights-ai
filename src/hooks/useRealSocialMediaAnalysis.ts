@@ -96,8 +96,8 @@ export const useRealSocialMediaAnalysis = () => {
         throw error;
       }
 
-      // Cast the JSON data back to our type
-      return data?.metrics_data as SocialMediaMetrics || null;
+      // Cast the JSON data back to our type through unknown
+      return data?.metrics_data ? (data.metrics_data as unknown as SocialMediaMetrics) : null;
     } catch (error) {
       console.error('Error fetching social media analysis:', error);
       return null;
