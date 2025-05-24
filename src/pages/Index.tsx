@@ -33,7 +33,8 @@ const Index: React.FC = () => {
       const onboardingData = await getOnboardingData();
       console.log('Onboarding data result:', onboardingData);
       
-      const completed = onboardingData?.completed_at !== null;
+      // If no data exists, user hasn't completed onboarding
+      const completed = onboardingData && onboardingData.completed_at !== null;
       console.log('Onboarding completed status:', completed);
       
       setHasCompletedOnboarding(completed);

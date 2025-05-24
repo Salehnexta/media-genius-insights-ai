@@ -238,17 +238,23 @@ export const useOnboardingData = () => {
       return null;
     }
 
-    setLoading(true);
+    console.log('Fetching onboarding data for user:', user.id);
+    
     try {
-      console.log('Fetching onboarding data for user:', user.id);
-      // FIXED: Add user filter and use maybeSingle() to handle no data case
+      // Using a more explicit query to ensure proper filtering
       const { data, error } = await supabase
         .from('onboarding_data')
         .select('*')
-        .eq('user_id', user.id)  // This is the critical fix - filter by user_id
-        .maybeSingle(); // Use maybeSingle instead of single to handle no results
+        .eq('user_id', user.id)
+        .limit(1)
+        .single();
 
       if (error) {
+        // If no data found, return null (this is expected for new users)
+        if (error.code === 'PGRST116' || error.message.includes('no rows')) {
+          console.log('No onboarding data found for user - this is normal for new users');
+          return null;
+        }
         console.error('Error in getOnboardingData:', error);
         throw error;
       }
@@ -257,9 +263,12 @@ export const useOnboardingData = () => {
       return data;
     } catch (error) {
       console.error('Error fetching onboarding data:', error);
-      return null;
-    } finally {
-      setLoading(false);
+      // For new users without onboarding data, return null instead of throwing
+      if (error.code === 'PGRST116') {
+        console.log('No onboarding data exists for this user yet');
+        return null;
+      }
+      throw error;
     }
   };
 
