@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Brain, Target, TrendingUp, Users, Globe, Zap } from 'lucide-react';
+import { Brain, Target, TrendingUp, Users, Globe, Zap, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 import LanguageToggle from '@/components/layout/LanguageToggle';
 
 const LandingPage: React.FC = () => {
@@ -54,7 +54,7 @@ const LandingPage: React.FC = () => {
               <span className="text-white font-bold text-lg">MG</span>
             </div>
             <span className="text-xl font-bold text-gray-900 dark:text-white">
-              {isArabic ? 'منصة التسويق الذكي' : 'AI Marketing Platform'}
+              {isArabic ? 'فريق التسويق' : 'AI Marketing Platform'}
             </span>
           </div>
           
@@ -74,7 +74,7 @@ const LandingPage: React.FC = () => {
       <section className="container mx-auto px-4 py-16 text-center">
         <Badge variant="secondary" className="mb-6">
           <Globe className="w-4 h-4 mr-2" />
-          {isArabic ? 'منصة التسويق الذكي' : 'AI Marketing Platform'}
+          {isArabic ? 'فريق التسويق' : 'AI Marketing Platform'}
         </Badge>
         
         <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
@@ -165,6 +165,100 @@ const LandingPage: React.FC = () => {
           </CardContent>
         </Card>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+        <div className="container mx-auto px-4 py-12">
+          <div className="grid md:grid-cols-4 gap-8">
+            {/* Company Info */}
+            <div className={`text-center ${isArabic ? 'md:text-right' : 'md:text-left'}`}>
+              <div className={`flex items-center ${isArabic ? 'justify-center md:justify-end' : 'justify-center md:justify-start'} gap-3 mb-4`}>
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold">MG</span>
+                </div>
+                <span className="text-lg font-bold text-gray-900 dark:text-white">
+                  {isArabic ? 'فريق التسويق' : 'AI Marketing Platform'}
+                </span>
+              </div>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">
+                {isArabic 
+                  ? 'مستقبل التسويق الرقمي مدعوم بالذكاء الاصطناعي'
+                  : 'The future of digital marketing powered by AI'
+                }
+              </p>
+            </div>
+
+            {/* Quick Links */}
+            <div className={`text-center ${isArabic ? 'md:text-right' : 'md:text-left'}`}>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+                {isArabic ? 'روابط سريعة' : 'Quick Links'}
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Button variant="link" onClick={() => navigate('/pricing')} className="text-gray-600 dark:text-gray-300 p-0 h-auto">
+                    {isArabic ? 'الأسعار' : 'Pricing'}
+                  </Button>
+                </li>
+                <li>
+                  <Button variant="link" onClick={() => navigate('/auth')} className="text-gray-600 dark:text-gray-300 p-0 h-auto">
+                    {isArabic ? 'تسجيل الدخول' : 'Sign In'}
+                  </Button>
+                </li>
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div className={`text-center ${isArabic ? 'md:text-right' : 'md:text-left'}`}>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+                {isArabic ? 'قانوني' : 'Legal'}
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Button variant="link" onClick={() => navigate('/privacy')} className="text-gray-600 dark:text-gray-300 p-0 h-auto">
+                    {isArabic ? 'سياسة الخصوصية' : 'Privacy Policy'}
+                  </Button>
+                </li>
+                <li>
+                  <Button variant="link" onClick={() => navigate('/terms')} className="text-gray-600 dark:text-gray-300 p-0 h-auto">
+                    {isArabic ? 'شروط الخدمة' : 'Terms of Service'}
+                  </Button>
+                </li>
+              </ul>
+            </div>
+
+            {/* Social Media */}
+            <div className={`text-center ${isArabic ? 'md:text-right' : 'md:text-left'}`}>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+                {isArabic ? 'تابعنا' : 'Follow Us'}
+              </h3>
+              <div className={`flex ${isArabic ? 'justify-center md:justify-end' : 'justify-center md:justify-start'} gap-4`}>
+                <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-300">
+                  <Facebook className="h-5 w-5" />
+                </Button>
+                <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-300">
+                  <Twitter className="h-5 w-5" />
+                </Button>
+                <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-300">
+                  <Instagram className="h-5 w-5" />
+                </Button>
+                <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-300">
+                  <Linkedin className="h-5 w-5" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Copyright */}
+          <div className="border-t border-gray-200 dark:border-gray-700 mt-8 pt-8 text-center">
+            <p className="text-gray-600 dark:text-gray-300 text-sm">
+              {isArabic 
+                ? '© 2024 فريق التسويق. جميع الحقوق محفوظة.'
+                : '© 2024 AI Marketing Platform. All rights reserved.'
+              }
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

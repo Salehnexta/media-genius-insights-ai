@@ -49,7 +49,7 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleDarkMode, hideNavigat
     <header className="bg-white dark:bg-gray-900 border-b dark:border-gray-800 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="font-bold text-xl text-gray-900 dark:text-white">
-          AI Marketing Platform
+          {isArabic ? 'فريق التسويق' : 'AI Marketing Platform'}
         </Link>
 
         <div className="flex items-center gap-4">
