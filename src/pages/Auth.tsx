@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -60,6 +61,7 @@ const Auth = () => {
             title: isArabic ? 'مرحباً بك' : 'Welcome back',
             description: isArabic ? 'تم تسجيل الدخول بنجاح' : 'Successfully signed in'
           });
+          // The useEffect will handle the redirect when user state updates
         }
       } else {
         if (password !== confirmPassword) {
@@ -81,8 +83,9 @@ const Auth = () => {
         } else {
           toast({
             title: isArabic ? 'تم إنشاء الحساب' : 'Account Created',
-            description: isArabic ? 'تم إنشاء حسابك بنجاح' : 'Your account has been created successfully'
+            description: isArabic ? 'تم إنشاء حسابك بنجاح. جاري تسجيل الدخول...' : 'Your account has been created successfully. Signing you in...'
           });
+          // The useEffect will handle the redirect when user state updates
         }
       }
     } catch (error: any) {
