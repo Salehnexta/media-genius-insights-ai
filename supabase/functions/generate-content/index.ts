@@ -15,15 +15,49 @@ serve(async (req) => {
   }
 
   try {
-    const { prompt, platform, userInfo = '', language = 'en' } = await req.json();
+    const { prompt, platform, userInfo, language = 'en' } = await req.json();
 
-    if (!prompt) {
-      throw new Error('Prompt is required');
-    }
+    const languageInstruction = language === 'ar' 
+      ? 'يجب أن تكتب المحتوى باللغة العربية فقط. لا تستخدم كلمات أو عبارات إنجليزية.'
+      : 'You must write content in English only.';
 
-    console.log('Generating content:', { prompt, platform, language });
+    const platformGuidelines = language === 'ar' ? {
+      twitter: 'تويتر: محتوى قصير وجذاب (أقل من 280 حرف), استخدم هاشتاغات مناسبة',
+      instagram: 'إنستغرام: محتوى بصري وملهم, استخدم هاشتاغات شائعة ووصف جذاب',
+      linkedin: 'لينكد إن: محتوى مهني ومفيد, ركز على القيمة المضافة والخبرة',
+      facebook: 'فيسبوك: محتوى تفاعلي ومجتمعي, شجع على التعليقات والمشاركة'
+    } : {
+      twitter: 'Twitter: Short and engaging content (under 280 characters), use relevant hashtags',
+      instagram: 'Instagram: Visual and inspiring content, use trending hashtags and engaging captions',
+      linkedin: 'LinkedIn: Professional and valuable content, focus on expertise and insights',
+      facebook: 'Facebook: Interactive and community-focused content, encourage comments and shares'
+    };
 
-    const systemPrompt = getContentSystemPrompt(platform, userInfo, language);
+    const systemPrompt = language === 'ar'
+      ? `أنت خبير في إنشاء المحتوى التسويقي. ${languageInstruction}
+         
+         قم بإنشاء محتوى مخصص لـ ${platform} باتباع هذه الإرشادات:
+         ${platformGuidelines[platform] || platformGuidelines.twitter}
+         
+         معلومات المستخدم: ${userInfo || 'غير متوفرة'}
+         
+         يجب أن يكون المحتوى:
+         - جذاب ومثير للاهتمام
+         - مناسب للمنصة المحددة
+         - يحث على التفاعل
+         - يحتوي على call-to-action مناسب`
+      : `You are an expert content marketing specialist. ${languageInstruction}
+         
+         Create content optimized for ${platform} following these guidelines:
+         ${platformGuidelines[platform] || platformGuidelines.twitter}
+         
+         User info: ${userInfo || 'Not provided'}
+         
+         The content should be:
+         - Engaging and compelling
+         - Platform-appropriate
+         - Encouraging interaction
+         - Include relevant call-to-action`;
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -32,7 +66,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: prompt }
@@ -43,60 +77,20 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
+      throw new Error(`OpenAI API error: ${response.statusText}`);
     }
 
     const data = await response.json();
-    const generatedContent = data.choices[0].message.content;
+    const content = data.choices[0].message.content;
 
-    console.log('Content generated successfully');
-
-    return new Response(JSON.stringify({ 
-      content: generatedContent,
-      platform,
-      timestamp: new Date().toISOString()
-    }), {
+    return new Response(JSON.stringify({ content }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
-
   } catch (error) {
     console.error('Error in generate-content function:', error);
-    return new Response(JSON.stringify({ 
-      error: error.message,
-      fallback: 'Failed to generate content. Please try again.'
-    }), {
+    return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });
-
-function getContentSystemPrompt(platform: string, userInfo: string, language: string): string {
-  const isArabic = language === 'ar';
-  
-  const platformSpecs = {
-    twitter: isArabic 
-      ? 'اكتب تغريدة جذابة وقصيرة (أقل من 280 حرف) مع هاشتاغات ذات صلة'
-      : 'Write an engaging, short tweet (under 280 characters) with relevant hashtags',
-    instagram: isArabic
-      ? 'اكتب تسمية توضيحية جذابة لإنستجرام مع إيموجي وهاشتاغات. اجعلها ملهمة وبصرية'
-      : 'Write an engaging Instagram caption with emojis and hashtags. Make it visual and inspiring',
-    linkedin: isArabic
-      ? 'اكتب منشور لينكد إن احترافي ومدروس مع رؤى قيمة ودعوة للعمل'
-      : 'Write a professional, thoughtful LinkedIn post with valuable insights and a call-to-action',
-    facebook: isArabic
-      ? 'اكتب منشور فيسبوك ودود وجذاب يشجع على المشاركة والتفاعل'
-      : 'Write a friendly, engaging Facebook post that encourages sharing and interaction'
-  };
-
-  const basePrompt = isArabic
-    ? 'أنت خبير في كتابة المحتوى للوسائل الاجتماعية.'
-    : 'You are an expert social media content creator.';
-
-  const userContext = userInfo 
-    ? (isArabic ? `\n\nسياق العمل: ${userInfo}` : `\n\nBusiness context: ${userInfo}`)
-    : '';
-
-  return `${basePrompt} ${platformSpecs[platform as keyof typeof platformSpecs] || platformSpecs.twitter}${userContext}`;
-}

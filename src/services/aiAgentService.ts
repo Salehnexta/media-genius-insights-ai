@@ -1,252 +1,313 @@
+import { User } from '@supabase/supabase-js';
 
-import { supabase } from '@/integrations/supabase/client';
-
-export interface AIAgent {
+interface AIInsight {
   id: string;
-  name: string;
-  role: string;
-  expertise: string[];
-  context: string;
-  isActive: boolean;
-}
-
-export interface AIInsight {
-  id: string;
-  type: 'recommendation' | 'insight' | 'alert' | 'opportunity';
   title: string;
   description: string;
-  priority: 'high' | 'medium' | 'low';
+  type: string;
+  priority: string;
   category: string;
   actionable: boolean;
   timestamp: Date;
 }
 
-export interface AgentContext {
-  userProfile: any;
-  businessInfo: any;
-  recentActivity: any[];
-  goals: string[];
-  preferences: any;
+interface AgentContext {
+  userProfile: User | null;
+  businessInfo?: {
+    industry?: string;
+    company_name?: string;
+  };
+  recentActivity?: { type: string; timestamp: Date }[];
+  goals?: string[];
+  preferences?: {
+    language: string;
+  };
 }
 
 class AIAgentService {
-  private agents: AIAgent[] = [
-    {
-      id: 'strategy-agent',
-      name: 'Strategic Advisor',
-      role: 'marketing_strategist',
-      expertise: ['strategy', 'planning', 'market_analysis', 'competitive_intelligence'],
-      context: 'You are a senior marketing strategist with expertise in developing comprehensive marketing strategies.',
-      isActive: true
-    },
-    {
-      id: 'content-agent',
-      name: 'Content Specialist',
-      role: 'content_creator',
-      expertise: ['content_creation', 'copywriting', 'social_media', 'storytelling'],
-      context: 'You are a creative content specialist focused on engaging storytelling and brand voice.',
-      isActive: true
-    },
-    {
-      id: 'analytics-agent',
-      name: 'Analytics Expert',
-      role: 'data_analyst',
-      expertise: ['data_analysis', 'performance_tracking', 'roi_optimization', 'reporting'],
-      context: 'You are a data-driven analytics expert who identifies trends and optimization opportunities.',
-      isActive: true
-    },
-    {
-      id: 'growth-agent',
-      name: 'Growth Hacker',
-      role: 'growth_specialist',
-      expertise: ['growth_hacking', 'conversion_optimization', 'user_acquisition', 'scaling'],
-      context: 'You are a growth hacking specialist focused on rapid, scalable growth strategies.',
-      isActive: true
-    }
-  ];
+  private openaiApiKey: string | null = null;
 
-  async generateDailyInsights(userContext: AgentContext): Promise<AIInsight[]> {
+  constructor() {
+    // Check for OpenAI API key in environment
+    this.openaiApiKey = import.meta.env.VITE_OPENAI_API_KEY || null;
+  }
+
+  private async makeOpenAIRequest(messages: any[], language: string = 'en') {
+    if (!this.openaiApiKey) {
+      throw new Error('OpenAI API key not configured');
+    }
+
+    // Add language instruction to system message
+    const languageInstruction = language === 'ar' 
+      ? 'You must respond in Arabic language only. Do not use English words or phrases.'
+      : 'You must respond in English language only.';
+
+    const systemMessage = {
+      role: 'system',
+      content: `${messages[0]?.content || 'You are a helpful AI assistant.'} ${languageInstruction}`
+    };
+
+    const requestMessages = [systemMessage, ...messages.slice(1)];
+
     try {
-      const insights: AIInsight[] = [];
-      
-      // Generate insights from each active agent
-      for (const agent of this.agents.filter(a => a.isActive)) {
-        const agentInsight = await this.getAgentInsight(agent, userContext);
-        if (agentInsight) {
-          insights.push(agentInsight);
-        }
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.openaiApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: requestMessages,
+          temperature: 0.7,
+          max_tokens: 1000,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`OpenAI API error: ${response.statusText}`);
       }
 
+      const data = await response.json();
+      return data.choices[0].message.content;
+    } catch (error) {
+      console.error('OpenAI API request failed:', error);
+      throw error;
+    }
+  }
+
+  async generateDailyInsights(context: AgentContext): Promise<AIInsight[]> {
+    const language = context.preferences?.language || 'en';
+    
+    try {
+      const prompt = language === 'ar' 
+        ? `بناءً على بيانات المستخدم التالية، قم بإنشاء 3-4 رؤى تسويقية يومية مفيدة باللغة العربية فقط:
+           - الصناعة: ${context.businessInfo?.industry || 'تسويق رقمي'}
+           - الأهداف: ${context.goals?.join(', ') || 'زيادة المشاركة'}
+           
+           اجعل الرؤى قابلة للتنفيذ ومحددة. تجنب النصائح العامة.`
+        : `Based on the following user data, generate 3-4 actionable daily marketing insights in English only:
+           - Industry: ${context.businessInfo?.industry || 'Digital Marketing'}
+           - Goals: ${context.goals?.join(', ') || 'Increase engagement'}
+           
+           Make insights actionable and specific. Avoid generic advice.`;
+
+      const response = await this.makeOpenAIRequest([
+        { role: 'system', content: 'You are a marketing expert AI assistant.' },
+        { role: 'user', content: prompt }
+      ], language);
+
+      // Parse the response into insights
+      const insights = this.parseInsightsFromResponse(response, language);
       return insights;
     } catch (error) {
       console.error('Error generating daily insights:', error);
-      return this.getFallbackInsights();
+      return this.getFallbackInsights(language);
     }
   }
 
-  private async getAgentInsight(agent: AIAgent, context: AgentContext): Promise<AIInsight | null> {
+  async getPersonalizedRecommendations(context: AgentContext, category?: string): Promise<AIInsight[]> {
+    const language = context.preferences?.language || 'en';
+    
     try {
-      const prompt = this.buildAgentPrompt(agent, context);
+      const categoryFilter = category ? 
+        (language === 'ar' ? `في فئة ${category}` : `in the ${category} category`) : '';
       
-      const { data, error } = await supabase.functions.invoke('ai-chat', {
-        body: {
-          message: prompt,
-          context: agent.role,
-          language: 'en'
-        }
-      });
+      const prompt = language === 'ar'
+        ? `بناءً على ملف المستخدم التالي، قم بإنشاء 3 توصيات تسويقية شخصية قابلة للتنفيذ باللغة العربية فقط ${categoryFilter}:
+           - الصناعة: ${context.businessInfo?.industry || 'تسويق رقمي'}
+           - الأهداف: ${context.goals?.join(', ') || 'زيادة المشاركة'}
+           
+           يجب أن تكون كل توصية محددة وقابلة للتنفيذ مع خطوات واضحة.`
+        : `Based on the following user profile, generate 3 personalized actionable marketing recommendations in English only ${categoryFilter}:
+           - Industry: ${context.businessInfo?.industry || 'Digital Marketing'}
+           - Goals: ${context.goals?.join(', ') || 'Increase engagement'}
+           
+           Each recommendation should be specific and actionable with clear steps.`;
 
-      if (error) throw error;
+      const response = await this.makeOpenAIRequest([
+        { role: 'system', content: 'You are a marketing strategy consultant.' },
+        { role: 'user', content: prompt }
+      ], language);
 
-      return this.parseAgentResponse(agent, data.response);
+      const recommendations = this.parseRecommendationsFromResponse(response, language);
+      return recommendations;
     } catch (error) {
-      console.error(`Error getting insight from ${agent.name}:`, error);
-      return null;
+      console.error('Error generating recommendations:', error);
+      return this.getFallbackRecommendations(language);
     }
   }
 
-  private buildAgentPrompt(agent: AIAgent, context: AgentContext): string {
-    return `${agent.context}
-
-Based on the following business context, provide ONE specific, actionable insight or recommendation:
-
-Business Profile:
-- Industry: ${context.businessInfo?.industry || 'Not specified'}
-- Company: ${context.businessInfo?.company_name || 'Not specified'}
-- Goals: ${context.goals?.join(', ') || 'Growth and engagement'}
-
-Recent Activity:
-- User has been active in: ${context.recentActivity?.map(a => a.type).join(', ') || 'dashboard, campaigns'}
-
-Your expertise areas: ${agent.expertise.join(', ')}
-
-Provide a specific, actionable insight in this JSON format:
-{
-  "type": "recommendation|insight|alert|opportunity",
-  "title": "Brief title (max 50 chars)",
-  "description": "Detailed description (max 200 chars)",
-  "priority": "high|medium|low",
-  "category": "One of your expertise areas",
-  "actionable": true
-}
-
-Focus on practical, implementable advice based on your role as ${agent.name}.`;
-  }
-
-  private parseAgentResponse(agent: AIAgent, response: string): AIInsight {
+  async generateSmartSuggestion(fieldType: string, currentValue: string, context: any): Promise<string[]> {
+    const language = context.language || 'en';
+    
     try {
-      // Try to extract JSON from response
-      const jsonMatch = response.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]);
-        return {
-          id: `${agent.id}-${Date.now()}`,
-          type: parsed.type || 'insight',
-          title: parsed.title || `${agent.name} Recommendation`,
-          description: parsed.description || response.substring(0, 200),
-          priority: parsed.priority || 'medium',
-          category: parsed.category || agent.expertise[0],
-          actionable: parsed.actionable !== false,
-          timestamp: new Date()
-        };
-      }
-    } catch (error) {
-      console.error('Error parsing agent response:', error);
-    }
+      const prompt = language === 'ar'
+        ? `بناءً على النوع "${fieldType}" والقيمة الحالية "${currentValue}"، اقترح 3 تحسينات أو بدائل باللغة العربية فقط.
+           السياق: ${JSON.stringify(context)}
+           
+           قدم اقتراحات مفيدة ومحددة.`
+        : `Based on field type "${fieldType}" and current value "${currentValue}", suggest 3 improvements or alternatives in English only.
+           Context: ${JSON.stringify(context)}
+           
+           Provide helpful and specific suggestions.`;
 
-    // Fallback if JSON parsing fails
-    return {
-      id: `${agent.id}-${Date.now()}`,
-      type: 'insight',
-      title: `${agent.name} Insight`,
-      description: response.substring(0, 200),
-      priority: 'medium',
-      category: agent.expertise[0],
-      actionable: true,
-      timestamp: new Date()
-    };
+      const response = await this.makeOpenAIRequest([
+        { role: 'system', content: 'You are a content optimization assistant.' },
+        { role: 'user', content: prompt }
+      ], language);
+
+      return this.parseSuggestionsFromResponse(response);
+    } catch (error) {
+      console.error('Error generating smart suggestions:', error);
+      return language === 'ar' 
+        ? ['تحسين النص', 'إضافة كلمات مفتاحية', 'تحسين الجاذبية']
+        : ['Improve clarity', 'Add keywords', 'Enhance appeal'];
+    }
   }
 
-  private getFallbackInsights(): AIInsight[] {
+  private parseInsightsFromResponse(response: string, language: string): AIInsight[] {
+    try {
+      const parsedResponse = JSON.parse(response);
+      if (!Array.isArray(parsedResponse)) {
+        console.error('Unexpected response format: Not an array');
+        return [];
+      }
+
+      return parsedResponse.map((item: any) => ({
+        id: item.id || Math.random().toString(36).substring(7),
+        title: item.title || 'Untitled Insight',
+        description: item.description || 'No description provided.',
+        type: item.type || 'general',
+        priority: item.priority || 'medium',
+        category: item.category || 'marketing',
+        actionable: item.actionable !== false,
+        timestamp: new Date(item.timestamp || Date.now())
+      }));
+    } catch (error) {
+      console.error('Error parsing insights from response:', error);
+      return this.getFallbackInsights(language);
+    }
+  }
+
+  private parseRecommendationsFromResponse(response: string, language: string): AIInsight[] {
+    try {
+      const parsedResponse = JSON.parse(response);
+      if (!Array.isArray(parsedResponse)) {
+        console.error('Unexpected response format: Not an array');
+        return [];
+      }
+
+      return parsedResponse.map((item: any) => ({
+        id: item.id || Math.random().toString(36).substring(7),
+        title: item.title || 'Untitled Recommendation',
+        description: item.description || 'No description provided.',
+        type: item.type || 'recommendation',
+        priority: item.priority || 'medium',
+        category: item.category || 'general',
+        actionable: item.actionable !== false,
+        timestamp: new Date(item.timestamp || Date.now())
+      }));
+    } catch (error) {
+      console.error('Error parsing recommendations from response:', error);
+      return this.getFallbackRecommendations(language);
+    }
+  }
+
+  private parseSuggestionsFromResponse(response: string): string[] {
+    try {
+      const parsedResponse = JSON.parse(response);
+      if (!Array.isArray(parsedResponse)) {
+        console.error('Unexpected response format: Not an array');
+        return [];
+      }
+      return parsedResponse.map(item => String(item));
+    } catch (error) {
+      console.error('Error parsing suggestions from response:', error);
+      return [];
+    }
+  }
+
+  private getFallbackInsights(language: string): AIInsight[] {
+    if (language === 'ar') {
+      return [
+        {
+          id: 'fallback-1',
+          title: 'تحسين المحتوى على وسائل التواصل الاجتماعي',
+          description: 'قم بزيادة معدل النشر إلى 3-5 منشورات أسبوعياً لتحسين المشاركة',
+          type: 'recommendation',
+          priority: 'medium',
+          category: 'content_optimization',
+          actionable: true,
+          timestamp: new Date()
+        },
+        {
+          id: 'fallback-2',
+          title: 'تحليل أداء المنافسين',
+          description: 'راقب استراتيجيات المحتوى للمنافسين الرئيسيين لتحديد الفرص',
+          type: 'opportunity',
+          priority: 'high',
+          category: 'competitor_analysis',
+          actionable: true,
+          timestamp: new Date()
+        }
+      ];
+    }
+
     return [
       {
         id: 'fallback-1',
+        title: 'Optimize Social Media Content',
+        description: 'Increase posting frequency to 3-5 posts per week to improve engagement',
         type: 'recommendation',
-        title: 'Optimize Content Timing',
-        description: 'Consider posting content during peak engagement hours (9-11 AM and 3-5 PM) to maximize reach.',
         priority: 'medium',
-        category: 'content_creation',
+        category: 'content_optimization',
         actionable: true,
         timestamp: new Date()
       },
       {
         id: 'fallback-2',
-        type: 'insight',
-        title: 'Audience Engagement Opportunity',
-        description: 'Your audience shows higher engagement with video content. Consider increasing video production.',
+        title: 'Competitor Performance Analysis',
+        description: 'Monitor key competitors content strategies to identify opportunities',
+        type: 'opportunity',
         priority: 'high',
-        category: 'strategy',
+        category: 'competitor_analysis',
         actionable: true,
         timestamp: new Date()
       }
     ];
   }
 
-  async getPersonalizedRecommendations(userContext: AgentContext, category?: string): Promise<AIInsight[]> {
-    const allInsights = await this.generateDailyInsights(userContext);
-    
-    if (category) {
-      return allInsights.filter(insight => insight.category === category);
-    }
-    
-    return allInsights.filter(insight => insight.type === 'recommendation');
-  }
-
-  getAgents(): AIAgent[] {
-    return this.agents;
-  }
-
-  async generateSmartSuggestion(fieldType: string, currentValue: string, context: any): Promise<string[]> {
-    try {
-      const { data, error } = await supabase.functions.invoke('ai-chat', {
-        body: {
-          message: `Generate 3 smart suggestions for a ${fieldType} field. Current value: "${currentValue}". Context: ${JSON.stringify(context)}. Return only a JSON array of strings.`,
-          context: 'content',
-          language: 'en'
+  private getFallbackRecommendations(language: string): AIInsight[] {
+    if (language === 'ar') {
+      return [
+        {
+          id: 'rec-fallback-1',
+          title: 'تحسين استراتيجية المحتوى',
+          description: 'قم بإنشاء تقويم محتوى شهري مع مواضيع متنوعة لجذب جمهور أوسع',
+          type: 'recommendation',
+          priority: 'high',
+          category: 'content_strategy',
+          actionable: true,
+          timestamp: new Date()
         }
-      });
-
-      if (error) throw error;
-
-      // Try to parse JSON array from response
-      const arrayMatch = data.response.match(/\[[\s\S]*\]/);
-      if (arrayMatch) {
-        return JSON.parse(arrayMatch[0]);
-      }
-      
-      // Fallback: split by lines and clean up
-      return data.response
-        .split('\n')
-        .filter((line: string) => line.trim().length > 0)
-        .slice(0, 3)
-        .map((line: string) => line.replace(/^[\d\-\*\.\s]+/, '').trim());
-        
-    } catch (error) {
-      console.error('Error generating smart suggestions:', error);
-      return this.getFallbackSuggestions(fieldType);
+      ];
     }
-  }
 
-  private getFallbackSuggestions(fieldType: string): string[] {
-    const suggestions: Record<string, string[]> = {
-      title: ['Engaging Title Here', 'Compelling Headline', 'Attention-Grabbing Title'],
-      description: ['Detailed description that engages your audience', 'Compelling story that resonates', 'Clear value proposition'],
-      content: ['Share valuable insights', 'Tell your brand story', 'Engage with your community'],
-      campaign_name: ['Summer Launch Campaign', 'Brand Awareness Drive', 'Product Spotlight Series']
-    };
-
-    return suggestions[fieldType] || ['Smart suggestion', 'AI-powered idea', 'Optimized content'];
+    return [
+      {
+        id: 'rec-fallback-1',
+        title: 'Enhance Content Strategy',
+        description: 'Create a monthly content calendar with diverse topics to attract wider audience',
+        type: 'recommendation',
+        priority: 'high',
+        category: 'content_strategy',
+        actionable: true,
+        timestamp: new Date()
+      }
+    ];
   }
 }
 
 export const aiAgentService = new AIAgentService();
+export type { AIInsight, AgentContext };

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -27,7 +26,7 @@ const SmartTextarea: React.FC<SmartTextareaProps> = ({
   disabled,
   rows = 4
 }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -39,10 +38,15 @@ const SmartTextarea: React.FC<SmartTextareaProps> = ({
     
     setLoading(true);
     try {
+      const contextWithLanguage = {
+        ...context,
+        language
+      };
+      
       const smartSuggestions = await aiAgentService.generateSmartSuggestion(
         fieldType,
         value,
-        context
+        contextWithLanguage
       );
       setSuggestions(smartSuggestions);
       setShowSuggestions(true);
