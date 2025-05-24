@@ -121,6 +121,8 @@ export const useOnboardingData = () => {
           budget: dataToSave.budget,
           completed_at: dataToSave.completed ? new Date().toISOString() : null,
           updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id'
         });
 
       if (onboardingError) throw onboardingError;
@@ -137,6 +139,13 @@ export const useOnboardingData = () => {
         competitorCount: dataToSave.competitors.length
       };
 
+      // Check if user preferences already exist
+      const { data: existingPrefs } = await supabase
+        .from('user_preferences')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+
       // Save user preferences with AI context
       const { error: preferencesError } = await supabase
         .from('user_preferences')
@@ -149,6 +158,8 @@ export const useOnboardingData = () => {
             businessName: dataToSave.businessName
           },
           updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id'
         });
 
       if (preferencesError) throw preferencesError;
