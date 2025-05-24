@@ -108,7 +108,7 @@ const Agents: React.FC = () => {
       
       {/* Dashboard Container - 35/65 Split */}
       <div className="dashboard-container flex h-[calc(100vh-4rem)]">
-        {/* Fixed Chat Sidebar - Full 35% Height */}
+        {/* Fixed Chat Sidebar - Full 35% Height - ALWAYS LEFT */}
         <div className="chat-sidebar w-[35%] min-w-[400px] border-r bg-white dark:bg-gray-900">
           <AgentChatSidebar 
             agents={agents}
