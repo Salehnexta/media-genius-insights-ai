@@ -1,5 +1,7 @@
 
 import React from 'react';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import PrivacyHeader from '@/components/privacy/PrivacyHeader';
 import InformationCollectionSection from '@/components/privacy/InformationCollectionSection';
@@ -14,6 +16,7 @@ import ContactSection from '@/components/privacy/ContactSection';
 
 const Privacy: React.FC = () => {
   const { language } = useLanguage();
+  const navigate = useNavigate();
   const isArabic = language === 'ar';
 
   return (
@@ -32,6 +35,16 @@ const Privacy: React.FC = () => {
             <DataRetentionSection />
             <UserRightsSection />
             <ContactSection />
+          </div>
+
+          {/* Back to Landing Button */}
+          <div className="flex justify-center mt-8">
+            <Button 
+              onClick={() => navigate('/landing')}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            >
+              Back to Landing Page
+            </Button>
           </div>
         </div>
       </div>

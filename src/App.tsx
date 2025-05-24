@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -13,6 +12,7 @@ import LandingPageAr from '@/pages/LandingPageAr';
 import Pricing from '@/pages/Pricing';
 import PricingAr from '@/pages/PricingAr';
 import Privacy from '@/pages/Privacy';
+import PrivacyAr from '@/pages/PrivacyAr';
 import Terms from '@/pages/Terms';
 import Onboarding from '@/pages/Onboarding';
 import Profile from '@/pages/Profile';
@@ -64,6 +64,7 @@ function App() {
                   <Privacy />
                 </LanguageProvider>
               } />
+              <Route path="/privacy-ar" element={<PrivacyAr />} />
               <Route path="/terms" element={
                 <LanguageProvider>
                   <Terms />

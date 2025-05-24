@@ -193,7 +193,7 @@ const LandingPageArContent: React.FC = () => {
               <h3 className="font-semibold text-gray-900 dark:text-white mb-4">قانوني</h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Button variant="link" onClick={() => navigate('/privacy')} className="text-gray-600 dark:text-gray-300 p-0 h-auto">
+                  <Button variant="link" onClick={() => navigate('/privacy-ar')} className="text-gray-600 dark:text-gray-300 p-0 h-auto">
                     سياسة الخصوصية
                   </Button>
                 </li>
