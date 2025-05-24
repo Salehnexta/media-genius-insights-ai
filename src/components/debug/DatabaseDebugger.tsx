@@ -221,12 +221,13 @@ const DatabaseDebugger = () => {
   };
 
   const getStatusBadge = (status: TestStatus) => {
-    const variants = {
-      success: 'default' as const,
-      error: 'destructive' as const,
-      warning: 'secondary' as const
-    };
-    return <Badge variant={variants[status]}>{status}</Badge>;
+    if (status === 'success') {
+      return <Badge variant="default">{status}</Badge>;
+    } else if (status === 'error') {
+      return <Badge variant="destructive">{status}</Badge>;
+    } else {
+      return <Badge variant="secondary">{status}</Badge>;
+    }
   };
 
   return (
