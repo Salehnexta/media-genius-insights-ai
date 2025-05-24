@@ -42,7 +42,7 @@ const OnboardingWizard: React.FC = () => {
   const [isNavigating, setIsNavigating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const { data, updateData, saveData, loading, saving, error: dataError } = useOnboardingData();
+  const { data, updateData, saveData, loading, saving } = useOnboardingData();
   
   // Use refs to prevent stale closures and memory leaks
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -144,18 +144,6 @@ const OnboardingWizard: React.FC = () => {
       }
     };
   }, []);
-
-  // Handle navigation errors
-  useEffect(() => {
-    if (dataError) {
-      setError(dataError);
-      toast({
-        title: isArabic ? 'خطأ' : 'Error',
-        description: dataError,
-        variant: 'destructive'
-      });
-    }
-  }, [dataError, isArabic, toast]);
 
   const handleNext = useCallback(async () => {
     if (isNavigating || !isMountedRef.current) return;
