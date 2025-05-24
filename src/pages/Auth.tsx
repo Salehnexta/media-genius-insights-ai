@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -34,6 +33,14 @@ const Auth = () => {
       navigate(from, { replace: true });
     }
   }, [user, navigate, from]);
+
+  const handleBackToHome = () => {
+    if (isArabic) {
+      navigate('/landing-ar');
+    } else {
+      navigate('/');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,7 +101,7 @@ const Auth = () => {
       <div className="w-full max-w-md">
         <Button
           variant="ghost"
-          onClick={() => navigate('/')}
+          onClick={handleBackToHome}
           className={`mb-6 ${isArabic ? 'mr-auto' : 'ml-0'}`}
         >
           <ArrowLeft className={`h-4 w-4 ${isArabic ? 'ml-2 rotate-180' : 'mr-2'}`} />
