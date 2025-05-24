@@ -45,7 +45,11 @@ function App() {
               <Route path="/register-ar" element={<RegisterAr />} />
               <Route path="/landing" element={<LandingPage />} />
               <Route path="/landing-ar" element={<LandingPageAr />} />
-              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/pricing" element={
+                <LanguageProvider>
+                  <Pricing />
+                </LanguageProvider>
+              } />
               <Route path="/pricing-ar" element={<PricingAr />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
