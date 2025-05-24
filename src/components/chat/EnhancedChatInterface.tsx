@@ -63,33 +63,6 @@ const EnhancedChatInterface: React.FC<EnhancedChatInterfaceProps> = ({
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
 
-  const agents = [
-    { 
-      id: 'marketing-manager', 
-      name: isArabic ? 'مدير التسويق' : 'Marketing Manager',
-      color: 'bg-blue-500',
-      icon: <Brain className="h-4 w-4" />
-    },
-    { 
-      id: 'content-strategist', 
-      name: isArabic ? 'استراتيجي المحتوى' : 'Content Strategist',
-      color: 'bg-purple-500',
-      icon: <MessageSquare className="h-4 w-4" />
-    },
-    { 
-      id: 'social-media', 
-      name: isArabic ? 'مدير التواصل الاجتماعي' : 'Social Media Manager',
-      color: 'bg-pink-500',
-      icon: <MessageSquare className="h-4 w-4" />
-    },
-    { 
-      id: 'brand-manager', 
-      name: isArabic ? 'مدير العلامة التجارية' : 'Brand Manager',
-      color: 'bg-green-500',
-      icon: <MessageSquare className="h-4 w-4" />
-    }
-  ];
-
   const quickActions = [
     {
       text: isArabic ? 'تحليل الأداء الحالي' : 'Analyze current performance',
@@ -277,22 +250,6 @@ const EnhancedChatInterface: React.FC<EnhancedChatInterfaceProps> = ({
             </Button>
           )}
         </div>
-      </div>
-      
-      {/* Agent Selector */}
-      <div className={`flex gap-2 mt-3 ${isArabic ? 'flex-row-reverse' : ''}`}>
-        {agents.map(agent => (
-          <Button
-            key={agent.id}
-            variant={selectedAgent === agent.id ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setSelectedAgent(agent.id)}
-            className={`${selectedAgent === agent.id ? agent.color : ''} text-xs`}
-          >
-            {agent.icon}
-            <span className="ml-1">{agent.name}</span>
-          </Button>
-        ))}
       </div>
 
       {/* Search Bar */}
