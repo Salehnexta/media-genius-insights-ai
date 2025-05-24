@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,6 +14,7 @@ import SubscriptionSection from '@/components/profile/SubscriptionSection';
 import ActivitySection from '@/components/profile/ActivitySection';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { User, Settings, CreditCard, BarChart3 } from 'lucide-react';
 
 const EnhancedProfile: React.FC = () => {
   const { language } = useLanguage();
@@ -152,10 +152,12 @@ const EnhancedProfile: React.FC = () => {
 
   if (loading && !profile.email) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p>{isArabic ? 'جاري التحميل...' : 'Loading profile...'}</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600 mx-auto mb-6"></div>
+          <p className={`text-lg text-gray-600 dark:text-gray-300 ${isArabic ? 'font-arabic' : ''}`}>
+            {isArabic ? 'جاري التحميل...' : 'Loading profile...'}
+          </p>
         </div>
       </div>
     );
@@ -165,8 +167,8 @@ const EnhancedProfile: React.FC = () => {
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : ''}`} dir={isArabic ? 'rtl' : 'ltr'}>
       <DashboardHeader />
       
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* Profile Header */}
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Enhanced Profile Header */}
         <ProfileHeader 
           profile={profile}
           stats={stats}
@@ -175,25 +177,41 @@ const EnhancedProfile: React.FC = () => {
           loading={loading}
         />
 
-        {/* Main Content Tabs */}
-        <div className="mt-8">
+        {/* Enhanced Main Content Tabs */}
+        <div className="mt-10">
           <Tabs defaultValue="personal" className="w-full">
-            <TabsList className={`grid w-full grid-cols-4 ${isArabic ? 'text-right' : ''}`}>
-              <TabsTrigger value="personal" className={isArabic ? 'flex-row-reverse' : ''}>
+            <TabsList className={`grid w-full grid-cols-4 h-14 bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-xl p-2 shadow-lg ${isArabic ? 'text-right' : ''}`}>
+              <TabsTrigger 
+                value="personal" 
+                className={`flex items-center gap-3 h-10 rounded-lg text-base font-medium transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gray-100 dark:hover:bg-gray-800 ${isArabic ? 'flex-row-reverse font-arabic' : ''}`}
+              >
+                <User className="h-5 w-5" />
                 {isArabic ? 'المعلومات الشخصية' : 'Personal Info'}
               </TabsTrigger>
-              <TabsTrigger value="settings" className={isArabic ? 'flex-row-reverse' : ''}>
+              <TabsTrigger 
+                value="settings" 
+                className={`flex items-center gap-3 h-10 rounded-lg text-base font-medium transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gray-100 dark:hover:bg-gray-800 ${isArabic ? 'flex-row-reverse font-arabic' : ''}`}
+              >
+                <Settings className="h-5 w-5" />
                 {isArabic ? 'إعدادات الحساب' : 'Account Settings'}
               </TabsTrigger>
-              <TabsTrigger value="subscription" className={isArabic ? 'flex-row-reverse' : ''}>
+              <TabsTrigger 
+                value="subscription" 
+                className={`flex items-center gap-3 h-10 rounded-lg text-base font-medium transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gray-100 dark:hover:bg-gray-800 ${isArabic ? 'flex-row-reverse font-arabic' : ''}`}
+              >
+                <CreditCard className="h-5 w-5" />
                 {isArabic ? 'الاشتراك والفوترة' : 'Subscription'}
               </TabsTrigger>
-              <TabsTrigger value="activity" className={isArabic ? 'flex-row-reverse' : ''}>
+              <TabsTrigger 
+                value="activity" 
+                className={`flex items-center gap-3 h-10 rounded-lg text-base font-medium transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gray-100 dark:hover:bg-gray-800 ${isArabic ? 'flex-row-reverse font-arabic' : ''}`}
+              >
+                <BarChart3 className="h-5 w-5" />
                 {isArabic ? 'النشاط' : 'Activity'}
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="personal" className="mt-6">
+            <TabsContent value="personal" className="mt-8">
               <PersonalInfoSection
                 profile={profile}
                 socialLinks={socialLinks}
@@ -204,7 +222,7 @@ const EnhancedProfile: React.FC = () => {
               />
             </TabsContent>
 
-            <TabsContent value="settings" className="mt-6">
+            <TabsContent value="settings" className="mt-8">
               <AccountSettingsSection
                 settings={settings}
                 isArabic={isArabic}
@@ -214,7 +232,7 @@ const EnhancedProfile: React.FC = () => {
               />
             </TabsContent>
 
-            <TabsContent value="subscription" className="mt-6">
+            <TabsContent value="subscription" className="mt-8">
               <SubscriptionSection
                 subscription={subscription}
                 stats={stats}
@@ -222,7 +240,7 @@ const EnhancedProfile: React.FC = () => {
               />
             </TabsContent>
 
-            <TabsContent value="activity" className="mt-6">
+            <TabsContent value="activity" className="mt-8">
               <ActivitySection
                 stats={stats}
                 isArabic={isArabic}
