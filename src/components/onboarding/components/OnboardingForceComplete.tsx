@@ -22,18 +22,45 @@ const OnboardingForceComplete: React.FC<OnboardingForceCompleteProps> = ({ isAra
     try {
       console.log('=== FORCE COMPLETING ONBOARDING ===');
       
-      // Directly update the database to mark onboarding as complete
-      const { error: updateError } = await supabase
+      // First check if record exists
+      const { data: existingData } = await supabase
         .from('onboarding_data')
-        .update({
-          completed_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
-        .eq('user_id', user.id);
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle();
 
-      if (updateError) {
-        console.error('Error updating onboarding:', updateError);
-        throw updateError;
+      if (existingData) {
+        // Update existing record
+        const { error: updateError } = await supabase
+          .from('onboarding_data')
+          .update({
+            completed_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
+          .eq('user_id', user.id);
+
+        if (updateError) {
+          console.error('Error updating onboarding:', updateError);
+          throw updateError;
+        }
+      } else {
+        // Create new record with minimal data
+        const { error: insertError } = await supabase
+          .from('onboarding_data')
+          .insert({
+            user_id: user.id,
+            completed_at: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            skill_level: 'beginner',
+            business_name: 'Default Business',
+            industry: 'technology'
+          });
+
+        if (insertError) {
+          console.error('Error creating onboarding record:', insertError);
+          throw insertError;
+        }
       }
 
       console.log('Onboarding marked as complete, redirecting...');
@@ -43,7 +70,7 @@ const OnboardingForceComplete: React.FC<OnboardingForceCompleteProps> = ({ isAra
         description: isArabic ? 'تم إكمال الإعداد بنجاح' : 'Onboarding completed successfully',
       });
 
-      // Force redirect to dashboard
+      // Force redirect to dashboard with a hard refresh
       setTimeout(() => {
         window.location.href = '/';
       }, 1000);
@@ -65,7 +92,7 @@ const OnboardingForceComplete: React.FC<OnboardingForceCompleteProps> = ({ isAra
         className="bg-red-600 hover:bg-red-700 text-white"
         size="sm"
       >
-        {isArabic ? 'إكمال الإعداد الآن' : 'Complete Onboarding Now'}
+        {isArabic ? 'إكمال الإعداد الآن' : 'Force Complete & Go to Dashboard'}
       </Button>
     </div>
   );

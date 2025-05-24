@@ -14,6 +14,7 @@ const Index: React.FC = () => {
   const navigate = useNavigate();
   const { data: onboardingData, loading: onboardingLoading, getOnboardingData } = useOnboardingData();
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean | null>(null);
+  const [checkingStatus, setCheckingStatus] = useState(true);
   const isArabic = language === 'ar';
 
   useEffect(() => {
@@ -24,7 +25,6 @@ const Index: React.FC = () => {
     console.log('Onboarding loading:', onboardingLoading);
     console.log('Has completed onboarding:', hasCompletedOnboarding);
     console.log('Onboarding data from hook:', onboardingData);
-    console.log('Onboarding data completed field:', onboardingData?.completed);
     
     if (!authLoading && !user) {
       console.log('No user found, redirecting to auth');
@@ -32,82 +32,58 @@ const Index: React.FC = () => {
       return;
     }
 
-    if (user && !onboardingLoading && hasCompletedOnboarding === null) {
-      console.log('Checking onboarding status...');
+    if (user && !onboardingLoading && checkingStatus) {
+      console.log('User found and onboarding not loading, checking status...');
       checkOnboardingStatus();
     }
-  }, [user, authLoading, onboardingLoading, navigate, hasCompletedOnboarding, onboardingData]);
+  }, [user, authLoading, onboardingLoading, navigate, checkingStatus]);
 
   const checkOnboardingStatus = async () => {
     if (!user) return;
     
     try {
       console.log('=== CHECKING ONBOARDING STATUS ===');
+      setCheckingStatus(true);
       
-      // First check the hook data which should be already processed
-      if (onboardingData) {
-        console.log('Using hook data for completion check');
-        console.log('Hook data completed status:', onboardingData.completed);
-        
-        const isCompleted = onboardingData.completed === true;
-        console.log('Final completion status from hook:', isCompleted);
-        
-        setHasCompletedOnboarding(isCompleted);
-        
-        if (!isCompleted) {
-          console.log('Onboarding not completed, staying on onboarding page');
-          // Don't redirect if we're already on onboarding page
-          if (window.location.pathname !== '/onboarding') {
-            navigate('/onboarding');
-          }
-        } else {
-          console.log('Onboarding completed, staying on dashboard');
-        }
-        return;
-      }
-      
-      // Fallback: Get raw data from database if hook data not available
-      console.log('Hook data not available, fetching from database...');
+      // Get raw data directly from database
+      console.log('Fetching raw data from database...');
       const rawData = await getOnboardingData();
       console.log('Raw onboarding data from database:', rawData);
       
       if (rawData) {
-        // Check completion status from raw database data
+        // Check if completed_at has any value (not null/undefined)
         const isCompleted = rawData.completed_at !== null && rawData.completed_at !== undefined;
-        console.log('=== RAW DATA COMPLETION CHECK ===');
+        console.log('=== COMPLETION CHECK ===');
         console.log('completed_at value:', rawData.completed_at);
-        console.log('completed_at is null:', rawData.completed_at === null);
-        console.log('Final isCompleted result from raw data:', isCompleted);
+        console.log('completed_at is not null:', rawData.completed_at !== null);
+        console.log('completed_at is not undefined:', rawData.completed_at !== undefined);
+        console.log('Final isCompleted result:', isCompleted);
         
         setHasCompletedOnboarding(isCompleted);
         
         if (!isCompleted) {
-          console.log('Onboarding not completed, staying on onboarding page');
-          if (window.location.pathname !== '/onboarding') {
-            navigate('/onboarding');
-          }
+          console.log('Onboarding not completed, redirecting to onboarding page');
+          navigate('/onboarding');
         } else {
           console.log('Onboarding completed, staying on dashboard');
         }
       } else {
         console.log('No onboarding data found, redirecting to onboarding');
         setHasCompletedOnboarding(false);
-        if (window.location.pathname !== '/onboarding') {
-          navigate('/onboarding');
-        }
+        navigate('/onboarding');
       }
     } catch (error) {
       console.error('Error checking onboarding status:', error);
-      // If there's an error, assume onboarding not completed
+      // If there's an error, assume onboarding not completed and redirect
       setHasCompletedOnboarding(false);
-      if (window.location.pathname !== '/onboarding') {
-        navigate('/onboarding');
-      }
+      navigate('/onboarding');
+    } finally {
+      setCheckingStatus(false);
     }
   };
 
   // Show loading while checking authentication or onboarding status
-  if (authLoading || onboardingLoading || hasCompletedOnboarding === null) {
+  if (authLoading || onboardingLoading || hasCompletedOnboarding === null || checkingStatus) {
     console.log('Showing loading state');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
@@ -119,7 +95,8 @@ const Index: React.FC = () => {
           <p className="text-sm text-gray-500 mt-2">
             Auth: {authLoading ? 'loading' : 'ready'} | 
             Onboarding: {onboardingLoading ? 'loading' : 'ready'} | 
-            Status: {hasCompletedOnboarding === null ? 'checking' : hasCompletedOnboarding ? 'completed' : 'incomplete'}
+            Status: {hasCompletedOnboarding === null ? 'checking' : hasCompletedOnboarding ? 'completed' : 'incomplete'} |
+            Checking: {checkingStatus ? 'yes' : 'no'}
           </p>
         </div>
       </div>
