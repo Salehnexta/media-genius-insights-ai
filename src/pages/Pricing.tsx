@@ -2,15 +2,43 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import DynamicPricingCards from '@/components/pricing/DynamicPricingCards';
-import Header from '@/components/layout/Header';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
+import { Globe } from 'lucide-react';
+import LanguageToggle from '@/components/layout/LanguageToggle';
 
 const Pricing: React.FC = () => {
-  const { language } = useLanguage();
+  const { language, toggleLanguage } = useLanguage();
+  const navigate = useNavigate();
   const isArabic = language === 'ar';
 
   return (
-    <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : ''}`}>
-      <Header isDarkMode={false} toggleDarkMode={() => {}} />
+    <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 ${isArabic ? 'rtl' : ''}`}>
+      {/* Header */}
+      <header className="container mx-auto px-4 py-6">
+        <div className={`flex justify-between items-center ${isArabic ? 'flex-row-reverse' : ''}`}>
+          <div className={`flex items-center gap-3 ${isArabic ? 'flex-row-reverse' : ''}`}>
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold text-lg">MG</span>
+            </div>
+            <span className="text-xl font-bold text-gray-900 dark:text-white">
+              {isArabic ? 'منصة التسويق الذكي' : 'AI Marketing Platform'}
+            </span>
+          </div>
+          
+          <div className={`flex items-center gap-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
+            <LanguageToggle isArabic={isArabic} onToggle={toggleLanguage} />
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/auth')}
+            >
+              {isArabic ? 'تسجيل الدخول' : 'Sign In'}
+            </Button>
+          </div>
+        </div>
+      </header>
+
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-12">
@@ -61,18 +89,6 @@ const Pricing: React.FC = () => {
             
             <div>
               <h3 className="font-semibold mb-2">
-                {isArabic ? 'هل تقدمون فترة تجريبية مجانية؟' : 'Do you offer a free trial?'}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                {isArabic 
-                  ? 'نعم، نقدم فترة تجريبية مجانية لمدة 7 أيام مع جميع الميزات.'
-                  : 'Yes, we offer a 7-day free trial with full access to all features.'
-                }
-              </p>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold mb-2">
                 {isArabic ? 'هل بياناتي آمنة؟' : 'Is my data secure?'}
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
@@ -82,9 +98,45 @@ const Pricing: React.FC = () => {
                 }
               </p>
             </div>
+            
+            <div>
+              <h3 className="font-semibold mb-2">
+                {isArabic ? 'كيف يتم احتساب الرسائل؟' : 'How are messages calculated?'}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                {isArabic 
+                  ? 'كل تفاعل مع الذكاء الاصطناعي يُحتسب كرسالة واحدة. يتم إعادة تعيين العداد شهرياً.'
+                  : 'Each AI interaction counts as one message. The counter resets monthly with your billing cycle.'
+                }
+              </p>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Footer CTA Section */}
+      <section className="container mx-auto px-4 py-16">
+        <Card className="bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0">
+          <CardContent className="p-12 text-center">
+            <h2 className="text-3xl font-bold mb-4">
+              {isArabic ? 'جاهز للبدء؟' : 'Ready to Get Started?'}
+            </h2>
+            <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
+              {isArabic 
+                ? 'انضم إلى آلاف المسوقين الذين يحققون نتائج استثنائية مع منصتنا'
+                : 'Join thousands of marketers achieving exceptional results with our platform'
+              }
+            </p>
+            <Button 
+              size="lg" 
+              variant="secondary"
+              onClick={() => navigate('/auth')}
+            >
+              {isArabic ? 'ابدأ رحلتك اليوم' : 'Start Your Journey Today'}
+            </Button>
+          </CardContent>
+        </Card>
+      </section>
     </div>
   );
 };
