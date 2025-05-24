@@ -83,9 +83,9 @@ const Profile = () => {
           industry: data.industry || '',
           website: data.website || '',
           avatar_url: data.avatar_url || '',
-          bio: data.bio || '',
-          phone: data.phone || '',
-          location: data.location || ''
+          bio: (data as any).bio || '',
+          phone: (data as any).phone || '',
+          location: (data as any).location || ''
         });
       }
     } catch (error: any) {
