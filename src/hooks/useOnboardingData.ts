@@ -1,11 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { OnboardingData, defaultOnboardingData } from './onboarding/types';
 import { loadOnboardingData, saveOnboardingData, saveUserPreferences, getOnboardingData } from './onboarding/onboardingService';
-
-export interface { OnboardingData } from './onboarding/types';
 
 export const useOnboardingData = () => {
   const { user, loading: authLoading } = useAuth();
