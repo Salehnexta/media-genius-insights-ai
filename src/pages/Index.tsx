@@ -120,20 +120,34 @@ const Index: React.FC = () => {
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : ''}`}>
       <DashboardHeader />
       <div className="flex">
+        {/* AI Assistant Sidebar - Left for English, Right for Arabic */}
+        {!isArabic && (
+          <aside className="w-[35%] p-4 border-r bg-white dark:bg-gray-900">
+            <div className="sticky top-6">
+              <h2 className="text-xl font-bold mb-4">
+                AI Marketing Assistant
+              </h2>
+              <ChatSection />
+            </div>
+          </aside>
+        )}
+        
         {/* Main Content Area - 65% */}
         <main className="flex-1 w-[65%] px-4 py-6">
           <DashboardTabs />
         </main>
         
-        {/* AI Assistant Sidebar - 35% */}
-        <aside className="w-[35%] p-4 border-l bg-white dark:bg-gray-900">
-          <div className="sticky top-6">
-            <h2 className={`text-xl font-bold mb-4 ${isArabic ? 'text-right' : ''}`}>
-              {isArabic ? 'مساعد التسويق الذكي' : 'AI Marketing Assistant'}
-            </h2>
-            <ChatSection />
-          </div>
-        </aside>
+        {/* AI Assistant Sidebar - Right for Arabic */}
+        {isArabic && (
+          <aside className="w-[35%] p-4 border-l bg-white dark:bg-gray-900">
+            <div className="sticky top-6">
+              <h2 className="text-xl font-bold mb-4 text-right">
+                مساعد التسويق الذكي
+              </h2>
+              <ChatSection />
+            </div>
+          </aside>
+        )}
       </div>
     </div>
   );
