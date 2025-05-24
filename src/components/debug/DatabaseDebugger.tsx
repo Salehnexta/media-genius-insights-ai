@@ -221,16 +221,15 @@ const DatabaseDebugger = () => {
   };
 
   const getStatusBadge = (status: TestStatus) => {
-    const statusText = status as string;
     switch (status) {
       case 'success':
-        return <Badge variant="default">{statusText}</Badge>;
+        return <Badge variant="default">success</Badge>;
       case 'error':
-        return <Badge variant="destructive">{statusText}</Badge>;
+        return <Badge variant="destructive">error</Badge>;
       case 'warning':
-        return <Badge variant="secondary">{statusText}</Badge>;
+        return <Badge variant="secondary">warning</Badge>;
       default:
-        return <Badge variant="secondary">{statusText}</Badge>;
+        return <Badge variant="secondary">unknown</Badge>;
     }
   };
 
