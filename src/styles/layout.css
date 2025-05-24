@@ -1,0 +1,59 @@
+
+/* Dashboard Layout Styles */
+.dashboard-container {
+  @apply flex w-full;
+}
+
+.chat-sidebar {
+  @apply w-[35%] min-w-[400px] border-r bg-white dark:bg-gray-900;
+}
+
+.agent-workspace {
+  @apply flex-1 bg-gray-50 dark:bg-gray-950;
+}
+
+/* RTL/LTR Content */
+.workspace-rtl {
+  direction: rtl;
+}
+
+.workspace-rtl .metric-numbers {
+  direction: ltr; /* Keep numbers LTR even in RTL */
+}
+
+.workspace-ltr {
+  direction: ltr;
+}
+
+/* Arabic font improvements */
+.font-arabic {
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .chat-sidebar {
+    @apply w-[40%] min-w-[350px];
+  }
+  
+  .agent-workspace {
+    min-width: 60%;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    @apply flex-col;
+  }
+  
+  .chat-sidebar {
+    @apply w-full;
+    height: 50vh;
+  }
+  
+  .agent-workspace {
+    @apply w-full;
+    min-height: 50vh;
+  }
+}
