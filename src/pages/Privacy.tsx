@@ -209,9 +209,9 @@ const Privacy: React.FC = () => {
                   For privacy-related questions or to exercise your rights, contact our Data Protection Officer:
                 </p>
                 <div className="space-y-1 text-sm">
-                  <p>Email: privacy@marketinggenius.ai</p>
-                  <p>Address: [Your Business Address]</p>
-                  <p>Phone: [Your Contact Number]</p>
+                  <p><strong>Company:</strong> Nexta Saudi Arabia</p>
+                  <p><strong>Email:</strong> info@nexta.sa</p>
+                  <p><strong>Address:</strong> Dammam Khobar, Saudi Arabia</p>
                 </div>
               </div>
             </CardContent>
