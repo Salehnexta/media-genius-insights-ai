@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
@@ -5,7 +6,7 @@ import AgentChatSidebar from '@/components/agents/AgentChatSidebar';
 import AdminPanelAccess from '@/components/agents/AdminPanelAccess';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Eye, Users, TrendingUp, Target, Activity } from 'lucide-react';
+import { Eye, Users, TrendingUp, Target, Activity, MessageCircle, Calendar, BarChart3, Settings, Play, Pause } from 'lucide-react';
 
 export interface Agent {
   id: string;
@@ -109,14 +110,24 @@ const Agents: React.FC = () => {
       <DashboardHeader />
       
       <div className="flex h-[calc(100vh-4rem)]" dir={isArabic ? 'rtl' : 'ltr'}>
-        {/* Chat Sidebar - Fixed 35% - ALWAYS LEFT in physical position */}
+        {/* AI Chat Sidebar - Fixed 35% - Always LEFT in physical position */}
         <div className="w-[35%] min-w-[400px] bg-white dark:bg-gray-900 border-r" style={{ order: isArabic ? 2 : 1 }}>
-          <AgentChatSidebar 
-            agents={agents}
-            selectedAgent={selectedAgent}
-            onAgentSelect={setSelectedAgent}
-            isArabic={isArabic}
-          />
+          <div className="p-4 border-b">
+            <h2 className={`text-lg font-semibold text-gray-900 dark:text-white ${isArabic ? 'text-right font-arabic' : ''}`}>
+              {isArabic ? 'مساعد التسويق الذكي' : 'AI Marketing Assistant'}
+            </h2>
+            <p className={`text-sm text-gray-600 dark:text-gray-400 ${isArabic ? 'text-right' : ''}`}>
+              {isArabic ? 'تحدث مع مساعد التسويق الذكي' : 'Chat with your AI marketing assistant'}
+            </p>
+          </div>
+          <div className="h-[calc(100%-80px)]">
+            <AgentChatSidebar 
+              agents={agents}
+              selectedAgent={selectedAgent}
+              onAgentSelect={setSelectedAgent}
+              isArabic={isArabic}
+            />
+          </div>
         </div>
 
         {/* Main Dashboard - 65% */}
@@ -126,8 +137,11 @@ const Agents: React.FC = () => {
             <div className={`mb-6 flex items-center justify-between ${isArabic ? 'text-right flex-row-reverse' : ''}`}>
               <div>
                 <h1 className={`text-2xl font-bold text-gray-900 dark:text-white mb-2 ${isArabic ? 'font-arabic' : ''}`}>
-                  {isArabic ? 'مساعد التسويق الذكي' : 'AI Marketing Assistant'}
+                  {isArabic ? 'لوحة تحكم الوكلاء الأذكياء' : 'AI Agents Dashboard'}
                 </h1>
+                <p className={`text-gray-600 dark:text-gray-300 ${isArabic ? 'leading-relaxed' : ''}`}>
+                  {isArabic ? 'إدارة ومراقبة فريق التسويق الذكي' : 'Manage and monitor your AI marketing team'}
+                </p>
               </div>
               <AdminPanelAccess />
             </div>
@@ -135,7 +149,7 @@ const Agents: React.FC = () => {
             {/* Top Metrics Row */}
             <div className="grid grid-cols-4 gap-4 mb-6">
               {/* Views */}
-              <Card className="bg-white dark:bg-gray-900">
+              <Card className="bg-white dark:bg-gray-900 hover:shadow-lg transition-shadow">
                 <CardContent className="p-4">
                   <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
                     <div className={isArabic ? 'text-right' : ''}>
@@ -153,7 +167,7 @@ const Agents: React.FC = () => {
               </Card>
 
               {/* Conversion Rate */}
-              <Card className="bg-white dark:bg-gray-900">
+              <Card className="bg-white dark:bg-gray-900 hover:shadow-lg transition-shadow">
                 <CardContent className="p-4">
                   <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
                     <div className={isArabic ? 'text-right' : ''}>
@@ -171,7 +185,7 @@ const Agents: React.FC = () => {
               </Card>
 
               {/* Reach */}
-              <Card className="bg-white dark:bg-gray-900">
+              <Card className="bg-white dark:bg-gray-900 hover:shadow-lg transition-shadow">
                 <CardContent className="p-4">
                   <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
                     <div className={isArabic ? 'text-right' : ''}>
@@ -189,7 +203,7 @@ const Agents: React.FC = () => {
               </Card>
 
               {/* Conversions */}
-              <Card className="bg-white dark:bg-gray-900">
+              <Card className="bg-white dark:bg-gray-900 hover:shadow-lg transition-shadow">
                 <CardContent className="p-4">
                   <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
                     <div className={isArabic ? 'text-right' : ''}>
@@ -207,76 +221,74 @@ const Agents: React.FC = () => {
               </Card>
             </div>
 
-            {/* AI Assistant Cards */}
+            {/* AI Agents Grid */}
             <div className={`mb-6 ${isArabic ? 'text-right' : ''}`}>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                {isArabic ? 'اقتراحات ذكية لهذا اليوم' : 'Smart Suggestions for Today'}
+                {isArabic ? 'فريق الوكلاء الأذكياء' : 'AI Marketing Team'}
               </h2>
-              <div className="grid grid-cols-2 gap-4">
-                {/* Content Creation */}
-                <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white cursor-pointer hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className={`flex items-center gap-3 ${isArabic ? 'flex-row-reverse text-right' : ''}`}>
-                      <div className="p-2 bg-white/20 rounded-lg">
-                        <Activity className="h-6 w-6" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {agents.map((agent) => (
+                  <Card key={agent.id} className="bg-white dark:bg-gray-900 hover:shadow-lg transition-shadow cursor-pointer">
+                    <CardContent className="p-6">
+                      <div className={`flex items-center gap-3 mb-4 ${isArabic ? 'flex-row-reverse text-right' : ''}`}>
+                        <div className={`p-3 rounded-lg ${agent.bgColor} text-white text-xl`}>
+                          {agent.icon}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-900 dark:text-white">{agent.name}</h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{agent.role}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold">{isArabic ? 'إنشاء المحتوى' : 'Content Creation'}</h3>
-                        <p className="text-sm opacity-90">{isArabic ? 'أفكار لمحتوى جديد' : 'New content ideas'}</p>
+                      
+                      <div className={`space-y-3 ${isArabic ? 'text-right' : ''}`}>
+                        <div className={`flex justify-between items-center ${isArabic ? 'flex-row-reverse' : ''}`}>
+                          <span className="text-sm text-gray-600">{isArabic ? 'الحالة' : 'Status'}</span>
+                          <Badge className={
+                            agent.status === 'active' ? 'bg-green-100 text-green-800' :
+                            agent.status === 'working' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-gray-100 text-gray-800'
+                          }>
+                            {isArabic ? 
+                              (agent.status === 'active' ? 'نشط' : agent.status === 'working' ? 'يعمل' : 'في الانتظار') :
+                              agent.status.charAt(0).toUpperCase() + agent.status.slice(1)
+                            }
+                          </Badge>
+                        </div>
+                        
+                        <div className={`flex justify-between items-center ${isArabic ? 'flex-row-reverse' : ''}`}>
+                          <span className="text-sm text-gray-600">{isArabic ? 'المهام المكتملة' : 'Completed Tasks'}</span>
+                          <span className="font-semibold">{agent.completedTasks}</span>
+                        </div>
+                        
+                        <div className={`flex justify-between items-center ${isArabic ? 'flex-row-reverse' : ''}`}>
+                          <span className="text-sm text-gray-600">{isArabic ? 'التقدم' : 'Progress'}</span>
+                          <span className="font-semibold">{agent.progress}%</span>
+                        </div>
+                        
+                        <div className={isArabic ? 'text-right' : ''}>
+                          <p className="text-sm text-gray-600 mb-1">{isArabic ? 'المهمة الحالية:' : 'Current Task:'}</p>
+                          <p className="text-sm font-medium">{agent.currentTask}</p>
+                        </div>
+                        
+                        <div className="flex gap-2 mt-4">
+                          <button className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors flex items-center gap-2 justify-center">
+                            <MessageCircle className="h-4 w-4" />
+                            {isArabic ? 'محادثة' : 'Chat'}
+                          </button>
+                          <button className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3 py-2 rounded-lg text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center gap-2 justify-center">
+                            <Settings className="h-4 w-4" />
+                            {isArabic ? 'إعدادات' : 'Settings'}
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Campaign Analysis */}
-                <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white cursor-pointer hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className={`flex items-center gap-3 ${isArabic ? 'flex-row-reverse text-right' : ''}`}>
-                      <div className="p-2 bg-white/20 rounded-lg">
-                        <TrendingUp className="h-6 w-6" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">{isArabic ? 'تحليل الحملة' : 'Campaign Analysis'}</h3>
-                        <p className="text-sm opacity-90">{isArabic ? 'تحليل أداء حملات التسويق' : 'Marketing campaign performance'}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Trend Analysis */}
-                <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white cursor-pointer hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className={`flex items-center gap-3 ${isArabic ? 'flex-row-reverse text-right' : ''}`}>
-                      <div className="p-2 bg-white/20 rounded-lg">
-                        <Target className="h-6 w-6" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">{isArabic ? 'الاتجاهات' : 'Trends'}</h3>
-                        <p className="text-sm opacity-90">{isArabic ? 'آخر الاتجاهات في السوق' : 'Latest market trends'}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Audience Analysis */}
-                <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white cursor-pointer hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className={`flex items-center gap-3 ${isArabic ? 'flex-row-reverse text-right' : ''}`}>
-                      <div className="p-2 bg-white/20 rounded-lg">
-                        <Users className="h-6 w-6" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">{isArabic ? 'تحليل الجمهور' : 'Audience Analysis'}</h3>
-                        <p className="text-sm opacity-90">{isArabic ? 'فهم جمهورك المستهدف' : 'Understanding your audience'}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             </div>
 
             {/* Weekly Performance & Best Campaigns */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Weekly Performance */}
               <Card className="bg-white dark:bg-gray-900">
                 <CardHeader>
