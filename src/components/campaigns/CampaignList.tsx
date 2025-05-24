@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import CampaignForm from './CampaignForm';
+import CampaignDetails from './CampaignDetails';
 
 const CampaignList = () => {
   const { t, language } = useLanguage();
@@ -22,6 +22,7 @@ const CampaignList = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<any>(null);
+  const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(null);
 
   const fetchCampaigns = async () => {
     if (!user) return;
@@ -110,6 +111,22 @@ const CampaignList = () => {
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
+  // Show campaign details view
+  if (selectedCampaignId) {
+    return (
+      <CampaignDetails
+        campaignId={selectedCampaignId}
+        onBack={() => setSelectedCampaignId(null)}
+        onEdit={(campaign) => {
+          setEditingCampaign(campaign);
+          setSelectedCampaignId(null);
+          setShowForm(true);
+        }}
+      />
+    );
+  }
+
+  // Show campaign form
   if (showForm) {
     return (
       <CampaignForm
@@ -247,7 +264,12 @@ const CampaignList = () => {
                 </div>
 
                 <div className="pt-2">
-                  <Button variant="outline" size="sm" className="w-full">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full"
+                    onClick={() => setSelectedCampaignId(campaign.id)}
+                  >
                     <Eye className={`h-4 w-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
                     {isArabic ? 'عرض التفاصيل' : 'View Details'}
                   </Button>
