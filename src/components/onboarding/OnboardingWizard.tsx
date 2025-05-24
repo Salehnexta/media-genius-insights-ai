@@ -153,28 +153,32 @@ const OnboardingWizard: React.FC = () => {
     setError(null);
     
     try {
-      // Save current data before proceeding
-      const saved = await memoizedSaveData();
-      if (!saved) {
-        throw new Error(isArabic ? 'فشل في حفظ البيانات' : 'Failed to save data');
-      }
-      
       if (currentStep < steps.length - 1) {
+        // Save current data before proceeding to next step
+        const saved = await memoizedSaveData();
+        if (!saved) {
+          throw new Error(isArabic ? 'فشل في حفظ البيانات' : 'Failed to save data');
+        }
+        
         setCurrentStep(prev => prev + 1);
       } else {
-        // Mark onboarding as complete
+        // This is the final step - complete onboarding
         console.log('Completing onboarding...');
+        
+        // Mark onboarding as complete and update data
         const completedData = { ...data, completed: true };
         updateData(completedData);
         
-        // Final save with completed status
-        const finalSave = await memoizedSaveData();
-        if (!finalSave) {
+        // Save the completed onboarding data
+        const finalSaved = await memoizedSaveData();
+        if (!finalSaved) {
           throw new Error(isArabic ? 'فشل في إكمال الإعداد' : 'Failed to complete onboarding');
         }
         
         console.log('Onboarding completed successfully, navigating to dashboard');
-        navigate('/');
+        
+        // Navigate to dashboard with replace to prevent back navigation
+        navigate('/', { replace: true });
       }
     } catch (error) {
       console.error('Error in handleNext:', error);
