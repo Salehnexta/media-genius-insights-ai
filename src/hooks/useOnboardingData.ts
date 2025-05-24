@@ -58,13 +58,20 @@ export const useOnboardingData = () => {
       if (error && error.code !== 'PGRST116') throw error;
 
       if (existingData) {
+        // Safely cast social_accounts from Json type to Record<string, string>
+        const socialAccounts = existingData.social_accounts && 
+          typeof existingData.social_accounts === 'object' && 
+          !Array.isArray(existingData.social_accounts) 
+          ? existingData.social_accounts as Record<string, string>
+          : {};
+
         setData({
           skillLevel: existingData.skill_level || '',
           experience: existingData.experience || '',
           businessName: existingData.business_name || '',
           industry: existingData.industry || '',
           website: existingData.website || '',
-          socialAccounts: existingData.social_accounts || {},
+          socialAccounts: socialAccounts,
           competitors: existingData.competitors || [],
           goals: existingData.goals || [],
           budget: existingData.budget || '',
