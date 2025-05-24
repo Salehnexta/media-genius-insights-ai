@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { LanguageProvider } from '@/contexts/LanguageContext';
 import Index from '@/pages/Index';
 import Auth from '@/pages/Auth';
 import AuthAr from '@/pages/AuthAr';
@@ -35,7 +36,11 @@ function App() {
           <div className="min-h-screen bg-background">
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
+              <Route path="/auth" element={
+                <LanguageProvider>
+                  <Auth />
+                </LanguageProvider>
+              } />
               <Route path="/auth-ar" element={<AuthAr />} />
               <Route path="/register-ar" element={<RegisterAr />} />
               <Route path="/landing" element={<LandingPage />} />
