@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useOnboardingData } from '@/hooks/useOnboardingData';
-import { useAIInsights } from '@/hooks/useAIInsights';
-import { ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react';
+
 import SkillAssessment from './steps/SkillAssessment';
 import BusinessInfo from './steps/BusinessInfo';
 import WebsiteAnalysis from './steps/WebsiteAnalysis';
@@ -14,51 +16,71 @@ import CompetitorAnalysis from './steps/CompetitorAnalysis';
 import StrategySetup from './steps/StrategySetup';
 
 export interface OnboardingData {
-  skillLevel: string;
-  experience: string;
-  businessName: string;
-  industry: string;
-  website: string;
-  socialAccounts: Record<string, string>;
-  competitors: string[];
-  goals: string[];
-  budget: string;
+  skillLevel?: string;
+  experience?: string;
+  businessName?: string;
+  industry?: string;
+  website?: string;
+  socialAccounts?: { [key: string]: string };
+  competitors?: string[];
+  goals?: string[];
+  budget?: string;
+  completed?: boolean;
 }
 
 const OnboardingWizard: React.FC = () => {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const navigate = useNavigate();
-  const { saveOnboardingData, saving } = useOnboardingData();
-  const { generatePersonalizedInsights } = useAIInsights();
   const isArabic = language === 'ar';
-  
   const [currentStep, setCurrentStep] = useState(0);
-  const [data, setData] = useState<OnboardingData>({
-    skillLevel: '',
-    experience: '',
-    businessName: '',
-    industry: '',
-    website: '',
-    socialAccounts: {},
-    competitors: [],
-    goals: [],
-    budget: ''
-  });
+  const { data, updateData, saveData, loading } = useOnboardingData();
 
   const steps = [
-    { id: 'skill', title: t('onboarding.skill.title'), component: SkillAssessment },
-    { id: 'business', title: t('onboarding.business.title'), component: BusinessInfo },
-    { id: 'website', title: t('onboarding.website.title'), component: WebsiteAnalysis },
-    { id: 'social', title: t('onboarding.social.title'), component: SocialMediaSetup },
-    { id: 'competitors', title: t('onboarding.competitors.title'), component: CompetitorAnalysis },
-    { id: 'strategy', title: t('onboarding.strategy.title'), component: StrategySetup }
+    {
+      id: 'skills',
+      title: isArabic ? 'تقييم المهارات' : 'Skill Assessment',
+      component: SkillAssessment
+    },
+    {
+      id: 'business',
+      title: isArabic ? 'معلومات العمل' : 'Business Information',
+      component: BusinessInfo
+    },
+    {
+      id: 'website',
+      title: isArabic ? 'تحليل الموقع' : 'Website Analysis',
+      component: WebsiteAnalysis
+    },
+    {
+      id: 'social',
+      title: isArabic ? 'وسائل التواصل' : 'Social Media',
+      component: SocialMediaSetup
+    },
+    {
+      id: 'competitors',
+      title: isArabic ? 'تحليل المنافسين' : 'Competitor Analysis',
+      component: CompetitorAnalysis
+    },
+    {
+      id: 'strategy',
+      title: isArabic ? 'إعداد الاستراتيجية' : 'Strategy Setup',
+      component: StrategySetup
+    }
   ];
 
   const progress = ((currentStep + 1) / steps.length) * 100;
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    // Save current data
+    await saveData();
+    
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
+    } else {
+      // Mark onboarding as complete
+      await updateData({ completed: true });
+      await saveData();
+      navigate('/');
     }
   };
 
@@ -68,124 +90,134 @@ const OnboardingWizard: React.FC = () => {
     }
   };
 
-  const handleComplete = async () => {
-    console.log('Onboarding completed:', data);
-    
-    const success = await saveOnboardingData(data);
-    if (success) {
-      // Generate AI insights in the background
-      setTimeout(() => {
-        generatePersonalizedInsights();
-      }, 1000);
-      
-      // Redirect to dashboard
-      navigate('/');
+  const handleStepClick = (stepIndex: number) => {
+    setCurrentStep(stepIndex);
+  };
+
+  const isStepValid = () => {
+    switch (currentStep) {
+      case 0: // Skills
+        return data.skillLevel && data.experience;
+      case 1: // Business
+        return data.businessName && data.industry;
+      case 2: // Website
+        return true; // Website is optional
+      case 3: // Social
+        return true; // Social media is optional
+      case 4: // Competitors
+        return true; // Competitors are optional
+      case 5: // Strategy
+        return data.goals && data.goals.length > 0;
+      default:
+        return true;
     }
   };
 
-  const updateData = (stepData: Partial<OnboardingData>) => {
-    setData(prev => ({ ...prev, ...stepData }));
+  const getCurrentStepComponent = () => {
+    const StepComponent = steps[currentStep].component;
+    return (
+      <StepComponent
+        data={data}
+        updateData={updateData}
+        isArabic={isArabic}
+      />
+    );
   };
 
-  const CurrentStepComponent = steps[currentStep].component;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p>{isArabic ? 'جاري التحميل...' : 'Loading...'}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 ${isArabic ? 'rtl' : ''}`}>
+    <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : ''}`}>
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            {t('onboarding.title')}
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300">
-            {t('onboarding.subtitle')}
-          </p>
-        </div>
-
-        {/* Progress */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <div className={`flex items-center justify-between mb-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              {t('onboarding.step').replace('{{current}}', (currentStep + 1).toString()).replace('{{total}}', steps.length.toString())}
-            </span>
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              {Math.round(progress)}% {t('onboarding.complete')}
-            </span>
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              {isArabic ? 'إعداد منصة التسويق الذكي' : 'AI Marketing Platform Setup'}
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300">
+              {isArabic ? 'دعنا نخصص تجربتك للحصول على أفضل النتائج' : 'Let\'s customize your experience for the best results'}
+            </p>
           </div>
-          <Progress value={progress} className="h-2" />
-          
-          {/* Step indicators */}
-          <div className={`flex justify-between mt-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
-            {steps.map((step, index) => (
-              <div
-                key={step.id}
-                className={`flex flex-col items-center ${isArabic ? 'text-center' : 'text-center'}`}
-              >
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    index <= currentStep
+
+          {/* Progress Bar */}
+          <div className="mb-8">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {isArabic ? 'التقدم' : 'Progress'}
+              </span>
+              <span className="text-sm font-medium text-blue-600">
+                {currentStep + 1} / {steps.length}
+              </span>
+            </div>
+            <Progress value={progress} className="h-2" />
+          </div>
+
+          {/* Step Navigation */}
+          <div className="flex justify-center mb-8">
+            <div className="flex space-x-2 rtl:space-x-reverse">
+              {steps.map((step, index) => (
+                <button
+                  key={step.id}
+                  onClick={() => handleStepClick(index)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                    index === currentStep
                       ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
+                      : index < currentStep
+                      ? 'bg-green-600 text-white'
+                      : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
                   }`}
                 >
-                  {index < currentStep ? (
-                    <CheckCircle className="w-5 h-5" />
-                  ) : (
-                    index + 1
-                  )}
-                </div>
-                <span className="text-xs mt-2 text-gray-600 dark:text-gray-400 hidden md:block">
-                  {step.title}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Step Content */}
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-8 mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6">
-              {steps[currentStep].title}
-            </h2>
-            
-            <CurrentStepComponent
-              data={data}
-              updateData={updateData}
-              isArabic={isArabic}
-            />
+                  {index + 1}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Navigation */}
-          <div className={`flex justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
+          {/* Main Content */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="text-xl">
+                {steps[currentStep].title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {getCurrentStepComponent()}
+            </CardContent>
+          </Card>
+
+          {/* Navigation Buttons */}
+          <div className="flex justify-between">
             <Button
               variant="outline"
               onClick={handlePrevious}
               disabled={currentStep === 0}
-              className={isArabic ? 'flex-row-reverse' : ''}
+              className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}
             >
-              <ArrowLeft className={`w-4 h-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
-              {t('onboarding.previous')}
+              <ChevronLeft className="h-4 w-4" />
+              {isArabic ? 'السابق' : 'Previous'}
             </Button>
 
-            {currentStep === steps.length - 1 ? (
-              <Button
-                onClick={handleComplete}
-                disabled={saving}
-                className={`bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 ${isArabic ? 'flex-row-reverse' : ''}`}
-              >
-                {saving ? 'Saving...' : t('onboarding.complete')}
-                <CheckCircle className={`w-4 h-4 ${isArabic ? 'mr-2' : 'ml-2'}`} />
-              </Button>
-            ) : (
-              <Button
-                onClick={handleNext}
-                className={isArabic ? 'flex-row-reverse' : ''}
-              >
-                {t('onboarding.next')}
-                <ArrowRight className={`w-4 h-4 ${isArabic ? 'mr-2' : 'ml-2'}`} />
-              </Button>
-            )}
+            <Button
+              onClick={handleNext}
+              disabled={!isStepValid()}
+              className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}
+            >
+              {currentStep === steps.length - 1 
+                ? (isArabic ? 'إنهاء الإعداد' : 'Complete Setup')
+                : (isArabic ? 'التالي' : 'Next')
+              }
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </div>
