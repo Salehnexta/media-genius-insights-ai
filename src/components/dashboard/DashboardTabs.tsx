@@ -3,8 +3,7 @@ import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart3, Users, TrendingUp, MessageSquare, PenTool, Target } from 'lucide-react';
-import ChatSection from './ChatSection';
+import { BarChart3, Users, TrendingUp, Target } from 'lucide-react';
 import MockDataCards from './MockDataCards';
 
 const DashboardTabs: React.FC = () => {
@@ -16,11 +15,6 @@ const DashboardTabs: React.FC = () => {
       id: 'overview',
       label: isArabic ? 'نظرة عامة' : 'Overview',
       icon: <BarChart3 className="h-4 w-4" />
-    },
-    {
-      id: 'chat',
-      label: isArabic ? 'المساعد الذكي' : 'AI Assistant',
-      icon: <MessageSquare className="h-4 w-4" />
     },
     {
       id: 'campaigns',
@@ -42,7 +36,7 @@ const DashboardTabs: React.FC = () => {
   return (
     <div className={`w-full ${isArabic ? 'rtl' : ''}`}>
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className={`grid w-full grid-cols-5 ${isArabic ? 'grid-flow-col-reverse' : ''}`}>
+        <TabsList className={`grid w-full grid-cols-4 ${isArabic ? 'grid-flow-col-reverse' : ''}`}>
           {tabs.map((tab) => (
             <TabsTrigger 
               key={tab.id} 
@@ -107,20 +101,6 @@ const DashboardTabs: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="chat" className="mt-6">
-          <div className="grid grid-cols-1 gap-6">
-            <div>
-              <h2 className={`text-2xl font-bold mb-4 ${isArabic ? 'text-right' : ''}`}>
-                {isArabic ? 'مساعد التسويق الذكي' : 'AI Marketing Assistant'}
-              </h2>
-              <p className={`text-gray-600 dark:text-gray-300 mb-6 ${isArabic ? 'text-right' : ''}`}>
-                {isArabic ? 'تحدث مع مساعدك الذكي للحصول على رؤى تسويقية وتوصيات مخصصة' : 'Chat with your AI assistant for marketing insights and personalized recommendations'}
-              </p>
-            </div>
-            <ChatSection />
           </div>
         </TabsContent>
 

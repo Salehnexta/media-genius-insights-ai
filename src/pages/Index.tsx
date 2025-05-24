@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useOnboardingData } from '@/hooks/useOnboardingData';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import DashboardTabs from '@/components/dashboard/DashboardTabs';
+import ChatSection from '@/components/dashboard/ChatSection';
 import { Loader2 } from 'lucide-react';
 
 const Index: React.FC = () => {
@@ -118,9 +119,22 @@ const Index: React.FC = () => {
   return (
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : ''}`}>
       <DashboardHeader />
-      <main className="container mx-auto px-4 py-6">
-        <DashboardTabs />
-      </main>
+      <div className="flex">
+        {/* Main Content Area - 65% */}
+        <main className="flex-1 w-[65%] px-4 py-6">
+          <DashboardTabs />
+        </main>
+        
+        {/* AI Assistant Sidebar - 35% */}
+        <aside className="w-[35%] p-4 border-l bg-white dark:bg-gray-900">
+          <div className="sticky top-6">
+            <h2 className={`text-xl font-bold mb-4 ${isArabic ? 'text-right' : ''}`}>
+              {isArabic ? 'مساعد التسويق الذكي' : 'AI Marketing Assistant'}
+            </h2>
+            <ChatSection />
+          </div>
+        </aside>
+      </div>
     </div>
   );
 };
