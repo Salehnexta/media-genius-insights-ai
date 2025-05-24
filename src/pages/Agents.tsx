@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/layout/Header';
 import AgentCard from '@/components/agents/AgentCard';
 import AgentStatusDashboard from '@/components/agents/AgentStatusDashboard';
+import AgentTaskManager from '@/components/agents/AgentTaskManager';
 import CreateAgentDialog from '@/components/agents/CreateAgentDialog';
 import { Bot, Plus, Activity, Users, BarChart, Search, PenTool, TrendingUp } from 'lucide-react';
 
@@ -33,6 +34,7 @@ const Agents = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [agents, setAgents] = useState<Agent[]>([]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const toggleDarkMode = () => {
@@ -42,6 +44,10 @@ const Agents = () => {
 
   useEffect(() => {
     initializeDefaultAgents();
+    // Initialize specialized agents
+    import('@/services/specializedAgents').then(({ initializeSpecializedAgents }) => {
+      initializeSpecializedAgents();
+    });
   }, [user]);
 
   const initializeDefaultAgents = async () => {
@@ -165,7 +171,7 @@ const Agents = () => {
               {isArabic ? 'إدارة الوكلاء الذكيين' : 'AI Agent Management'}
             </h1>
             <p className="text-gray-600 dark:text-gray-300">
-              {isArabic ? 'إدارة ومراقبة الوكلاء الذكيين المتخصصين' : 'Manage and monitor your specialized AI agents'}
+              {isArabic ? 'إدارة ومراقبة الوكلاء الذكيين المتخصصين والمهام' : 'Manage and monitor your specialized AI agents and tasks'}
             </p>
           </div>
           <Button
@@ -180,15 +186,35 @@ const Agents = () => {
         {/* Agent Status Dashboard */}
         <AgentStatusDashboard agents={agents} />
 
+        {/* Agent Communication & Task Management */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              {isArabic ? 'مدير المهام الإجمالي' : 'Global Task Manager'}
+            </h2>
+            <AgentTaskManager showAllAgents={true} />
+          </div>
+          
+          {selectedAgent && (
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                {isArabic ? 'مهام الوكيل المحدد' : 'Selected Agent Tasks'}
+              </h2>
+              <AgentTaskManager agentId={selectedAgent} />
+            </div>
+          )}
+        </div>
+
         {/* Agents Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {agents.map((agent) => (
-            <AgentCard 
-              key={agent.id} 
-              agent={agent} 
-              getAgentIcon={getAgentIcon}
-              getStatusColor={getStatusColor}
-            />
+            <div key={agent.id} onClick={() => setSelectedAgent(agent.id)} className="cursor-pointer">
+              <AgentCard 
+                agent={agent} 
+                getAgentIcon={getAgentIcon}
+                getStatusColor={getStatusColor}
+              />
+            </div>
           ))}
         </div>
 
