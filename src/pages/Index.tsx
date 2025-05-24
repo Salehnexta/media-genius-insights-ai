@@ -10,7 +10,7 @@ const Index = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   // Set up dark mode
   useEffect(() => {
@@ -49,7 +49,7 @@ const Index = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">
+    <div className={`flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950 ${language === 'ar' ? 'rtl' : ''}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
@@ -57,7 +57,7 @@ const Index = () => {
         {/* Desktop Layout */}
         {!isMobile && (
           <div className="flex-1 overflow-auto p-6">
-            <div className="flex gap-6 h-full">
+            <div className={`flex gap-6 h-full ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
               {/* Chat Interface (40% width) */}
               <div className="w-[40%] h-full">
                 <ChatInterface />
@@ -96,10 +96,10 @@ const Index = () => {
               >
                 <div className="w-12 h-1 bg-gray-300 dark:bg-gray-700 rounded-full my-2"></div>
                 {isChatExpanded ? 
-                  <ChevronDown className="h-4 w-4 text-gray-500 absolute right-4" /> : 
-                  <ChevronUp className="h-4 w-4 text-gray-500 absolute right-4" />
+                  <ChevronDown className={`h-4 w-4 text-gray-500 absolute ${language === 'ar' ? 'left-4' : 'right-4'}`} /> : 
+                  <ChevronUp className={`h-4 w-4 text-gray-500 absolute ${language === 'ar' ? 'left-4' : 'right-4'}`} />
                 }
-                <span className="text-sm text-gray-500 dark:text-gray-400 ml-4 absolute left-4">
+                <span className={`text-sm text-gray-500 dark:text-gray-400 ml-4 absolute ${language === 'ar' ? 'right-4' : 'left-4'}`}>
                   💬 {t('chat.insights')}
                 </span>
               </div>

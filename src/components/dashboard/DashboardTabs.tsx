@@ -15,7 +15,7 @@ const DashboardTabs: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [isMobile, setIsMobile] = useState(false);
   const chartConfig = getChartConfig();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -28,46 +28,46 @@ const DashboardTabs: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className={`flex flex-col h-full ${language === 'ar' ? 'rtl' : ''}`}>
       <div className="border-b mb-2 sm:mb-4">
-        <div className={`flex ${isMobile ? 'overflow-x-auto pb-1' : 'space-x-1'} scrollbar-none`}>
+        <div className={`flex ${isMobile ? 'overflow-x-auto pb-1' : 'space-x-1'} scrollbar-none ${language === 'ar' ? 'space-x-reverse' : ''}`}>
           <TabButton 
-            label={isMobile ? "" : t('tab.overview')} 
+            label={isMobile ? "" : t('overview')} 
             icon={<LayoutGrid className="h-4 w-4" />} 
             isActive={activeTab === 'overview'}
             onClick={() => setActiveTab('overview')}
             isMobile={isMobile}
           />
           <TabButton 
-            label={isMobile ? "" : t('tab.campaigns')} 
+            label={isMobile ? "" : t('campaigns')} 
             icon={<BarChart className="h-4 w-4" />} 
             isActive={activeTab === 'campaigns'}
             onClick={() => setActiveTab('campaigns')}
             isMobile={isMobile}
           />
           <TabButton 
-            label={isMobile ? "" : t('tab.audience')} 
+            label={isMobile ? "" : t('audience')} 
             icon={<Users className="h-4 w-4" />} 
             isActive={activeTab === 'audience'}
             onClick={() => setActiveTab('audience')}
             isMobile={isMobile}
           />
           <TabButton 
-            label={isMobile ? "" : t('tab.competitors')} 
+            label={isMobile ? "" : t('competitors')} 
             icon={<TrendingUp className="h-4 w-4" />} 
             isActive={activeTab === 'competitors'}
             onClick={() => setActiveTab('competitors')}
             isMobile={isMobile}
           />
           <TabButton 
-            label={isMobile ? "" : t('tab.sentiment')} 
+            label={iMobile ? "" : t('sentiment')} 
             icon={<Gauge className="h-4 w-4" />} 
             isActive={activeTab === 'sentiment'}
             onClick={() => setActiveTab('sentiment')}
             isMobile={isMobile}
           />
           <TabButton 
-            label={isMobile ? "" : t('tab.content.creator')} 
+            label={isMobile ? "" : t('content.creator')} 
             icon={<Edit className="h-4 w-4" />} 
             isActive={activeTab === 'content-creator'}
             onClick={() => setActiveTab('content-creator')}
