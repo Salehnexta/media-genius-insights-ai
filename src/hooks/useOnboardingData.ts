@@ -233,18 +233,27 @@ export const useOnboardingData = () => {
   };
 
   const getOnboardingData = async () => {
-    if (!user) return null;
+    if (!user) {
+      console.log('No user found, returning null');
+      return null;
+    }
 
     setLoading(true);
     try {
-      // Fixed: Add user filter and use maybeSingle() to handle no data case
+      console.log('Fetching onboarding data for user:', user.id);
+      // FIXED: Add user filter and use maybeSingle() to handle no data case
       const { data, error } = await supabase
         .from('onboarding_data')
         .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle();
+        .eq('user_id', user.id)  // This is the critical fix - filter by user_id
+        .maybeSingle(); // Use maybeSingle instead of single to handle no results
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error in getOnboardingData:', error);
+        throw error;
+      }
+      
+      console.log('Onboarding data fetched successfully:', data);
       return data;
     } catch (error) {
       console.error('Error fetching onboarding data:', error);

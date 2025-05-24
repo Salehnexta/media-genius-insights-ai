@@ -28,11 +28,24 @@ const Index: React.FC = () => {
   }, [user, authLoading, onboardingLoading, navigate]);
 
   const checkOnboardingStatus = async () => {
-    const onboardingData = await getOnboardingData();
-    const completed = onboardingData?.completed_at !== null;
-    setHasCompletedOnboarding(completed);
-    
-    if (!completed) {
+    try {
+      console.log('Checking onboarding status...');
+      const onboardingData = await getOnboardingData();
+      console.log('Onboarding data result:', onboardingData);
+      
+      const completed = onboardingData?.completed_at !== null;
+      console.log('Onboarding completed status:', completed);
+      
+      setHasCompletedOnboarding(completed);
+      
+      if (!completed) {
+        console.log('Redirecting to onboarding...');
+        navigate('/onboarding');
+      }
+    } catch (error) {
+      console.error('Error checking onboarding status:', error);
+      // If there's an error, assume onboarding is not completed
+      setHasCompletedOnboarding(false);
       navigate('/onboarding');
     }
   };
