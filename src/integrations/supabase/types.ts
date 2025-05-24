@@ -226,6 +226,57 @@ export type Database = {
           },
         ]
       }
+      onboarding_data: {
+        Row: {
+          budget: string | null
+          business_name: string | null
+          competitors: string[] | null
+          completed_at: string | null
+          created_at: string | null
+          experience: string | null
+          goals: string[] | null
+          id: string
+          industry: string | null
+          skill_level: string | null
+          social_accounts: Json | null
+          updated_at: string | null
+          user_id: string
+          website: string | null
+        }
+        Insert: {
+          budget?: string | null
+          business_name?: string | null
+          competitors?: string[] | null
+          completed_at?: string | null
+          created_at?: string | null
+          experience?: string | null
+          goals?: string[] | null
+          id?: string
+          industry?: string | null
+          skill_level?: string | null
+          social_accounts?: Json | null
+          updated_at?: string | null
+          user_id: string
+          website?: string | null
+        }
+        Update: {
+          budget?: string | null
+          business_name?: string | null
+          competitors?: string[] | null
+          completed_at?: string | null
+          created_at?: string | null
+          experience?: string | null
+          goals?: string[] | null
+          id?: string
+          industry?: string | null
+          skill_level?: string | null
+          social_accounts?: Json | null
+          updated_at?: string | null
+          user_id?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -347,6 +398,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_preferences: {
+        Row: {
+          ai_context: Json | null
+          created_at: string | null
+          id: string
+          language: string | null
+          personalization_data: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          ai_context?: Json | null
+          created_at?: string | null
+          id?: string
+          language?: string | null
+          personalization_data?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          ai_context?: Json | null
+          created_at?: string | null
+          id?: string
+          language?: string | null
+          personalization_data?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       user_subscriptions: {
         Row: {

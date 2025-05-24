@@ -1,8 +1,10 @@
-
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useOnboardingData } from '@/hooks/useOnboardingData';
+import { useAIInsights } from '@/hooks/useAIInsights';
 import { ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react';
 import SkillAssessment from './steps/SkillAssessment';
 import BusinessInfo from './steps/BusinessInfo';
@@ -25,6 +27,9 @@ export interface OnboardingData {
 
 const OnboardingWizard: React.FC = () => {
   const { t, language } = useLanguage();
+  const navigate = useNavigate();
+  const { saveOnboardingData, saving } = useOnboardingData();
+  const { generatePersonalizedInsights } = useAIInsights();
   const isArabic = language === 'ar';
   
   const [currentStep, setCurrentStep] = useState(0);
@@ -63,9 +68,19 @@ const OnboardingWizard: React.FC = () => {
     }
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     console.log('Onboarding completed:', data);
-    // Here we would save the data and redirect to dashboard
+    
+    const success = await saveOnboardingData(data);
+    if (success) {
+      // Generate AI insights in the background
+      setTimeout(() => {
+        generatePersonalizedInsights();
+      }, 1000);
+      
+      // Redirect to dashboard
+      navigate('/');
+    }
   };
 
   const updateData = (stepData: Partial<OnboardingData>) => {
@@ -156,9 +171,10 @@ const OnboardingWizard: React.FC = () => {
             {currentStep === steps.length - 1 ? (
               <Button
                 onClick={handleComplete}
+                disabled={saving}
                 className={`bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 ${isArabic ? 'flex-row-reverse' : ''}`}
               >
-                {t('onboarding.complete')}
+                {saving ? 'Saving...' : t('onboarding.complete')}
                 <CheckCircle className={`w-4 h-4 ${isArabic ? 'mr-2' : 'ml-2'}`} />
               </Button>
             ) : (
