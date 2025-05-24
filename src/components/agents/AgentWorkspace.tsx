@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Calendar, BarChart3, Settings, Play, Pause, CheckCircle, Clock, Target } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Calendar, BarChart3, Settings, Play, Pause, CheckCircle, Clock, Target } from 'lucide-react';
+import AgentChatInterface from './AgentChatInterface';
 import AgentTaskBoard from './AgentTaskBoard';
 import AgentAnalytics from './AgentAnalytics';
 import AgentSettings from './AgentSettings';
@@ -32,7 +33,7 @@ interface AgentWorkspaceProps {
 }
 
 const AgentWorkspace: React.FC<AgentWorkspaceProps> = ({ agent, onClose, isArabic }) => {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState('chat');
   const [agentStatus, setAgentStatus] = useState(agent.status);
 
   const toggleAgentStatus = () => {
@@ -61,7 +62,7 @@ const AgentWorkspace: React.FC<AgentWorkspaceProps> = ({ agent, onClose, isArabi
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : ''}`} dir={isArabic ? 'rtl' : 'ltr'}>
       {/* Header */}
       <div className="bg-white dark:bg-gray-900 border-b shadow-sm">
-        <div className="max-w-full mx-auto px-4 py-4">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
             <div className={`flex items-center gap-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
               <Button variant="ghost" onClick={onClose} size="sm">
@@ -108,7 +109,7 @@ const AgentWorkspace: React.FC<AgentWorkspaceProps> = ({ agent, onClose, isArabi
       </div>
 
       {/* Agent Stats */}
-      <div className="max-w-full mx-auto px-4 py-6">
+      <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <Card>
             <CardContent className="p-4">
@@ -177,14 +178,18 @@ const AgentWorkspace: React.FC<AgentWorkspaceProps> = ({ agent, onClose, isArabi
 
         {/* Workspace Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="dashboard" className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
-              <BarChart3 className="h-4 w-4" />
-              {isArabic ? 'لوحة التحكم' : 'Dashboard'}
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="chat" className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
+              <MessageCircle className="h-4 w-4" />
+              {isArabic ? 'محادثة' : 'Chat'}
             </TabsTrigger>
             <TabsTrigger value="tasks" className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
               <Calendar className="h-4 w-4" />
               {isArabic ? 'المهام' : 'Tasks'}
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
+              <BarChart3 className="h-4 w-4" />
+              {isArabic ? 'التحليلات' : 'Analytics'}
             </TabsTrigger>
             <TabsTrigger value="settings" className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
               <Settings className="h-4 w-4" />
@@ -192,12 +197,16 @@ const AgentWorkspace: React.FC<AgentWorkspaceProps> = ({ agent, onClose, isArabi
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="dashboard" className="mt-6">
-            <AgentAnalytics agent={agent} isArabic={isArabic} />
+          <TabsContent value="chat" className="mt-6">
+            <AgentChatInterface agent={agent} isArabic={isArabic} />
           </TabsContent>
 
           <TabsContent value="tasks" className="mt-6">
             <AgentTaskBoard agent={agent} isArabic={isArabic} />
+          </TabsContent>
+
+          <TabsContent value="analytics" className="mt-6">
+            <AgentAnalytics agent={agent} isArabic={isArabic} />
           </TabsContent>
 
           <TabsContent value="settings" className="mt-6">
