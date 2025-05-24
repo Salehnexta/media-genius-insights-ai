@@ -108,6 +108,10 @@
   direction: rtl;
 }
 
+[dir="ltr"], .ltr {
+  direction: ltr;
+}
+
 /* RTL Spacing Utilities */
 [dir="rtl"] .space-x-1 > * + *,
 .rtl .space-x-1 > * + * {
@@ -137,6 +141,15 @@
 .rtl .space-x-reverse > * + * {
   margin-right: 0.75rem;
   margin-left: 0;
+}
+
+/* RTL Gap utilities */
+[dir="rtl"] .gap-2 {
+  gap: 0.5rem;
+}
+
+[dir="rtl"] .gap-4 {
+  gap: 1rem;
 }
 
 /* RTL Margin Utilities */
@@ -191,6 +204,18 @@
   flex-direction: row-reverse;
 }
 
+/* RTL Form elements */
+[dir="rtl"] input,
+[dir="rtl"] textarea,
+[dir="rtl"] select {
+  text-align: right;
+}
+
+[dir="rtl"] input::placeholder,
+[dir="rtl"] textarea::placeholder {
+  text-align: right;
+}
+
 /* RTL Positioning */
 [dir="rtl"] .left-2,
 .rtl .left-2 {
@@ -214,6 +239,11 @@
 .rtl .right-4 {
   right: auto;
   left: 1rem;
+}
+
+/* Progress bar RTL support */
+[dir="rtl"] .progress-bar {
+  transform: scaleX(-1);
 }
 
 /* Chat Bubbles */
@@ -288,4 +318,33 @@
 
 .scrollbar-none::-webkit-scrollbar {
   display: none;
+}
+
+/* Onboarding specific RTL styles */
+[dir="rtl"] .onboarding-step {
+  text-align: right;
+}
+
+[dir="rtl"] .onboarding-form .form-group {
+  text-align: right;
+}
+
+[dir="rtl"] .onboarding-form label {
+  text-align: right;
+}
+
+/* Radio button and checkbox RTL alignment */
+[dir="rtl"] .radio-group-item,
+[dir="rtl"] .checkbox {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+/* Card RTL support */
+[dir="rtl"] .card-header {
+  text-align: right;
+}
+
+[dir="rtl"] .card-content {
+  text-align: right;
 }
