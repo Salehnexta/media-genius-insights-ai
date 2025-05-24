@@ -35,7 +35,7 @@ const Auth = () => {
   }, [isRegisterAr, isAuthAr, setLanguage]);
   
   const isArabic = language === 'ar' || isRegisterAr || isAuthAr;
-  const from = location.state?.from?.pathname || '/dashboard';
+  const from = location.state?.from?.pathname || '/';
 
   useEffect(() => {
     if (user) {
