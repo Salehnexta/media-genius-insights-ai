@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -95,7 +96,7 @@ const BusinessInfo: React.FC<BusinessInfoProps> = ({ data, updateData, isArabic 
               {t('onboarding.business.insights.title')}
             </h4>
             <div className="space-y-2 text-sm text-purple-800 dark:text-purple-200">
-              <p>• {t('onboarding.business.insights.templates', { industry: industries.find(i => i.id === data.industry)?.label })}</p>
+              <p>• {t('onboarding.business.insights.templates').replace('{{industry}}', industries.find(i => i.id === data.industry)?.label || '')}</p>
               <p>• {t('onboarding.business.insights.benchmarks')}</p>
               <p>• {t('onboarding.business.insights.competitors')}</p>
               <p>• {t('onboarding.business.insights.trends')}</p>

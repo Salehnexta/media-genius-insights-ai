@@ -91,7 +91,7 @@ const OnboardingWizard: React.FC = () => {
         <div className="max-w-4xl mx-auto mb-8">
           <div className={`flex items-center justify-between mb-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
             <span className="text-sm text-gray-600 dark:text-gray-400">
-              {t('onboarding.step', { current: currentStep + 1, total: steps.length })}
+              {t('onboarding.step').replace('{{current}}', (currentStep + 1).toString()).replace('{{total}}', steps.length.toString())}
             </span>
             <span className="text-sm text-gray-600 dark:text-gray-400">
               {Math.round(progress)}% {t('onboarding.complete')}
