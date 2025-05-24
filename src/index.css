@@ -97,25 +97,42 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   }
   
-  /* Enhanced Arabic font */
-  .rtl, .rtl *, [dir="rtl"], [dir="rtl"] * {
+  /* Enhanced Arabic font support */
+  .rtl, .rtl *, [dir="rtl"], [dir="rtl"] *, .font-arabic {
     font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-    text-align: right;
     direction: rtl;
+  }
+
+  /* Arabic typography improvements */
+  .font-arabic {
+    line-height: 1.8;
+    letter-spacing: 0.01em;
+  }
+
+  .font-arabic h1, .font-arabic h2, .font-arabic h3, .font-arabic h4, .font-arabic h5, .font-arabic h6 {
+    line-height: 1.6;
+    font-weight: 600;
+  }
+
+  .font-arabic p {
+    line-height: 1.9;
   }
 }
 
-/* Enhanced RTL Support */
+/* Enhanced RTL Support with better specificity */
 [dir="rtl"], .rtl {
   direction: rtl;
+  text-align: right;
 }
 
 [dir="ltr"], .ltr {
   direction: ltr;
+  text-align: left;
 }
 
-/* RTL Flexbox - Enhanced */
-[dir="rtl"] .flex {
+/* RTL Flexbox - Enhanced with better support */
+[dir="rtl"] .flex,
+.rtl .flex {
   direction: rtl;
 }
 
@@ -145,11 +162,6 @@
   direction: rtl;
 }
 
-[dir="rtl"] .grid-flow-col-reverse,
-.rtl .grid-flow-col-reverse {
-  grid-auto-flow: column reverse;
-}
-
 /* RTL Spacing Utilities - Enhanced */
 [dir="rtl"] .space-x-1 > * + *,
 .rtl .space-x-1 > * + * {
@@ -175,15 +187,23 @@
   margin-left: 0;
 }
 
+[dir="rtl"] .space-x-6 > * + *,
+.rtl .space-x-6 > * + * {
+  margin-right: 1.5rem;
+  margin-left: 0;
+}
+
 /* RTL Padding and Margin - Enhanced */
 [dir="rtl"] .pr-4,
 .rtl .pr-4 {
-  padding-right: 1rem;
+  padding-left: 1rem;
+  padding-right: 0;
 }
 
 [dir="rtl"] .pl-4,
 .rtl .pl-4 {
-  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-left: 0;
 }
 
 [dir="rtl"] .mr-2,
@@ -222,6 +242,18 @@
   margin-right: 1rem;
 }
 
+[dir="rtl"] .mr-6,
+.rtl .mr-6 {
+  margin-right: 0;
+  margin-left: 1.5rem;
+}
+
+[dir="rtl"] .ml-6,
+.rtl .ml-6 {
+  margin-left: 0;
+  margin-right: 1.5rem;
+}
+
 /* RTL Text Alignment - Enhanced */
 [dir="rtl"] .text-left,
 .rtl .text-left {
@@ -254,13 +286,18 @@
 /* RTL Form elements - Enhanced */
 [dir="rtl"] input,
 [dir="rtl"] textarea,
-[dir="rtl"] select {
+[dir="rtl"] select,
+.rtl input,
+.rtl textarea,
+.rtl select {
   text-align: right;
   direction: rtl;
 }
 
 [dir="rtl"] input::placeholder,
-[dir="rtl"] textarea::placeholder {
+[dir="rtl"] textarea::placeholder,
+.rtl input::placeholder,
+.rtl textarea::placeholder {
   text-align: right;
   direction: rtl;
 }
@@ -290,30 +327,37 @@
   left: 1rem;
 }
 
-/* RTL Order utilities */
-[dir="rtl"] .order-first,
-.rtl .order-first {
-  order: 9999;
+[dir="rtl"] .left-6,
+.rtl .left-6 {
+  left: auto;
+  right: 1.5rem;
 }
 
-[dir="rtl"] .order-last,
-.rtl .order-last {
-  order: -9999;
+[dir="rtl"] .right-6,
+.rtl .right-6 {
+  right: auto;
+  left: 1.5rem;
 }
 
-/* Progress bar RTL support */
-[dir="rtl"] .progress-bar {
-  transform: scaleX(-1);
+/* RTL Float - Enhanced */
+[dir="rtl"] .float-left,
+.rtl .float-left {
+  float: right;
+}
+
+[dir="rtl"] .float-right,
+.rtl .float-right {
+  float: left;
 }
 
 /* Chat Bubbles - Enhanced RTL */
 .chat-bubble-ai {
-  @apply bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm text-gray-900 dark:text-gray-100 relative;
+  @apply bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm text-gray-900 dark:text-gray-100 relative border;
   max-width: 85%;
 }
 
 .chat-bubble-user {
-  @apply bg-primary text-primary-foreground p-3 rounded-lg shadow-sm relative;
+  @apply bg-blue-500 text-white p-4 rounded-2xl shadow-sm relative;
   max-width: 85%;
 }
 
@@ -342,97 +386,128 @@
 }
 
 /* Enhanced Typography for Arabic */
-[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6 {
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6,
+.rtl h1, .rtl h2, .rtl h3, .rtl h4, .rtl h5, .rtl h6 {
   text-align: right;
   line-height: 1.6;
+  font-weight: 600;
 }
 
-[dir="rtl"] p {
+[dir="rtl"] p,
+.rtl p {
   text-align: right;
-  line-height: 1.7;
+  line-height: 1.8;
 }
 
 /* RTL Button groups */
-[dir="rtl"] .btn-group {
+[dir="rtl"] .btn-group,
+.rtl .btn-group {
   flex-direction: row-reverse;
-}
-
-[dir="rtl"] .btn-group .btn:first-child {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  border-top-right-radius: 0.375rem;
-  border-bottom-right-radius: 0.375rem;
-}
-
-[dir="rtl"] .btn-group .btn:last-child {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  border-top-left-radius: 0.375rem;
-  border-bottom-left-radius: 0.375rem;
 }
 
 /* RTL Tab Navigation */
-[dir="rtl"] .tabs-list {
+[dir="rtl"] .tabs-list,
+.rtl .tabs-list {
   flex-direction: row-reverse;
 }
 
-[dir="rtl"] .tab-trigger {
+[dir="rtl"] .tab-trigger,
+.rtl .tab-trigger {
   text-align: right;
 }
 
-/* RTL Cards and Statistics */
-[dir="rtl"] .stat-card {
+/* RTL Cards and Statistics - Enhanced */
+[dir="rtl"] .stat-card,
+.rtl .stat-card {
   text-align: right;
 }
 
-[dir="rtl"] .stat-card .icon {
+[dir="rtl"] .stat-card .icon,
+.rtl .stat-card .icon {
   order: -1;
   margin-left: 0.5rem;
   margin-right: 0;
 }
 
-[dir="rtl"] .stat-card .value {
+[dir="rtl"] .stat-card .value,
+.rtl .stat-card .value {
   text-align: right;
 }
 
-/* Mobile-specific RTL styles */
+/* Enhanced RTL Card Layout */
+[dir="rtl"] .card-content,
+.rtl .card-content {
+  text-align: right;
+}
+
+[dir="rtl"] .metric-card,
+.rtl .metric-card {
+  direction: rtl;
+}
+
+[dir="rtl"] .metric-card .metric-value,
+.rtl .metric-card .metric-value {
+  text-align: right;
+  font-family: 'Cairo', sans-serif;
+}
+
+[dir="rtl"] .metric-card .metric-title,
+.rtl .metric-card .metric-title {
+  text-align: right;
+}
+
+/* Mobile-specific RTL styles - Enhanced */
 @media (max-width: 768px) {
-  [dir="rtl"] .mobile-menu {
+  [dir="rtl"] .mobile-menu,
+  .rtl .mobile-menu {
     right: 0;
     left: auto;
   }
   
-  [dir="rtl"] .mobile-nav-item {
+  [dir="rtl"] .mobile-nav-item,
+  .rtl .mobile-nav-item {
     text-align: right;
     padding-right: 1rem;
     padding-left: 0.5rem;
   }
+
+  [dir="rtl"] .mobile-chat-button,
+  .rtl .mobile-chat-button {
+    left: 1.5rem;
+    right: auto;
+  }
 }
 
 /* Custom scrollbar - RTL aware */
-[dir="rtl"]::-webkit-scrollbar {
+[dir="rtl"]::-webkit-scrollbar,
+.rtl ::-webkit-scrollbar {
   width: 6px;
 }
 
-[dir="rtl"]::-webkit-scrollbar-track {
+[dir="rtl"]::-webkit-scrollbar-track,
+.rtl ::-webkit-scrollbar-track {
   background: transparent;
 }
 
-[dir="rtl"]::-webkit-scrollbar-thumb {
+[dir="rtl"]::-webkit-scrollbar-thumb,
+.rtl ::-webkit-scrollbar-thumb {
   background: #d1d5db;
   border-radius: 3px;
 }
 
-[dir="rtl"].dark ::-webkit-scrollbar-thumb {
+[dir="rtl"].dark ::-webkit-scrollbar-thumb,
+.rtl.dark ::-webkit-scrollbar-thumb {
   background: #4b5563;
 }
 
 /* Enhanced Animation and Transitions for RTL */
-[dir="rtl"] .slide-in-right {
+[dir="rtl"] .slide-in-right,
+.rtl .slide-in-right {
   animation: slideInLeft 0.3s ease-out;
 }
 
-[dir="rtl"] .slide-in-left {
+[dir="rtl"] .slide-in-left,
+.rtl .slide-in-left {
   animation: slideInRight 0.3s ease-out;
 }
 
@@ -446,6 +521,42 @@
   to { transform: translateX(0); }
 }
 
+/* Chat interface specific RTL improvements */
+[dir="rtl"] .chat-input-area,
+.rtl .chat-input-area {
+  direction: rtl;
+}
+
+[dir="rtl"] .chat-input-area input,
+.rtl .chat-input-area input {
+  text-align: right;
+  padding-right: 1rem;
+}
+
+[dir="rtl"] .chat-message-timestamp,
+.rtl .chat-message-timestamp {
+  text-align: left;
+}
+
+/* Improved number display for Arabic */
+[dir="rtl"] .number-display,
+.rtl .number-display,
+[dir="rtl"] .metric-value,
+.rtl .metric-value {
+  direction: ltr;
+  text-align: right;
+  unicode-bidi: embed;
+}
+
+/* Enhanced percentage and currency display */
+[dir="rtl"] .percentage,
+.rtl .percentage,
+[dir="rtl"] .currency,
+.rtl .currency {
+  direction: ltr;
+  display: inline-block;
+}
+
 /* Hide scrollbar for tab navigation */
 .scrollbar-none {
   -ms-overflow-style: none;
@@ -454,4 +565,75 @@
 
 .scrollbar-none::-webkit-scrollbar {
   display: none;
+}
+
+/* Enhanced focus states for RTL */
+[dir="rtl"] *:focus,
+.rtl *:focus {
+  outline-offset: 2px;
+}
+
+/* Better button alignment for RTL */
+[dir="rtl"] .button-with-icon,
+.rtl .button-with-icon {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .button-with-icon .icon,
+.rtl .button-with-icon .icon {
+  margin-left: 0.5rem;
+  margin-right: 0;
+}
+
+/* Enhanced tooltip positioning for RTL */
+[dir="rtl"] .tooltip,
+.rtl .tooltip {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Improved modal and dialog RTL support */
+[dir="rtl"] .dialog-content,
+.rtl .dialog-content {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] .modal-header,
+.rtl .modal-header {
+  text-align: right;
+}
+
+/* Enhanced loading states for RTL */
+[dir="rtl"] .loading-spinner,
+.rtl .loading-spinner {
+  margin-left: 0.5rem;
+  margin-right: 0;
+}
+
+/* Better badge positioning for RTL */
+[dir="rtl"] .badge,
+.rtl .badge {
+  direction: ltr;
+  display: inline-block;
+}
+
+/* Enhanced notification positioning for RTL */
+[dir="rtl"] .notification,
+.rtl .notification {
+  right: auto;
+  left: 1rem;
+}
+
+/* Improved search input RTL support */
+[dir="rtl"] .search-input,
+.rtl .search-input {
+  padding-right: 2.5rem;
+  padding-left: 1rem;
+}
+
+[dir="rtl"] .search-icon,
+.rtl .search-icon {
+  right: 0.75rem;
+  left: auto;
 }
