@@ -1,4 +1,3 @@
-
 export interface RealWebsiteAnalysisResult {
   url: string;
   title: string;
@@ -25,6 +24,17 @@ export interface RealWebsiteAnalysisResult {
     ssl: boolean;
     responsive: boolean;
   };
+  totalPages?: number;
+  blogPosts?: number;
+  contentGaps?: string[];
+  seoStrengths?: string[];
+  seoIssues?: string[];
+  performanceRecommendations?: string[];
+  marketPosition?: string;
+  marketRanking?: number;
+  keywordRankings?: number;
+  backlinks?: number;
+  competitiveAdvantages?: string[];
 }
 
 export class RealWebsiteAnalysisService {
@@ -139,7 +149,18 @@ export class RealWebsiteAnalysisService {
           hasStructuredData: structuredData,
           ssl: url.startsWith('https://'),
           responsive
-        }
+        },
+        totalPages: 0,
+        blogPosts: 0,
+        contentGaps: ['No content analysis available'],
+        seoStrengths: [],
+        seoIssues: ['Unable to analyze SEO due to CORS restrictions'],
+        performanceRecommendations: ['Enable detailed performance analysis'],
+        marketPosition: 'Unknown',
+        marketRanking: 0,
+        keywordRankings: 0,
+        backlinks: 0,
+        competitiveAdvantages: ['Analysis not available']
       };
     } catch (error) {
       console.error('Website analysis error:', error);
@@ -295,7 +316,18 @@ export class RealWebsiteAnalysisService {
         hasStructuredData: false,
         ssl: url.startsWith('https://'),
         responsive: false
-      }
+      },
+      totalPages: 0,
+      blogPosts: 0,
+      contentGaps: ['No content analysis available'],
+      seoStrengths: [],
+      seoIssues: ['Unable to analyze SEO due to CORS restrictions'],
+      performanceRecommendations: ['Enable detailed performance analysis'],
+      marketPosition: 'Unknown',
+      marketRanking: 0,
+      keywordRankings: 0,
+      backlinks: 0,
+      competitiveAdvantages: ['Analysis not available']
     };
   }
 }
