@@ -1,639 +1,225 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
- 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
- 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
- 
+    --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
- 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
- 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
- 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
- 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
- 
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 9% 8%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
- 
-    --ring: 215 20.2% 65.1%;
- 
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-
-    --sidebar-background: 222.2 84% 4.9%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 210 40% 98%;
-    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
-    --sidebar-accent: 217.2 32.6% 17.5%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 17.5%;
-    --sidebar-ring: var(--ring);
   }
- 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
- 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
- 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
- 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
- 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
- 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
- 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
- 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
- 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 85.7% 97.3%;
- 
-    --ring: 217.2 32.6% 17.5%;
 
-    --sidebar-background: 226 71% 10%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 210 40% 98%;
-    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
-    --sidebar-accent: 217.2 32.6% 17.5%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 17.5%;
-    --sidebar-ring: var(--ring);
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  }
-  
-  /* Enhanced Arabic font support */
-  .rtl, .rtl *, [dir="rtl"], [dir="rtl"] *, .font-arabic {
-    font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-    direction: rtl;
-  }
-
-  /* Arabic typography improvements */
-  .font-arabic {
-    line-height: 1.8;
-    letter-spacing: 0.01em;
-  }
-
-  .font-arabic h1, .font-arabic h2, .font-arabic h3, .font-arabic h4, .font-arabic h5, .font-arabic h6 {
-    line-height: 1.6;
-    font-weight: 600;
-  }
-
-  .font-arabic p {
-    line-height: 1.9;
+    font-family: 'Inter', sans-serif;
   }
 }
 
-/* Enhanced RTL Support with better specificity */
-[dir="rtl"], .rtl {
+/* Dashboard Layout Styles */
+.dashboard-container {
+  @apply flex w-full;
+}
+
+.chat-sidebar {
+  @apply w-[35%] min-w-[400px] border-r bg-white dark:bg-gray-900;
+  position: fixed;
+  left: 0;
+  top: 4rem;
+  height: calc(100vh - 4rem);
+  z-index: 30;
+}
+
+.agent-workspace {
+  @apply flex-1 bg-gray-50 dark:bg-gray-950;
+  margin-left: 35%;
+  min-width: 65%;
+}
+
+/* RTL/LTR Workspace Content */
+.workspace-rtl {
   direction: rtl;
-  text-align: right;
 }
 
-[dir="ltr"], .ltr {
+.workspace-rtl .metric-numbers {
+  direction: ltr; /* Keep numbers LTR even in RTL */
+}
+
+.workspace-ltr {
   direction: ltr;
-  text-align: left;
 }
 
-/* RTL Flexbox - Enhanced with better support */
-[dir="rtl"] .flex,
-.rtl .flex {
-  direction: rtl;
-}
-
-[dir="rtl"] .flex-row-reverse,
-.rtl .flex-row-reverse {
-  flex-direction: row-reverse;
-}
-
-[dir="rtl"] .justify-start,
-.rtl .justify-start {
-  justify-content: flex-end;
-}
-
-[dir="rtl"] .justify-end,
-.rtl .justify-end {
-  justify-content: flex-start;
-}
-
-[dir="rtl"] .justify-between,
-.rtl .justify-between {
-  justify-content: space-between;
-}
-
-/* RTL Grid Layout - Enhanced */
-[dir="rtl"] .grid,
-.rtl .grid {
-  direction: rtl;
-}
-
-/* RTL Spacing Utilities - Enhanced */
-[dir="rtl"] .space-x-1 > * + *,
-.rtl .space-x-1 > * + * {
-  margin-right: 0.25rem;
-  margin-left: 0;
-}
-
-[dir="rtl"] .space-x-2 > * + *,
-.rtl .space-x-2 > * + * {
-  margin-right: 0.5rem;
-  margin-left: 0;
-}
-
-[dir="rtl"] .space-x-3 > * + *,
-.rtl .space-x-3 > * + * {
-  margin-right: 0.75rem;
-  margin-left: 0;
-}
-
-[dir="rtl"] .space-x-4 > * + *,
-.rtl .space-x-4 > * + * {
-  margin-right: 1rem;
-  margin-left: 0;
-}
-
-[dir="rtl"] .space-x-6 > * + *,
-.rtl .space-x-6 > * + * {
-  margin-right: 1.5rem;
-  margin-left: 0;
-}
-
-/* RTL Padding and Margin - Enhanced */
-[dir="rtl"] .pr-4,
-.rtl .pr-4 {
-  padding-left: 1rem;
-  padding-right: 0;
-}
-
-[dir="rtl"] .pl-4,
-.rtl .pl-4 {
-  padding-right: 1rem;
-  padding-left: 0;
-}
-
-[dir="rtl"] .mr-2,
-.rtl .mr-2 {
-  margin-right: 0;
-  margin-left: 0.5rem;
-}
-
-[dir="rtl"] .ml-2,
-.rtl .ml-2 {
-  margin-left: 0;
-  margin-right: 0.5rem;
-}
-
-[dir="rtl"] .mr-3,
-.rtl .mr-3 {
-  margin-right: 0;
-  margin-left: 0.75rem;
-}
-
-[dir="rtl"] .ml-3,
-.rtl .ml-3 {
-  margin-left: 0;
-  margin-right: 0.75rem;
-}
-
-[dir="rtl"] .mr-4,
-.rtl .mr-4 {
-  margin-right: 0;
-  margin-left: 1rem;
-}
-
-[dir="rtl"] .ml-4,
-.rtl .ml-4 {
-  margin-left: 0;
-  margin-right: 1rem;
-}
-
-[dir="rtl"] .mr-6,
-.rtl .mr-6 {
-  margin-right: 0;
-  margin-left: 1.5rem;
-}
-
-[dir="rtl"] .ml-6,
-.rtl .ml-6 {
-  margin-left: 0;
-  margin-right: 1.5rem;
-}
-
-/* RTL Text Alignment - Enhanced */
-[dir="rtl"] .text-left,
-.rtl .text-left {
-  text-align: right;
-}
-
-[dir="rtl"] .text-right,
-.rtl .text-right {
-  text-align: left;
-}
-
-[dir="rtl"] .text-center,
-.rtl .text-center {
-  text-align: center;
-}
-
-/* RTL Borders - Enhanced */
-[dir="rtl"] .border-r,
-.rtl .border-r {
-  border-right: 0;
-  border-left: 1px solid;
-}
-
-[dir="rtl"] .border-l,
-.rtl .border-l {
-  border-left: 0;
-  border-right: 1px solid;
-}
-
-/* RTL Form elements - Enhanced */
-[dir="rtl"] input,
-[dir="rtl"] textarea,
-[dir="rtl"] select,
-.rtl input,
-.rtl textarea,
-.rtl select {
-  text-align: right;
-  direction: rtl;
-}
-
-[dir="rtl"] input::placeholder,
-[dir="rtl"] textarea::placeholder,
-.rtl input::placeholder,
-.rtl textarea::placeholder {
-  text-align: right;
-  direction: rtl;
-}
-
-/* RTL Positioning - Enhanced */
-[dir="rtl"] .left-2,
-.rtl .left-2 {
-  left: auto;
-  right: 0.5rem;
-}
-
-[dir="rtl"] .right-2,
-.rtl .right-2 {
-  right: auto;
-  left: 0.5rem;
-}
-
-[dir="rtl"] .left-4,
-.rtl .left-4 {
-  left: auto;
-  right: 1rem;
-}
-
-[dir="rtl"] .right-4,
-.rtl .right-4 {
-  right: auto;
-  left: 1rem;
-}
-
-[dir="rtl"] .left-6,
-.rtl .left-6 {
-  left: auto;
-  right: 1.5rem;
-}
-
-[dir="rtl"] .right-6,
-.rtl .right-6 {
-  right: auto;
-  left: 1.5rem;
-}
-
-/* RTL Float - Enhanced */
-[dir="rtl"] .float-left,
-.rtl .float-left {
-  float: right;
-}
-
-[dir="rtl"] .float-right,
-.rtl .float-right {
-  float: left;
-}
-
-/* Chat Bubbles - Enhanced RTL */
-.chat-bubble-ai {
-  @apply bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm text-gray-900 dark:text-gray-100 relative border;
-  max-width: 85%;
-}
-
-.chat-bubble-user {
-  @apply bg-blue-500 text-white p-4 rounded-2xl shadow-sm relative;
-  max-width: 85%;
-}
-
-[dir="rtl"] .chat-bubble-ai,
-.rtl .chat-bubble-ai {
-  direction: rtl;
-  text-align: right;
-}
-
-[dir="rtl"] .chat-bubble-user,
-.rtl .chat-bubble-user {
-  direction: rtl;
-  text-align: right;
-}
-
-/* RTL Dropdown positioning - Enhanced */
-[dir="rtl"] [data-radix-popper-content-wrapper],
-.rtl [data-radix-popper-content-wrapper] {
-  direction: rtl;
-}
-
-[dir="rtl"] .dropdown-content,
-.rtl .dropdown-content {
-  right: 0;
-  left: auto;
-}
-
-/* Enhanced Typography for Arabic */
-[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6,
-.rtl h1, .rtl h2, .rtl h3, .rtl h4, .rtl h5, .rtl h6 {
-  text-align: right;
+/* Arabic font improvements */
+.workspace-rtl {
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
+}
+
+.workspace-rtl h1,
+.workspace-rtl h2,
+.workspace-rtl h3,
+.workspace-rtl h4 {
   font-weight: 600;
 }
 
-[dir="rtl"] p,
-.rtl p {
-  text-align: right;
-  line-height: 1.8;
-}
-
-/* RTL Button groups */
-[dir="rtl"] .btn-group,
-.rtl .btn-group {
-  flex-direction: row-reverse;
-}
-
-/* RTL Tab Navigation */
-[dir="rtl"] .tabs-list,
-.rtl .tabs-list {
-  flex-direction: row-reverse;
-}
-
-[dir="rtl"] .tab-trigger,
-.rtl .tab-trigger {
-  text-align: right;
-}
-
-/* RTL Cards and Statistics - Enhanced */
-[dir="rtl"] .stat-card,
-.rtl .stat-card {
-  text-align: right;
-}
-
-[dir="rtl"] .stat-card .icon,
-.rtl .stat-card .icon {
-  order: -1;
-  margin-left: 0.5rem;
-  margin-right: 0;
-}
-
-[dir="rtl"] .stat-card .value,
-.rtl .stat-card .value {
-  text-align: right;
-}
-
-/* Enhanced RTL Card Layout */
-[dir="rtl"] .card-content,
-.rtl .card-content {
-  text-align: right;
-}
-
-[dir="rtl"] .metric-card,
-.rtl .metric-card {
-  direction: rtl;
-}
-
-[dir="rtl"] .metric-card .metric-value,
-.rtl .metric-card .metric-value {
-  text-align: right;
-  font-family: 'Cairo', sans-serif;
-}
-
-[dir="rtl"] .metric-card .metric-title,
-.rtl .metric-card .metric-title {
-  text-align: right;
-}
-
-/* Mobile-specific RTL styles - Enhanced */
-@media (max-width: 768px) {
-  [dir="rtl"] .mobile-menu,
-  .rtl .mobile-menu {
-    right: 0;
-    left: auto;
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .chat-sidebar {
+    @apply w-[40%] min-w-[350px];
   }
   
-  [dir="rtl"] .mobile-nav-item,
-  .rtl .mobile-nav-item {
-    text-align: right;
-    padding-right: 1rem;
-    padding-left: 0.5rem;
-  }
-
-  [dir="rtl"] .mobile-chat-button,
-  .rtl .mobile-chat-button {
-    left: 1.5rem;
-    right: auto;
+  .agent-workspace {
+    margin-left: 40%;
+    min-width: 60%;
   }
 }
 
-/* Custom scrollbar - RTL aware */
-[dir="rtl"]::-webkit-scrollbar,
-.rtl ::-webkit-scrollbar {
+@media (max-width: 768px) {
+  .dashboard-container {
+    @apply flex-col;
+  }
+  
+  .chat-sidebar {
+    @apply w-full;
+    position: relative;
+    top: 0;
+    height: 50vh;
+  }
+  
+  .agent-workspace {
+    @apply w-full;
+    margin-left: 0;
+    min-height: 50vh;
+  }
+}
+
+/* Animation improvements */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Chat specific styles */
+.chat-message {
+  @apply transition-all duration-200;
+}
+
+.chat-message:hover {
+  @apply transform scale-[1.02];
+}
+
+/* Scrollbar styling */
+.overflow-y-auto::-webkit-scrollbar {
   width: 6px;
 }
 
-[dir="rtl"]::-webkit-scrollbar-track,
-.rtl ::-webkit-scrollbar-track {
-  background: transparent;
+.overflow-y-auto::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
 }
 
-[dir="rtl"]::-webkit-scrollbar-thumb,
-.rtl ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 3px;
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
 }
 
-[dir="rtl"].dark ::-webkit-scrollbar-thumb,
-.rtl.dark ::-webkit-scrollbar-thumb {
-  background: #4b5563;
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-500;
 }
 
-/* Enhanced Animation and Transitions for RTL */
-[dir="rtl"] .slide-in-right,
-.rtl .slide-in-right {
-  animation: slideInLeft 0.3s ease-out;
+/* Select dropdown improvements */
+.select-content {
+  @apply bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-lg;
+  z-index: 50;
 }
 
-[dir="rtl"] .slide-in-left,
-.rtl .slide-in-left {
-  animation: slideInRight 0.3s ease-out;
+/* Button hover effects */
+.btn-hover {
+  @apply transition-all duration-200 hover:scale-105 hover:shadow-md;
 }
 
-@keyframes slideInLeft {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
+/* Card hover effects */
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-lg hover:transform hover:scale-[1.02];
 }
 
-@keyframes slideInRight {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+/* Loading spinner */
+.loading-spinner {
+  @apply animate-spin;
 }
 
-/* Chat interface specific RTL improvements */
-[dir="rtl"] .chat-input-area,
-.rtl .chat-input-area {
-  direction: rtl;
+/* Status indicators */
+.status-active {
+  @apply bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400;
 }
 
-[dir="rtl"] .chat-input-area input,
-.rtl .chat-input-area input {
-  text-align: right;
-  padding-right: 1rem;
+.status-working {
+  @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400;
 }
 
-[dir="rtl"] .chat-message-timestamp,
-.rtl .chat-message-timestamp {
-  text-align: left;
-}
-
-/* Improved number display for Arabic */
-[dir="rtl"] .number-display,
-.rtl .number-display,
-[dir="rtl"] .metric-value,
-.rtl .metric-value {
-  direction: ltr;
-  text-align: right;
-  unicode-bidi: embed;
-}
-
-/* Enhanced percentage and currency display */
-[dir="rtl"] .percentage,
-.rtl .percentage,
-[dir="rtl"] .currency,
-.rtl .currency {
-  direction: ltr;
-  display: inline-block;
-}
-
-/* Hide scrollbar for tab navigation */
-.scrollbar-none {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-
-/* Enhanced focus states for RTL */
-[dir="rtl"] *:focus,
-.rtl *:focus {
-  outline-offset: 2px;
-}
-
-/* Better button alignment for RTL */
-[dir="rtl"] .button-with-icon,
-.rtl .button-with-icon {
-  flex-direction: row-reverse;
-}
-
-[dir="rtl"] .button-with-icon .icon,
-.rtl .button-with-icon .icon {
-  margin-left: 0.5rem;
-  margin-right: 0;
-}
-
-/* Enhanced tooltip positioning for RTL */
-[dir="rtl"] .tooltip,
-.rtl .tooltip {
-  direction: rtl;
-  text-align: right;
-}
-
-/* Improved modal and dialog RTL support */
-[dir="rtl"] .dialog-content,
-.rtl .dialog-content {
-  direction: rtl;
-  text-align: right;
-}
-
-[dir="rtl"] .modal-header,
-.rtl .modal-header {
-  text-align: right;
-}
-
-/* Enhanced loading states for RTL */
-[dir="rtl"] .loading-spinner,
-.rtl .loading-spinner {
-  margin-left: 0.5rem;
-  margin-right: 0;
-}
-
-/* Better badge positioning for RTL */
-[dir="rtl"] .badge,
-.rtl .badge {
-  direction: ltr;
-  display: inline-block;
-}
-
-/* Enhanced notification positioning for RTL */
-[dir="rtl"] .notification,
-.rtl .notification {
-  right: auto;
-  left: 1rem;
-}
-
-/* Improved search input RTL support */
-[dir="rtl"] .search-input,
-.rtl .search-input {
-  padding-right: 2.5rem;
-  padding-left: 1rem;
-}
-
-[dir="rtl"] .search-icon,
-.rtl .search-icon {
-  right: 0.75rem;
-  left: auto;
+.status-standby {
+  @apply bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400;
 }
