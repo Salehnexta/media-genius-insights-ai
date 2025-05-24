@@ -9,9 +9,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+type TestStatus = 'success' | 'error' | 'warning';
+
 interface TestResult {
   name: string;
-  status: 'success' | 'error' | 'warning';
+  status: TestStatus;
   message: string;
   details?: any;
 }
@@ -205,7 +207,7 @@ const DatabaseDebugger = () => {
     setTesting(false);
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: TestStatus) => {
     switch (status) {
       case 'success':
         return <CheckCircle className="h-5 w-5 text-green-500" />;
@@ -218,7 +220,7 @@ const DatabaseDebugger = () => {
     }
   };
 
-  const getStatusBadge = (status: 'success' | 'error' | 'warning') => {
+  const getStatusBadge = (status: TestStatus) => {
     const variants = {
       success: 'default' as const,
       error: 'destructive' as const,
