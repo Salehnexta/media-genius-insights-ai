@@ -124,7 +124,9 @@ function App() {
               } />
               <Route path="/zapier-settings" element={
                 <ProtectedRoute>
-                  <ZapierSettings />
+                  <LanguageProvider>
+                    <ZapierSettings />
+                  </LanguageProvider>
                 </ProtectedRoute>
               } />
               <Route path="/debug" element={
