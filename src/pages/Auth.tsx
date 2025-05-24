@@ -1,32 +1,32 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Brain, ArrowLeft, Loader2 } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Auth = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [loginData, setLoginData] = useState({ email: '', password: '' });
-  const [signupData, setSignupData] = useState({ 
-    email: '', 
-    password: '', 
-    fullName: '', 
-    companyName: '' 
-  });
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   
   const { signIn, signUp, user } = useAuth();
   const { toast } = useToast();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
-  const { t, language } = useLanguage();
-  
+  const isArabic = language === 'ar';
+
   const from = location.state?.from?.pathname || '/dashboard';
 
   useEffect(() => {
@@ -35,231 +35,204 @@ const Auth = () => {
     }
   }, [user, navigate, from]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    
+    setLoading(true);
+
     try {
-      const { error } = await signIn(loginData.email, loginData.password);
-      
-      if (error) {
-        toast({
-          title: language === 'ar' ? 'خطأ في تسجيل الدخول' : 'Login Error',
-          description: error.message,
-          variant: 'destructive'
-        });
+      if (isLogin) {
+        const { error } = await signIn(email, password);
+        if (error) {
+          toast({
+            title: isArabic ? 'خطأ في تسجيل الدخول' : 'Login Error',
+            description: error.message,
+            variant: 'destructive'
+          });
+        } else {
+          toast({
+            title: isArabic ? 'مرحباً بك' : 'Welcome back',
+            description: isArabic ? 'تم تسجيل الدخول بنجاح' : 'Successfully signed in'
+          });
+        }
       } else {
-        toast({
-          title: language === 'ar' ? 'مرحباً بك!' : 'Welcome back!',
-          description: language === 'ar' ? 'تم تسجيل الدخول بنجاح' : 'Successfully logged in'
-        });
+        if (password !== confirmPassword) {
+          toast({
+            title: isArabic ? 'خطأ' : 'Error',
+            description: isArabic ? 'كلمات المرور غير متطابقة' : 'Passwords do not match',
+            variant: 'destructive'
+          });
+          return;
+        }
+
+        const { error } = await signUp(email, password, { full_name: fullName });
+        if (error) {
+          toast({
+            title: isArabic ? 'خطأ في التسجيل' : 'Signup Error',
+            description: error.message,
+            variant: 'destructive'
+          });
+        } else {
+          toast({
+            title: isArabic ? 'تم إنشاء الحساب' : 'Account Created',
+            description: isArabic ? 'تم إنشاء حسابك بنجاح' : 'Your account has been created successfully'
+          });
+        }
       }
     } catch (error: any) {
       toast({
-        title: language === 'ar' ? 'خطأ' : 'Error',
+        title: isArabic ? 'خطأ' : 'Error',
         description: error.message,
         variant: 'destructive'
       });
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    try {
-      const { error } = await signUp(signupData.email, signupData.password, {
-        full_name: signupData.fullName,
-        company_name: signupData.companyName
-      });
-      
-      if (error) {
-        toast({
-          title: language === 'ar' ? 'خطأ في إنشاء الحساب' : 'Signup Error',
-          description: error.message,
-          variant: 'destructive'
-        });
-      } else {
-        toast({
-          title: language === 'ar' ? 'تم إنشاء الحساب!' : 'Account Created!',
-          description: language === 'ar' ? 'مرحباً بك في عبقري التسويق الذكي' : 'Welcome to MarketingGenius AI'
-        });
-      }
-    } catch (error: any) {
-      toast({
-        title: language === 'ar' ? 'خطأ' : 'Error',
-        description: error.message,
-        variant: 'destructive'
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const isArabic = language === 'ar';
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 flex items-center justify-center p-4 ${isArabic ? 'rtl' : ''}`}>
+    <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4 ${isArabic ? 'rtl' : ''}`}>
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link to={isArabic ? '/ar' : '/'} className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 transition-colors mb-4">
-            <ArrowLeft className={`h-4 w-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
-            {isArabic ? 'العودة للصفحة الرئيسية' : 'Back to Home'}
-          </Link>
-          
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="h-12 w-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
-              <Brain className="h-7 w-7 text-white" />
-            </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              {isArabic ? 'عبقري التسويق الذكي' : 'MarketingGenius AI'}
-            </span>
-          </div>
-        </div>
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/')}
+          className={`mb-6 ${isArabic ? 'mr-auto' : 'ml-0'}`}
+        >
+          <ArrowLeft className={`h-4 w-4 ${isArabic ? 'ml-2 rotate-180' : 'mr-2'}`} />
+          {isArabic ? 'العودة للرئيسية' : 'Back to Home'}
+        </Button>
 
-        <Card className="shadow-xl border-0">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold">
-              {isArabic ? 'مرحباً بك' : 'Welcome'}
+        <Card className="shadow-2xl border-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
+          <CardHeader className="space-y-1 text-center">
+            <div className="flex justify-center mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                <span className="text-white font-bold text-xl">MG</span>
+              </div>
+            </div>
+            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              {isLogin 
+                ? (isArabic ? 'تسجيل الدخول' : 'Sign In')
+                : (isArabic ? 'إنشاء حساب جديد' : 'Create Account')
+              }
             </CardTitle>
-            <CardDescription>
-              {isArabic ? 'سجل دخولك أو أنشئ حساباً جديداً للبدء' : 'Sign in to your account or create a new one to get started'}
-            </CardDescription>
+            <p className="text-muted-foreground">
+              {isLogin 
+                ? (isArabic ? 'ادخل بياناتك للوصول إلى حسابك' : 'Enter your credentials to access your account')
+                : (isArabic ? 'أنشئ حساباً جديداً للبدء' : 'Create a new account to get started')
+              }
+            </p>
           </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">
-                  {isArabic ? 'تسجيل الدخول' : 'Sign In'}
-                </TabsTrigger>
-                <TabsTrigger value="signup">
-                  {isArabic ? 'إنشاء حساب' : 'Sign Up'}
-                </TabsTrigger>
-              </TabsList>
+          
+          <CardContent className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {!isLogin && (
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">
+                    {isArabic ? 'الاسم الكامل' : 'Full Name'}
+                  </Label>
+                  <Input
+                    id="fullName"
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required={!isLogin}
+                    className="bg-white dark:bg-gray-800"
+                  />
+                </div>
+              )}
               
-              <TabsContent value="login" className="space-y-4 mt-6">
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">
-                      {isArabic ? 'البريد الإلكتروني' : 'Email'}
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder={isArabic ? 'أدخل بريدك الإلكتروني' : 'Enter your email'}
-                      value={loginData.email}
-                      onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="password">
-                      {isArabic ? 'كلمة المرور' : 'Password'}
-                    </Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder={isArabic ? 'أدخل كلمة المرور' : 'Enter your password'}
-                      value={loginData.password}
-                      onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                      required
-                    />
-                  </div>
-                  
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                    disabled={isLoading}
+              <div className="space-y-2">
+                <Label htmlFor="email">
+                  {isArabic ? 'البريد الإلكتروني' : 'Email'}
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="bg-white dark:bg-gray-800"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="password">
+                  {isArabic ? 'كلمة المرور' : 'Password'}
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="bg-white dark:bg-gray-800 pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
                   >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {isArabic ? 'جاري تسجيل الدخول...' : 'Signing in...'}
-                      </>
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-400" />
                     ) : (
-                      isArabic ? 'تسجيل الدخول' : 'Sign In'
+                      <Eye className="h-4 w-4 text-gray-400" />
                     )}
                   </Button>
-                </form>
-              </TabsContent>
+                </div>
+              </div>
               
-              <TabsContent value="signup" className="space-y-4 mt-6">
-                <form onSubmit={handleSignup} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">
-                      {isArabic ? 'الاسم الكامل' : 'Full Name'}
-                    </Label>
-                    <Input
-                      id="fullName"
-                      type="text"
-                      placeholder={isArabic ? 'أدخل اسمك الكامل' : 'Enter your full name'}
-                      value={signupData.fullName}
-                      onChange={(e) => setSignupData({ ...signupData, fullName: e.target.value })}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="companyName">
-                      {isArabic ? 'اسم الشركة (اختياري)' : 'Company Name (Optional)'}
-                    </Label>
-                    <Input
-                      id="companyName"
-                      type="text"
-                      placeholder={isArabic ? 'أدخل اسم شركتك' : 'Enter your company name'}
-                      value={signupData.companyName}
-                      onChange={(e) => setSignupData({ ...signupData, companyName: e.target.value })}
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="signupEmail">
-                      {isArabic ? 'البريد الإلكتروني' : 'Email'}
-                    </Label>
-                    <Input
-                      id="signupEmail"
-                      type="email"
-                      placeholder={isArabic ? 'أدخل بريدك الإلكتروني' : 'Enter your email'}
-                      value={signupData.email}
-                      onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="signupPassword">
-                      {isArabic ? 'كلمة المرور' : 'Password'}
-                    </Label>
-                    <Input
-                      id="signupPassword"
-                      type="password"
-                      placeholder={isArabic ? 'أدخل كلمة مرور قوية' : 'Enter a strong password'}
-                      value={signupData.password}
-                      onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
-                      required
-                    />
-                  </div>
-                  
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {isArabic ? 'جاري إنشاء الحساب...' : 'Creating account...'}
-                      </>
-                    ) : (
-                      isArabic ? 'إنشاء حساب' : 'Create Account'
-                    )}
-                  </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
+              {!isLogin && (
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">
+                    {isArabic ? 'تأكيد كلمة المرور' : 'Confirm Password'}
+                  </Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    className="bg-white dark:bg-gray-800"
+                  />
+                </div>
+              )}
+              
+              <Button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                disabled={loading}
+              >
+                {loading 
+                  ? (isArabic ? 'جاري المعالجة...' : 'Processing...')
+                  : isLogin 
+                    ? (isArabic ? 'تسجيل الدخول' : 'Sign In')
+                    : (isArabic ? 'إنشاء الحساب' : 'Create Account')
+                }
+              </Button>
+            </form>
+            
+            <Separator />
+            
+            <div className="text-center">
+              <span className="text-sm text-muted-foreground">
+                {isLogin 
+                  ? (isArabic ? 'ليس لديك حساب؟' : "Don't have an account?")
+                  : (isArabic ? 'لديك حساب بالفعل؟' : 'Already have an account?')
+                }
+              </span>
+              <Button
+                variant="link"
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-blue-600 hover:text-blue-700 p-0 ml-1"
+              >
+                {isLogin 
+                  ? (isArabic ? 'إنشاء حساب جديد' : 'Sign up')
+                  : (isArabic ? 'تسجيل الدخول' : 'Sign in')
+                }
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
