@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -52,9 +51,14 @@ const Index: React.FC = () => {
       const onboardingData = await getOnboardingData();
       console.log('Onboarding data result:', onboardingData);
       
-      // Check if onboarding is completed
-      const isCompleted = onboardingData && onboardingData.completed_at !== null;
+      // ✅ FIXED: Check for the correct field name that OnboardingWizard actually saves
+      // Handle both field names for robustness (completed boolean and completed_at timestamp)
+      const isCompleted = onboardingData && (
+        onboardingData.completed === true || 
+        onboardingData.completed_at !== null
+      );
       console.log('Onboarding completed status:', isCompleted);
+      console.log('Checking fields - completed:', onboardingData?.completed, 'completed_at:', onboardingData?.completed_at);
       
       setHasCompletedOnboarding(isCompleted);
       
