@@ -40,21 +40,22 @@ const MockDataCards: React.FC = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 ${isArabic ? 'rtl:grid-flow-col-reverse' : ''}`} dir={isArabic ? 'rtl' : 'ltr'}>
       {mockData.map((item, index) => (
-        <Card key={index}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className={`text-sm font-medium ${isArabic ? 'text-right' : ''}`}>
+        <Card key={index} className={isArabic ? 'text-right' : 'text-left'}>
+          <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
+            <CardTitle className={`text-sm font-medium ${isArabic ? 'text-right order-last' : 'text-left order-first'}`}>
               {item.title}
             </CardTitle>
-            <item.icon className={`h-4 w-4 ${item.color}`} />
+            <item.icon className={`h-4 w-4 ${item.color} ${isArabic ? 'order-first' : 'order-last'}`} />
           </CardHeader>
-          <CardContent>
-            <div className={`text-2xl font-bold ${isArabic ? 'text-right' : ''}`}>
+          <CardContent className={isArabic ? 'text-right' : 'text-left'}>
+            <div className={`text-2xl font-bold ${isArabic ? 'text-right' : 'text-left'}`}>
               {item.value}
             </div>
-            <p className={`text-xs text-muted-foreground ${isArabic ? 'text-right' : ''}`}>
-              <span className="text-green-600">{item.change}</span> {isArabic ? 'من الشهر الماضي' : 'from last month'}
+            <p className={`text-xs text-muted-foreground flex items-center gap-1 ${isArabic ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
+              <span className="text-green-600">{item.change}</span>
+              <span>{isArabic ? 'من الشهر الماضي' : 'from last month'}</span>
             </p>
           </CardContent>
         </Card>

@@ -20,11 +20,11 @@ const DashboardHeader: React.FC = () => {
   };
 
   return (
-    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800" dir={isArabic ? 'rtl' : 'ltr'}>
       <div className="container mx-auto px-4">
         <div className={`flex justify-between items-center h-16 ${isArabic ? 'flex-row-reverse' : ''}`}>
-          {/* Logo */}
-          <div className={`flex items-center gap-3 ${isArabic ? 'flex-row-reverse' : ''}`}>
+          {/* Logo - Right side for Arabic, Left for English */}
+          <div className={`flex items-center gap-3 ${isArabic ? 'flex-row-reverse order-last' : 'order-first'}`}>
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">MG</span>
             </div>
@@ -33,8 +33,8 @@ const DashboardHeader: React.FC = () => {
             </span>
           </div>
 
-          {/* User Menu */}
-          <div className={`flex items-center gap-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
+          {/* User Menu - Left side for Arabic, Right for English */}
+          <div className={`flex items-center gap-4 ${isArabic ? 'flex-row-reverse order-first' : 'order-last'}`}>
             <LanguageToggle isArabic={isArabic} onToggle={toggleLanguage} />
             
             <Button
@@ -44,7 +44,7 @@ const DashboardHeader: React.FC = () => {
               className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}
             >
               <User className="h-4 w-4" />
-              {isArabic ? 'الملف الشخصي' : 'Profile'}
+              <span>{isArabic ? 'الملف الشخصي' : 'Profile'}</span>
             </Button>
 
             <Button
@@ -54,7 +54,7 @@ const DashboardHeader: React.FC = () => {
               className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}
             >
               <Settings className="h-4 w-4" />
-              {isArabic ? 'الاشتراك' : 'Subscription'}
+              <span>{isArabic ? 'الاشتراك' : 'Subscription'}</span>
             </Button>
 
             <div className={`flex items-center gap-3 ${isArabic ? 'flex-row-reverse' : ''}`}>
@@ -71,7 +71,7 @@ const DashboardHeader: React.FC = () => {
                 className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}
               >
                 <LogOut className="h-4 w-4" />
-                {isArabic ? 'تسجيل الخروج' : 'Sign Out'}
+                <span>{isArabic ? 'تسجيل الخروج' : 'Sign Out'}</span>
               </Button>
             </div>
           </div>
