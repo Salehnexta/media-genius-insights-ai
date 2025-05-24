@@ -88,7 +88,9 @@ function App() {
               } />
               <Route path="/subscription" element={
                 <ProtectedRoute>
-                  <Subscription />
+                  <LanguageProvider>
+                    <Subscription />
+                  </LanguageProvider>
                 </ProtectedRoute>
               } />
               <Route path="/subscription-ar" element={
