@@ -49,7 +49,7 @@ export const useOnboardingData = () => {
 
     setLoading(true);
     try {
-      // Use maybeSingle() instead of single() to avoid 406 errors
+      // Use maybeSingle() and filter by user_id to avoid 406 errors
       const { data: existingData, error } = await supabase
         .from('onboarding_data')
         .select('*')
@@ -237,6 +237,7 @@ export const useOnboardingData = () => {
 
     setLoading(true);
     try {
+      // Fixed: Add user filter and use maybeSingle() to handle no data case
       const { data, error } = await supabase
         .from('onboarding_data')
         .select('*')
