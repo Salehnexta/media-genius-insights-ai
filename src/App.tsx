@@ -83,7 +83,9 @@ function App() {
               } />
               <Route path="/profile" element={
                 <ProtectedRoute>
-                  <Profile />
+                  <LanguageProvider>
+                    <Profile />
+                  </LanguageProvider>
                 </ProtectedRoute>
               } />
               <Route path="/subscription" element={
