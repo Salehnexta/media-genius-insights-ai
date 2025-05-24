@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -28,7 +27,7 @@ const LandingPageAr = () => {
             <Link to="/" className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 transition-colors">
               English
             </Link>
-            <Link to="/dashboard">
+            <Link to="/auth">
               <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
                 <ArrowLeft className="ml-2 h-4 w-4" />
                 ابدأ الآن
@@ -57,7 +56,7 @@ const LandingPageAr = () => {
             انضم إلى آلاف المسوقين الذين يتخذون قرارات مبنية على البيانات.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 space-x-reverse">
-            <Link to="/dashboard">
+            <Link to="/auth">
               <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg">
                 <ArrowLeft className="ml-2 h-5 w-5" />
                 ابدأ الفترة التجريبية المجانية
@@ -371,7 +370,7 @@ const LandingPageAr = () => {
               ابدأ الفترة التجريبية المجانية اليوم وشاهد الفرق الذي يمكن أن يحدثه الذكاء الاصطناعي.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 space-x-reverse">
-              <Link to="/dashboard">
+              <Link to="/auth">
                 <Button size="lg" variant="secondary" className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg">
                   <ArrowLeft className="ml-2 h-5 w-5" />
                   ابدأ الفترة التجريبية المجانية
