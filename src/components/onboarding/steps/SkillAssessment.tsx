@@ -102,11 +102,12 @@ const SkillAssessment: React.FC<SkillAssessmentProps> = ({ data, updateData, isA
           value={data.experience}
           onValueChange={(value) => updateData({ experience: value })}
           className="space-y-3"
+          dir={isArabic ? 'rtl' : 'ltr'}
         >
           {experienceOptions.map((option) => (
-            <div key={option.id} className={`flex items-center ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
+            <div key={option.id} className={`flex items-center ${isArabic ? 'flex-row-reverse space-x-reverse space-x-2' : 'space-x-2'}`}>
               <RadioGroupItem value={option.id} id={option.id} />
-              <Label htmlFor={option.id} className="font-medium">
+              <Label htmlFor={option.id} className="font-medium cursor-pointer">
                 {option.label}
               </Label>
             </div>

@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
@@ -347,4 +346,39 @@
 
 [dir="rtl"] .card-content {
   text-align: right;
+}
+
+/* RTL Radio Group and Checkbox fixes */
+[dir="rtl"] .radio-group-item,
+[dir="rtl"] .checkbox,
+.rtl .radio-group-item,
+.rtl .checkbox {
+  margin-right: 0 !important;
+  margin-left: 0.5rem !important;
+}
+
+/* RTL Radio Group specific */
+[dir="rtl"] [role="radiogroup"] {
+  direction: rtl;
+}
+
+[dir="rtl"] [role="radiogroup"] > div {
+  flex-direction: row-reverse;
+}
+
+/* RTL Button icon alignment */
+[dir="rtl"] .flex-row-reverse {
+  flex-direction: row-reverse !important;
+}
+
+/* RTL Step navigation fixes */
+[dir="rtl"] .step-navigation {
+  flex-direction: row-reverse;
+}
+
+/* RTL Spacing fixes for Arabic */
+[dir="rtl"] .space-x-reverse > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+  margin-right: calc(0.5rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
 }

@@ -153,7 +153,7 @@ const OnboardingWizard: React.FC = () => {
         </div>
       </div>
     );
-  }
+  };
 
   return (
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
@@ -197,7 +197,7 @@ const OnboardingWizard: React.FC = () => {
 
           {/* Step Navigation */}
           <div className="flex justify-center mb-8">
-            <div className={`flex gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
+            <div className={`flex ${isArabic ? 'flex-row-reverse gap-2' : 'gap-2'}`}>
               {steps.map((step, index) => (
                 <button
                   key={step.id}
@@ -237,8 +237,17 @@ const OnboardingWizard: React.FC = () => {
               disabled={currentStep === 0}
               className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}
             >
-              <ChevronLeft className="h-4 w-4" />
-              {isArabic ? 'السابق' : 'Previous'}
+              {isArabic ? (
+                <>
+                  <ChevronRight className="h-4 w-4" />
+                  السابق
+                </>
+              ) : (
+                <>
+                  <ChevronLeft className="h-4 w-4" />
+                  Previous
+                </>
+              )}
             </Button>
 
             <div className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
@@ -252,11 +261,17 @@ const OnboardingWizard: React.FC = () => {
                 disabled={!isStepValid() || saving}
                 className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}
               >
-                {currentStep === steps.length - 1 
-                  ? (isArabic ? 'إنهاء الإعداد' : 'Complete Setup')
-                  : (isArabic ? 'التالي' : 'Next')
-                }
-                <ChevronRight className="h-4 w-4" />
+                {isArabic ? (
+                  <>
+                    <ChevronLeft className="h-4 w-4" />
+                    {currentStep === steps.length - 1 ? 'إنهاء الإعداد' : 'التالي'}
+                  </>
+                ) : (
+                  <>
+                    {currentStep === steps.length - 1 ? 'Complete Setup' : 'Next'}
+                    <ChevronRight className="h-4 w-4" />
+                  </>
+                )}
               </Button>
             </div>
           </div>
