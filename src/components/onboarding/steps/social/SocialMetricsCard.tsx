@@ -4,20 +4,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Users, TrendingUp, Calendar } from 'lucide-react';
+import { SocialMediaMetrics } from '@/services/realSocialMediaAnalysis';
 
 interface SocialMetricsCardProps {
-  metrics: {
-    followers: number;
-    engagement: number;
-    postsPerWeek: number;
-    topContent: string[];
-    audienceDemographics: {
-      ageGroups: Array<{
-        range: string;
-        percentage: number;
-      }>;
-    };
-  };
+  metrics: SocialMediaMetrics;
   isArabic: boolean;
 }
 
@@ -33,6 +23,11 @@ const SocialMetricsCard: React.FC<SocialMetricsCardProps> = ({ metrics, isArabic
     if (rate >= 2) return 'text-yellow-600';
     return 'text-red-600';
   };
+
+  // Extract top content types from recent posts
+  const topContent = metrics.recent_posts?.slice(0, 3).map(post => 
+    post.content.split(' ').slice(0, 2).join(' ') + '...'
+  ) || ['Photos', 'Videos', 'Stories'];
 
   return (
     <Card className="bg-gray-50 dark:bg-gray-800/50">
@@ -53,8 +48,8 @@ const SocialMetricsCard: React.FC<SocialMetricsCardProps> = ({ metrics, isArabic
               <TrendingUp className="w-4 h-4 mr-1" />
               <span className="text-sm font-medium">Engagement</span>
             </div>
-            <div className={`text-lg font-bold ${getEngagementColor(metrics.engagement)}`}>
-              {metrics.engagement.toFixed(1)}%
+            <div className={`text-lg font-bold ${getEngagementColor(metrics.engagement_rate)}`}>
+              {metrics.engagement_rate.toFixed(1)}%
             </div>
           </div>
           
@@ -64,7 +59,7 @@ const SocialMetricsCard: React.FC<SocialMetricsCardProps> = ({ metrics, isArabic
               <span className="text-sm font-medium">Posts/Week</span>
             </div>
             <div className="text-lg font-bold text-purple-600">
-              {metrics.postsPerWeek}
+              {metrics.growth_metrics?.posting_frequency || 0}
             </div>
           </div>
         </div>
@@ -72,17 +67,17 @@ const SocialMetricsCard: React.FC<SocialMetricsCardProps> = ({ metrics, isArabic
         <div className="space-y-2">
           <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400">
             <span>Engagement Rate</span>
-            <span>{metrics.engagement.toFixed(1)}%</span>
+            <span>{metrics.engagement_rate.toFixed(1)}%</span>
           </div>
-          <Progress value={Math.min(metrics.engagement * 20, 100)} className="h-2" />
+          <Progress value={Math.min(metrics.engagement_rate * 20, 100)} className="h-2" />
         </div>
 
         <div className="mt-3">
           <h5 className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Top Content Types
+            Recent Content
           </h5>
           <div className={`flex flex-wrap gap-1 ${isArabic ? 'justify-end' : ''}`}>
-            {metrics.topContent.slice(0, 3).map((content: string, index: number) => (
+            {topContent.map((content: string, index: number) => (
               <Badge key={index} variant="outline" className="text-xs">
                 {content}
               </Badge>
@@ -90,19 +85,13 @@ const SocialMetricsCard: React.FC<SocialMetricsCardProps> = ({ metrics, isArabic
           </div>
         </div>
 
-        <div className="mt-3">
-          <h5 className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Audience Demographics
-          </h5>
-          <div className="space-y-1">
-            {metrics.audienceDemographics.ageGroups.slice(0, 2).map((group: any, index: number) => (
-              <div key={index} className="flex justify-between text-xs">
-                <span>{group.range}</span>
-                <span>{group.percentage}%</span>
-              </div>
-            ))}
+        {metrics.profile_info.verified && (
+          <div className="mt-3">
+            <Badge variant="secondary" className="text-xs">
+              ✓ Verified Account
+            </Badge>
           </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );

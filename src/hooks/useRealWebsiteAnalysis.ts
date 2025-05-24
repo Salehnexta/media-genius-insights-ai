@@ -28,13 +28,13 @@ export const useRealWebsiteAnalysis = () => {
       // Perform real website analysis
       const analysis = await RealWebsiteAnalysisService.analyzeWebsite(url);
       
-      // Save analysis to database
+      // Save analysis to database with proper JSON serialization
       const { error } = await supabase
         .from('website_analysis')
         .upsert({
           user_id: user.id,
           website_url: url,
-          analysis_data: analysis,
+          analysis_data: analysis as any, // Cast to any for JSON storage
           seo_score: analysis.seoScore,
           performance_score: analysis.performanceScore,
           mobile_score: analysis.mobileScore,
@@ -84,7 +84,8 @@ export const useRealWebsiteAnalysis = () => {
         throw error;
       }
 
-      return data?.analysis_data || null;
+      // Cast the JSON data back to our type
+      return data?.analysis_data as RealWebsiteAnalysisResult || null;
     } catch (error) {
       console.error('Error fetching website analysis:', error);
       return null;

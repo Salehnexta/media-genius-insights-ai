@@ -36,7 +36,8 @@ const WebsiteAnalysis: React.FC<WebsiteAnalysisProps> = ({ data, updateData, isA
     
     const existingAnalysis = await getWebsiteAnalysis(data.website);
     if (existingAnalysis) {
-      setAnalysis(existingAnalysis);
+      // Ensure we properly cast the data
+      setAnalysis(existingAnalysis as RealWebsiteAnalysisResult);
     }
   };
 

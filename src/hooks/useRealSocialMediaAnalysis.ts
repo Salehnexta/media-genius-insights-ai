@@ -39,7 +39,7 @@ export const useRealSocialMediaAnalysis = () => {
       const metrics = await RealSocialMediaAnalysisService.analyzeSocialAccount(platform, url);
       const handle = RealSocialMediaAnalysisService.extractHandleFromUrl(platform, url);
       
-      // Save analysis to database
+      // Save analysis to database with proper JSON serialization
       const { error } = await supabase
         .from('social_media_accounts')
         .upsert({
@@ -47,7 +47,7 @@ export const useRealSocialMediaAnalysis = () => {
           platform: platform,
           account_url: url,
           account_handle: handle,
-          metrics_data: metrics,
+          metrics_data: metrics as any, // Cast to any for JSON storage
           last_sync: new Date().toISOString(),
           updated_at: new Date().toISOString()
         });
@@ -96,7 +96,8 @@ export const useRealSocialMediaAnalysis = () => {
         throw error;
       }
 
-      return data?.metrics_data || null;
+      // Cast the JSON data back to our type
+      return data?.metrics_data as SocialMediaMetrics || null;
     } catch (error) {
       console.error('Error fetching social media analysis:', error);
       return null;
