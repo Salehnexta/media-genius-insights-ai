@@ -28,6 +28,37 @@ export const loadOnboardingData = async (userId: string) => {
   return null;
 };
 
+// Helper function to delete records in batches
+const deleteDuplicatesInBatches = async (duplicateIds: string[], batchSize = 10) => {
+  console.log(`Deleting ${duplicateIds.length} duplicate records in batches of ${batchSize}`);
+  
+  for (let i = 0; i < duplicateIds.length; i += batchSize) {
+    const batch = duplicateIds.slice(i, i + batchSize);
+    
+    try {
+      const { error } = await supabase
+        .from('onboarding_data')
+        .delete()
+        .in('id', batch);
+
+      if (error) {
+        console.warn(`Error deleting batch ${i / batchSize + 1}:`, error);
+        // Continue with next batch even if one fails
+      } else {
+        console.log(`Successfully deleted batch ${i / batchSize + 1} (${batch.length} records)`);
+      }
+    } catch (error) {
+      console.warn(`Failed to delete batch ${i / batchSize + 1}:`, error);
+      // Continue with next batch
+    }
+    
+    // Small delay between batches to avoid overwhelming the server
+    if (i + batchSize < duplicateIds.length) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+  }
+};
+
 export const saveOnboardingData = async (userId: string, data: OnboardingData) => {
   console.log('Saving onboarding data for user:', userId, data);
 
@@ -54,18 +85,30 @@ export const saveOnboardingData = async (userId: string, data: OnboardingData) =
       throw onboardingError;
     }
 
-    // Delete any duplicate records
-    if (existingRecords.length > 1) {
+    // Clean up duplicates if there are more than 5 records (batch delete)
+    if (existingRecords.length > 5) {
       const duplicateIds = existingRecords.slice(1).map(record => record.id);
-      console.log('Deleting duplicate records:', duplicateIds);
+      console.log('Found many duplicates, cleaning up in background:', duplicateIds.length);
       
-      const { error: deleteError } = await supabase
-        .from('onboarding_data')
-        .delete()
-        .in('id', duplicateIds);
+      // Delete duplicates in background without blocking the save operation
+      deleteDuplicatesInBatches(duplicateIds).catch(error => {
+        console.warn('Background cleanup failed (non-critical):', error);
+      });
+    } else if (existingRecords.length > 1) {
+      // For smaller numbers, delete immediately but with error handling
+      const duplicateIds = existingRecords.slice(1).map(record => record.id);
+      
+      try {
+        const { error: deleteError } = await supabase
+          .from('onboarding_data')
+          .delete()
+          .in('id', duplicateIds);
 
-      if (deleteError) {
-        console.warn('Error deleting duplicates (non-critical):', deleteError);
+        if (deleteError) {
+          console.warn('Error deleting duplicates (non-critical):', deleteError);
+        }
+      } catch (error) {
+        console.warn('Failed to delete duplicates (non-critical):', error);
       }
     }
   } else {
@@ -93,8 +136,8 @@ export const saveUserPreferences = async (userId: string, data: OnboardingData) 
     goals: data.goals,
     budget: data.budget,
     hasWebsite: !!data.website,
-    socialPlatforms: Object.keys(data.socialAccounts),
-    competitorCount: data.competitors.length
+    socialPlatforms: Object.keys(data.socialAccounts || {}),
+    competitorCount: (data.competitors || []).length
   };
 
   const { data: existingPrefs } = await supabase
