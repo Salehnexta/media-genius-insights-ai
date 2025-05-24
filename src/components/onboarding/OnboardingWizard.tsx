@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useOnboardingWizard } from '@/hooks/useOnboardingWizard';
@@ -12,6 +13,7 @@ import OnboardingControls from './components/OnboardingControls';
 import OnboardingDebugPanel from './components/OnboardingDebugPanel';
 import OnboardingErrorDisplay from './components/OnboardingErrorDisplay';
 import OnboardingLoadingDisplay from './components/OnboardingLoadingDisplay';
+import OnboardingForceComplete from './components/OnboardingForceComplete';
 
 export interface OnboardingData {
   skillLevel?: string;
@@ -93,6 +95,8 @@ const OnboardingWizard: React.FC = () => {
 
   return (
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
+      <OnboardingForceComplete isArabic={isArabic} />
+      
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <OnboardingHeader 
