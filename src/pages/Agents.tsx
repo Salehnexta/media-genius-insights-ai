@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import AgentChatSidebar from '@/components/agents/AgentChatSidebar';
+import AdminPanelAccess from '@/components/agents/AdminPanelAccess';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Eye, Users, TrendingUp, Target, Activity } from 'lucide-react';
@@ -122,11 +122,14 @@ const Agents: React.FC = () => {
         {/* Main Dashboard - 65% */}
         <div className="flex-1 bg-gray-50 dark:bg-gray-950 overflow-y-auto" style={{ order: isArabic ? 1 : 2 }}>
           <div className="p-6" dir={isArabic ? 'rtl' : 'ltr'}>
-            {/* Header */}
-            <div className={`mb-6 ${isArabic ? 'text-right' : ''}`}>
-              <h1 className={`text-2xl font-bold text-gray-900 dark:text-white mb-2 ${isArabic ? 'font-arabic' : ''}`}>
-                {isArabic ? 'مساعد التسويق الذكي' : 'AI Marketing Assistant'}
-              </h1>
+            {/* Header with Admin Access */}
+            <div className={`mb-6 flex items-center justify-between ${isArabic ? 'text-right flex-row-reverse' : ''}`}>
+              <div>
+                <h1 className={`text-2xl font-bold text-gray-900 dark:text-white mb-2 ${isArabic ? 'font-arabic' : ''}`}>
+                  {isArabic ? 'مساعد التسويق الذكي' : 'AI Marketing Assistant'}
+                </h1>
+              </div>
+              <AdminPanelAccess />
             </div>
 
             {/* Top Metrics Row */}
