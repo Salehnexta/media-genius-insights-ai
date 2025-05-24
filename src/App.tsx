@@ -2,6 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from '@/contexts/AuthContext';
 import Index from '@/pages/Index';
 import Auth from '@/pages/Auth';
 import AuthAr from '@/pages/AuthAr';
@@ -29,68 +30,70 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <div className="min-h-screen bg-background">
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/auth-ar" element={<AuthAr />} />
-            <Route path="/register-ar" element={<RegisterAr />} />
-            <Route path="/landing" element={<LandingPage />} />
-            <Route path="/landing-ar" element={<LandingPageAr />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/pricing-ar" element={<PricingAr />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/onboarding" element={
-              <ProtectedRoute>
-                <Onboarding />
-              </ProtectedRoute>
-            } />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } />
-            <Route path="/subscription" element={
-              <ProtectedRoute>
-                <Subscription />
-              </ProtectedRoute>
-            } />
-            <Route path="/subscription-ar" element={
-              <ProtectedRoute>
-                <SubscriptionAr />
-              </ProtectedRoute>
-            } />
-            <Route path="/campaigns" element={
-              <ProtectedRoute>
-                <Campaigns />
-              </ProtectedRoute>
-            } />
-            <Route path="/agents" element={
-              <ProtectedRoute>
-                <Agents />
-              </ProtectedRoute>
-            } />
-            <Route path="/insights" element={
-              <ProtectedRoute>
-                <Insights />
-              </ProtectedRoute>
-            } />
-            <Route path="/zapier-settings" element={
-              <ProtectedRoute>
-                <ZapierSettings />
-              </ProtectedRoute>
-            } />
-            <Route path="/debug" element={
-              <ProtectedRoute>
-                <Debug />
-              </ProtectedRoute>
-            } />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
-      </Router>
+      <AuthProvider>
+        <Router>
+          <div className="min-h-screen bg-background">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/auth-ar" element={<AuthAr />} />
+              <Route path="/register-ar" element={<RegisterAr />} />
+              <Route path="/landing" element={<LandingPage />} />
+              <Route path="/landing-ar" element={<LandingPageAr />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/pricing-ar" element={<PricingAr />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/onboarding" element={
+                <ProtectedRoute>
+                  <Onboarding />
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              } />
+              <Route path="/subscription" element={
+                <ProtectedRoute>
+                  <Subscription />
+                </ProtectedRoute>
+              } />
+              <Route path="/subscription-ar" element={
+                <ProtectedRoute>
+                  <SubscriptionAr />
+                </ProtectedRoute>
+              } />
+              <Route path="/campaigns" element={
+                <ProtectedRoute>
+                  <Campaigns />
+                </ProtectedRoute>
+              } />
+              <Route path="/agents" element={
+                <ProtectedRoute>
+                  <Agents />
+                </ProtectedRoute>
+              } />
+              <Route path="/insights" element={
+                <ProtectedRoute>
+                  <Insights />
+                </ProtectedRoute>
+              } />
+              <Route path="/zapier-settings" element={
+                <ProtectedRoute>
+                  <ZapierSettings />
+                </ProtectedRoute>
+              } />
+              <Route path="/debug" element={
+                <ProtectedRoute>
+                  <Debug />
+                </ProtectedRoute>
+              } />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+        </Router>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
