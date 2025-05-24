@@ -47,7 +47,11 @@ function App() {
               } />
               <Route path="/auth-ar" element={<AuthAr />} />
               <Route path="/register-ar" element={<RegisterAr />} />
-              <Route path="/landing" element={<LandingPage />} />
+              <Route path="/landing" element={
+                <LanguageProvider>
+                  <LandingPage />
+                </LanguageProvider>
+              } />
               <Route path="/landing-ar" element={<LandingPageAr />} />
               <Route path="/pricing" element={
                 <LanguageProvider>
