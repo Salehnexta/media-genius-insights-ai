@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { AdminProvider } from '@/contexts/AdminContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import Index from '@/pages/Index';
 import Auth from '@/pages/Auth';
@@ -118,9 +119,11 @@ function App() {
               } />
               <Route path="/agents" element={
                 <ProtectedRoute>
-                  <LanguageProvider>
-                    <Agents />
-                  </LanguageProvider>
+                  <AdminProvider>
+                    <LanguageProvider>
+                      <Agents />
+                    </LanguageProvider>
+                  </AdminProvider>
                 </ProtectedRoute>
               } />
               <Route path="/insights" element={
@@ -144,6 +147,7 @@ function App() {
                   </LanguageProvider>
                 </ProtectedRoute>
               } />
+              <Route path="/admin/*" element={<Admin />} />
               <Route path="*" element={
                 <LanguageProvider>
                   <NotFound />
