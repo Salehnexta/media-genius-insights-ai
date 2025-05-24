@@ -60,7 +60,7 @@ const DashboardTabs: React.FC = () => {
             isMobile={isMobile}
           />
           <TabButton 
-            label={iMobile ? "" : t('sentiment')} 
+            label={isMobile ? "" : t('sentiment')} 
             icon={<Gauge className="h-4 w-4" />} 
             isActive={activeTab === 'sentiment'}
             onClick={() => setActiveTab('sentiment')}
