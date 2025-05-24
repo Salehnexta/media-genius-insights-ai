@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Globe, CheckCircle, AlertCircle, Loader, TrendingUp, Users, Search } from 'lucide-react';
+import { Globe, CheckCircle, AlertCircle, Loader, TrendingUp, Users, Search, Code, Target, BarChart3 } from 'lucide-react';
 import { OnboardingData } from '../OnboardingWizard';
+import { MockDataService } from '@/services/mockDataService';
 
 interface WebsiteAnalysisProps {
   data: OnboardingData;
@@ -13,56 +14,19 @@ interface WebsiteAnalysisProps {
   isArabic: boolean;
 }
 
-// Mock website analysis data
-const mockWebsiteAnalysis = {
-  seo: {
-    score: 78,
-    issues: [
-      'Missing meta description on 3 pages',
-      'Page load speed could be improved',
-      'Alt text missing on 5 images'
-    ],
-    strengths: [
-      'Good title tag optimization',
-      'Mobile-friendly design',
-      'SSL certificate installed'
-    ]
-  },
-  performance: {
-    score: 85,
-    loadTime: '2.1s',
-    mobileScore: 82,
-    desktopScore: 88
-  },
-  content: {
-    pages: 12,
-    blogPosts: 8,
-    lastUpdated: '2024-01-15',
-    contentGaps: [
-      'Product comparison guides',
-      'Customer testimonials',
-      'FAQ section needs expansion'
-    ]
-  },
-  competition: {
-    ranking: 'Top 3 in local market',
-    keywords: 45,
-    backlinks: 234
-  }
-};
-
 const WebsiteAnalysis: React.FC<WebsiteAnalysisProps> = ({ data, updateData, isArabic }) => {
   const { t } = useLanguage();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysis, setAnalysis] = useState<typeof mockWebsiteAnalysis | null>(null);
+  const [analysis, setAnalysis] = useState<any>(null);
 
   const startAnalysis = () => {
     if (!data.website) return;
     
     setIsAnalyzing(true);
-    // Simulate API call
+    // Simulate API call with enhanced mock data
     setTimeout(() => {
-      setAnalysis(mockWebsiteAnalysis);
+      const mockAnalysis = MockDataService.generateWebsiteAnalysis(data.website, data.industry || 'other');
+      setAnalysis(mockAnalysis);
       setIsAnalyzing(false);
     }, 3000);
   };
@@ -110,7 +74,7 @@ const WebsiteAnalysis: React.FC<WebsiteAnalysisProps> = ({ data, updateData, isA
           {t('onboarding.website.analyzing.description')}
         </p>
         <div className="text-sm text-gray-500 dark:text-gray-400">
-          {t('onboarding.website.analyzing.steps')}
+          Analyzing SEO • Checking performance • Scanning content • Reviewing competitors
         </div>
       </div>
     );
@@ -144,7 +108,7 @@ const WebsiteAnalysis: React.FC<WebsiteAnalysisProps> = ({ data, updateData, isA
         </Button>
       </div>
 
-      {/* Analysis Results */}
+      {/* Analysis Results Grid */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* SEO Analysis */}
         <Card>
@@ -160,10 +124,23 @@ const WebsiteAnalysis: React.FC<WebsiteAnalysisProps> = ({ data, updateData, isA
           <CardContent className="space-y-4">
             <div>
               <h5 className="font-medium text-gray-900 dark:text-white mb-2">
+                Technical Stack Detected
+              </h5>
+              <div className={`flex flex-wrap gap-1 ${isArabic ? 'justify-end' : ''}`}>
+                {analysis.seo.technicalStack.map((tech: string, index: number) => (
+                  <Badge key={index} variant="outline" className="text-xs">
+                    {tech}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h5 className="font-medium text-gray-900 dark:text-white mb-2">
                 {t('onboarding.website.seo.strengths')}
               </h5>
               <ul className="space-y-1">
-                {analysis.seo.strengths.map((strength, index) => (
+                {analysis.seo.strengths.map((strength: string, index: number) => (
                   <li key={index} className={`flex items-start ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'} text-sm text-green-700 dark:text-green-300`}>
                     <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                     <span>{strength}</span>
@@ -171,12 +148,13 @@ const WebsiteAnalysis: React.FC<WebsiteAnalysisProps> = ({ data, updateData, isA
                 ))}
               </ul>
             </div>
+
             <div>
               <h5 className="font-medium text-gray-900 dark:text-white mb-2">
-                {t('onboarding.website.seo.issues')}
+                Optimization Opportunities
               </h5>
               <ul className="space-y-1">
-                {analysis.seo.issues.map((issue, index) => (
+                {analysis.seo.issues.map((issue: string, index: number) => (
                   <li key={index} className={`flex items-start ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'} text-sm text-yellow-700 dark:text-yellow-300`}>
                     <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                     <span>{issue}</span>
@@ -202,7 +180,7 @@ const WebsiteAnalysis: React.FC<WebsiteAnalysisProps> = ({ data, updateData, isA
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {t('onboarding.website.performance.load-time')}
+                  Load Time
                 </p>
                 <p className="text-lg font-semibold text-gray-900 dark:text-white">
                   {analysis.performance.loadTime}
@@ -210,11 +188,31 @@ const WebsiteAnalysis: React.FC<WebsiteAnalysisProps> = ({ data, updateData, isA
               </div>
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {t('onboarding.website.performance.mobile')}
+                  Mobile Score
                 </p>
                 <p className={`text-lg font-semibold ${getScoreColor(analysis.performance.mobileScore)}`}>
                   {analysis.performance.mobileScore}/100
                 </p>
+              </div>
+            </div>
+
+            <div>
+              <h5 className="font-medium text-gray-900 dark:text-white mb-2">
+                Core Web Vitals
+              </h5>
+              <div className="grid grid-cols-3 gap-2 text-xs">
+                <div className="text-center p-2 bg-gray-50 dark:bg-gray-800 rounded">
+                  <div className="font-medium">LCP</div>
+                  <div className="text-gray-600 dark:text-gray-300">{analysis.performance.coreWebVitals.lcp}</div>
+                </div>
+                <div className="text-center p-2 bg-gray-50 dark:bg-gray-800 rounded">
+                  <div className="font-medium">FID</div>
+                  <div className="text-gray-600 dark:text-gray-300">{analysis.performance.coreWebVitals.fid}</div>
+                </div>
+                <div className="text-center p-2 bg-gray-50 dark:bg-gray-800 rounded">
+                  <div className="font-medium">CLS</div>
+                  <div className="text-gray-600 dark:text-gray-300">{analysis.performance.coreWebVitals.cls}</div>
+                </div>
               </div>
             </div>
           </CardContent>
@@ -225,14 +223,14 @@ const WebsiteAnalysis: React.FC<WebsiteAnalysisProps> = ({ data, updateData, isA
           <CardHeader>
             <CardTitle className={`flex items-center ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
               <Users className="w-5 h-5" />
-              {t('onboarding.website.content.title')}
+              Content Intelligence
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {t('onboarding.website.content.pages')}
+                  Total Pages
                 </p>
                 <p className="text-lg font-semibold text-gray-900 dark:text-white">
                   {analysis.content.pages}
@@ -240,19 +238,33 @@ const WebsiteAnalysis: React.FC<WebsiteAnalysisProps> = ({ data, updateData, isA
               </div>
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {t('onboarding.website.content.blog-posts')}
+                  Blog Posts
                 </p>
                 <p className="text-lg font-semibold text-gray-900 dark:text-white">
                   {analysis.content.blogPosts}
                 </p>
               </div>
             </div>
+
             <div>
               <h5 className="font-medium text-gray-900 dark:text-white mb-2">
-                {t('onboarding.website.content.gaps')}
+                Top Keywords
+              </h5>
+              <div className={`flex flex-wrap gap-1 ${isArabic ? 'justify-end' : ''}`}>
+                {analysis.content.topKeywords.map((keyword: string, index: number) => (
+                  <Badge key={index} variant="secondary" className="text-xs">
+                    {keyword}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h5 className="font-medium text-gray-900 dark:text-white mb-2">
+                Content Opportunities
               </h5>
               <ul className="space-y-1">
-                {analysis.content.contentGaps.map((gap, index) => (
+                {analysis.content.contentGaps.map((gap: string, index: number) => (
                   <li key={index} className="text-sm text-blue-700 dark:text-blue-300">
                     • {gap}
                   </li>
@@ -265,23 +277,28 @@ const WebsiteAnalysis: React.FC<WebsiteAnalysisProps> = ({ data, updateData, isA
         {/* Competition Analysis */}
         <Card>
           <CardHeader>
-            <CardTitle>
-              {t('onboarding.website.competition.title')}
+            <CardTitle className={`flex items-center ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
+              <BarChart3 className="w-5 h-5" />
+              Market Position
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                {t('onboarding.website.competition.ranking')}
+                Current Ranking
               </p>
               <p className="text-lg font-semibold text-gray-900 dark:text-white">
                 {analysis.competition.ranking}
               </p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Market Share: {analysis.competition.marketShare}
+              </p>
             </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {t('onboarding.website.competition.keywords')}
+                  Ranking Keywords
                 </p>
                 <p className="text-lg font-semibold text-gray-900 dark:text-white">
                   {analysis.competition.keywords}
@@ -289,31 +306,62 @@ const WebsiteAnalysis: React.FC<WebsiteAnalysisProps> = ({ data, updateData, isA
               </div>
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {t('onboarding.website.competition.backlinks')}
+                  Backlinks
                 </p>
                 <p className="text-lg font-semibold text-gray-900 dark:text-white">
                   {analysis.competition.backlinks}
                 </p>
               </div>
             </div>
+
+            <div>
+              <h5 className="font-medium text-gray-900 dark:text-white mb-2">
+                Competitive Advantages
+              </h5>
+              <ul className="space-y-1">
+                {analysis.competition.competitorGaps.map((gap: string, index: number) => (
+                  <li key={index} className="text-sm text-purple-700 dark:text-purple-300">
+                    • {gap}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* AI Recommendations */}
+      {/* AI Insights */}
       <Card className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
         <CardHeader>
           <CardTitle className="text-blue-900 dark:text-blue-100">
-            {t('onboarding.website.recommendations.title')}
+            AI-Powered Recommendations
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-2 text-sm text-blue-800 dark:text-blue-200">
-            <li>• {t('onboarding.website.recommendations.seo')}</li>
-            <li>• {t('onboarding.website.recommendations.content')}</li>
-            <li>• {t('onboarding.website.recommendations.performance')}</li>
-            <li>• {t('onboarding.website.recommendations.competition')}</li>
-          </ul>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <h5 className="font-medium text-blue-800 dark:text-blue-200 mb-2">
+                Immediate Actions
+              </h5>
+              <ul className="space-y-1 text-sm text-blue-700 dark:text-blue-300">
+                <li>• Optimize page load speed to under 2 seconds</li>
+                <li>• Add missing meta descriptions</li>
+                <li>• Implement structured data markup</li>
+                <li>• Create {data.industry} specific landing pages</li>
+              </ul>
+            </div>
+            <div>
+              <h5 className="font-medium text-blue-800 dark:text-blue-200 mb-2">
+                Strategic Opportunities
+              </h5>
+              <ul className="space-y-1 text-sm text-blue-700 dark:text-blue-300">
+                <li>• Develop content marketing strategy</li>
+                <li>• Launch competitor monitoring</li>
+                <li>• Improve mobile user experience</li>
+                <li>• Build industry-specific partnerships</li>
+              </ul>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -13,6 +13,7 @@ import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import LandingPage from "./pages/LandingPage";
 import LandingPageAr from "./pages/LandingPageAr";
+import Onboarding from "./pages/Onboarding";
 import Campaigns from "./pages/Campaigns";
 import Debug from "./pages/Debug";
 import NotFound from "./pages/NotFound";
@@ -40,6 +41,14 @@ const App = () => {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/ar" element={<LandingPageAr />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route 
+                  path="/onboarding" 
+                  element={
+                    <ProtectedRoute>
+                      <Onboarding />
+                    </ProtectedRoute>
+                  } 
+                />
                 <Route 
                   path="/profile" 
                   element={
