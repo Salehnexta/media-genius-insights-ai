@@ -9,6 +9,8 @@ import DataSharingSection from '@/components/privacy/DataSharingSection';
 import UserRightsSection from '@/components/privacy/UserRightsSection';
 import SecuritySection from '@/components/privacy/SecuritySection';
 import ContactSection from '@/components/privacy/ContactSection';
+import DataRetentionSection from '@/components/privacy/DataRetentionSection';
+import AIDataSection from '@/components/privacy/AIDataSection';
 
 const Privacy: React.FC = () => {
   const { language, setLanguage } = useLanguage();
@@ -32,9 +34,11 @@ const Privacy: React.FC = () => {
           <DataProtectionSection />
           <InformationCollectionSection />
           <DataUsageSection />
+          <AIDataSection />
           <DataSharingSection />
           <UserRightsSection />
           <SecuritySection />
+          <DataRetentionSection />
           <ContactSection />
         </div>
       </div>

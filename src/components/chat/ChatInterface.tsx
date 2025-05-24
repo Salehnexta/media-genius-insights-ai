@@ -33,49 +33,45 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
     const initialMessages: Message[] = [
       {
         id: '1',
-        content: t('chat.welcome'),
+        content: isArabic 
+          ? 'مرحباً! أنا مساعد التسويق الذكي الخاص بك. كيف يمكنني مساعدتك اليوم؟'
+          : 'Hello! I\'m your AI Marketing Assistant. How can I help you today?',
         sender: 'ai',
         timestamp: new Date(),
-      },
-      {
-        id: '2',
-        content: t('chat.alert'),
-        sender: 'ai',
-        timestamp: new Date(Date.now() - 1000 * 60 * 2),
       }
     ];
     setMessages(initialMessages);
-  }, [t]);
+  }, [isArabic]);
 
   const suggestionCards = [
     {
       id: 1,
-      title: t('suggestion.campaign.title'),
-      subtitle: t('suggestion.campaign.subtitle'),
+      title: isArabic ? 'تحليل الحملة' : 'Campaign Analysis',
+      subtitle: isArabic ? 'تحليل أداء حملاتك التسويقية' : 'Analyze your marketing campaign performance',
       icon: <BarChart3 className="h-6 w-6" />,
       bgColor: "bg-gradient-to-br from-blue-500 to-blue-600",
       context: "campaign"
     },
     {
       id: 2,
-      title: t('suggestion.content.title'),
-      subtitle: t('suggestion.content.subtitle'),
+      title: isArabic ? 'إنشاء المحتوى' : 'Content Creation',
+      subtitle: isArabic ? 'أفكار لمحتوى جذاب' : 'Ideas for engaging content',
       icon: <Target className="h-6 w-6" />,
       bgColor: "bg-gradient-to-br from-purple-500 to-purple-600",
       context: "content"
     },
     {
       id: 3,
-      title: t('suggestion.audience.title'),
-      subtitle: t('suggestion.audience.subtitle'),
+      title: isArabic ? 'تحليل الجمهور' : 'Audience Analysis',
+      subtitle: isArabic ? 'فهم جمهورك المستهدف' : 'Understand your target audience',
       icon: <Users className="h-6 w-6" />,
       bgColor: "bg-gradient-to-br from-green-500 to-green-600",
       context: "audience"
     },
     {
       id: 4,
-      title: t('suggestion.trend.title'),
-      subtitle: t('suggestion.trend.subtitle'),
+      title: isArabic ? 'الاتجاهات' : 'Market Trends',
+      subtitle: isArabic ? 'آخر الاتجاهات في السوق' : 'Latest market trends',
       icon: <TrendingUp className="h-6 w-6" />,
       bgColor: "bg-gradient-to-br from-orange-500 to-orange-600",
       context: "trends"
@@ -225,10 +221,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
         <div ref={messagesEndRef} />
         
         {/* Suggestion Cards - Only show in full chat view */}
-        {(!isMobile || isExpanded) && messages.length <= 2 && (
+        {(!isMobile || isExpanded) && messages.length <= 1 && (
           <div className="mt-6">
             <p className={`text-sm text-gray-600 dark:text-gray-400 mb-4 ${isArabic ? 'text-right' : ''}`}>
-              {t('chat.suggestion.today')}
+              {isArabic ? 'اقتراحات لتبدأ بها:' : 'Suggestions to get you started:'}
             </p>
             <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2'} gap-3`}>
               {suggestionCards.map(card => (
@@ -254,7 +250,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
       <div className="p-3 border-t">
         <div className={`flex ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
           <Input
-            placeholder={t('chat.placeholder')}
+            placeholder={isArabic ? 'اكتب رسالتك هنا...' : 'Type your message here...'}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !isLoading && handleSend()}
@@ -272,15 +268,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
             ) : (
               <Send className={`h-4 w-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
             )}
-            {!isMobile && (isLoading ? (isArabic ? 'جاري الإرسال...' : 'Sending...') : t('chat.send'))}
+            {!isMobile && (isLoading ? (isArabic ? 'جاري الإرسال...' : 'Sending...') : (isArabic ? 'إرسال' : 'Send'))}
           </Button>
         </div>
         {(!isMobile || isExpanded) && (
           <div className={`flex ${isArabic ? 'flex-row-reverse' : ''} justify-between mt-2`}>
             <div className={`text-xs text-gray-500 dark:text-gray-400 ${isArabic ? 'text-right' : ''}`}>
-              {t('chat.example')}
+              {isArabic ? 'مثال: "كيف يمكنني تحسين حملتي الإعلانية؟"' : 'Example: "How can I improve my ad campaign?"'}
             </div>
-            <div className="text-xs text-blue-500">{t('chat.language.indicator')}</div>
+            <div className="text-xs text-blue-500">{isArabic ? 'مدعوم بـ GPT-4' : 'Powered by GPT-4'}</div>
           </div>
         )}
       </div>
