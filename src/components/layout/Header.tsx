@@ -37,6 +37,11 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleDarkMode }) => {
       protected: true
     },
     { 
+      label: isArabic ? 'الوكلاء الذكيين' : 'AI Agents', 
+      href: '/agents',
+      protected: true
+    },
+    { 
       label: isArabic ? 'الأسعار' : 'Pricing', 
       href: language === 'ar' ? '/pricing-ar' : '/pricing',
       protected: false

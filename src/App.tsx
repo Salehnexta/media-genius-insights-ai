@@ -24,6 +24,7 @@ import PricingAr from "./pages/PricingAr";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Debug from "./pages/Debug";
+import Agents from "./pages/Agents";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => (
               <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
+              <Route path="/agents" element={<ProtectedRoute><Agents /></ProtectedRoute>} />
               <Route path="/zapier" element={<ProtectedRoute><ZapierSettings /></ProtectedRoute>} />
               <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
               <Route path="/subscription-ar" element={<ProtectedRoute><SubscriptionAr /></ProtectedRoute>} />
