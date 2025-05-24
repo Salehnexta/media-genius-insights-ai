@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -404,38 +405,46 @@ const LandingPageAr = () => {
             <div className="space-y-4">
               <h3 className="font-semibold text-lg">المنتج</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">الميزات</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">الأسعار</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">واجهة برمجة التطبيقات</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">التكاملات</a></li>
+                <li><a href="#features" className="hover:text-white transition-colors">الميزات</a></li>
+                <li><Link to="/dashboard" className="hover:text-white transition-colors">لوحة التحكم</Link></li>
+                <li><Link to="/campaigns" className="hover:text-white transition-colors">الحملات</Link></li>
+                <li><Link to="/subscription" className="hover:text-white transition-colors">الأسعار</Link></li>
               </ul>
             </div>
             
             <div className="space-y-4">
               <h3 className="font-semibold text-lg">الشركة</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">نبذة عنا</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">الوظائف</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">اتصل بنا</a></li>
+                <li><a href="#about" className="hover:text-white transition-colors">نبذة عنا</a></li>
+                <li><a href="#testimonials" className="hover:text-white transition-colors">آراء العملاء</a></li>
+                <li><Link to="/profile" className="hover:text-white transition-colors">اتصل بنا</Link></li>
                 <li><a href="#" className="hover:text-white transition-colors">المدونة</a></li>
               </ul>
             </div>
             
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">الدعم</h3>
+              <h3 className="font-semibold text-lg">القانونية والدعم</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">مركز المساعدة</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">التوثيق</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">المجتمع</a></li>
+                <li><Link to="/privacy" className="hover:text-white transition-colors">سياسة الخصوصية</Link></li>
+                <li><Link to="/terms" className="hover:text-white transition-colors">شروط الخدمة</Link></li>
+                <li><Link to="/debug" className="hover:text-white transition-colors">مركز المساعدة</Link></li>
                 <li><a href="#" className="hover:text-white transition-colors">الحالة</a></li>
               </ul>
             </div>
           </div>
           
-          <div className="pt-8 border-t border-gray-800 text-center">
-            <p className="text-gray-400">
+          <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center space-x-reverse">
+            <p className="text-gray-400 mb-4 md:mb-0">
               © 2024 عبقري التسويق الذكي. جميع الحقوق محفوظة.
             </p>
+            <div className="flex items-center space-x-4 space-x-reverse">
+              <Link to="/" className="text-gray-400 hover:text-white transition-colors text-sm">
+                English
+              </Link>
+              <Link to="/auth" className="text-blue-400 hover:text-blue-300 transition-colors text-sm">
+                تسجيل الدخول
+              </Link>
+            </div>
           </div>
         </div>
       </footer>

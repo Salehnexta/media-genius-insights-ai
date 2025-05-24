@@ -404,38 +404,46 @@ const LandingPage = () => {
             <div className="space-y-4">
               <h3 className="font-semibold text-lg">Product</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">API</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Integrations</a></li>
+                <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
+                <li><Link to="/dashboard" className="hover:text-white transition-colors">Dashboard</Link></li>
+                <li><Link to="/campaigns" className="hover:text-white transition-colors">Campaigns</Link></li>
+                <li><Link to="/subscription" className="hover:text-white transition-colors">Pricing</Link></li>
               </ul>
             </div>
             
             <div className="space-y-4">
               <h3 className="font-semibold text-lg">Company</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+                <li><a href="#about" className="hover:text-white transition-colors">About</a></li>
+                <li><a href="#testimonials" className="hover:text-white transition-colors">Testimonials</a></li>
+                <li><Link to="/profile" className="hover:text-white transition-colors">Contact</Link></li>
                 <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
               </ul>
             </div>
             
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Support</h3>
+              <h3 className="font-semibold text-lg">Legal & Support</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Community</a></li>
+                <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
+                <li><Link to="/debug" className="hover:text-white transition-colors">Help Center</Link></li>
                 <li><a href="#" className="hover:text-white transition-colors">Status</a></li>
               </ul>
             </div>
           </div>
           
-          <div className="pt-8 border-t border-gray-800 text-center">
-            <p className="text-gray-400">
+          <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-gray-400 mb-4 md:mb-0">
               © 2024 MarketingGenius AI. All rights reserved.
             </p>
+            <div className="flex items-center space-x-4">
+              <Link to="/ar" className="text-gray-400 hover:text-white transition-colors text-sm">
+                العربية
+              </Link>
+              <Link to="/auth" className="text-blue-400 hover:text-blue-300 transition-colors text-sm">
+                Sign In
+              </Link>
+            </div>
           </div>
         </div>
       </footer>
