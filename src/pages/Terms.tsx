@@ -1,12 +1,20 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { FileText, Scale, AlertCircle, CreditCard, Bot, Shield } from 'lucide-react';
 
 const Terms: React.FC = () => {
-  const { language } = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const isArabic = language === 'ar';
+
+  // Check if user came from Arabic path and set language accordingly
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+    if (currentPath.startsWith('/ar')) {
+      setLanguage('ar');
+    }
+  }, [setLanguage]);
 
   return (
     <div className={`container mx-auto px-4 py-8 ${isArabic ? 'rtl' : ''}`}>
