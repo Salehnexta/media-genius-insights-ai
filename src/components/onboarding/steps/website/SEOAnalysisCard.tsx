@@ -4,9 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Search, CheckCircle, AlertCircle } from 'lucide-react';
+import { RealWebsiteAnalysisResult } from '@/services/realWebsiteAnalysis';
 
 interface SEOAnalysisCardProps {
-  analysis: any;
+  analysis: RealWebsiteAnalysisResult;
   isArabic: boolean;
 }
 
@@ -25,8 +26,8 @@ const SEOAnalysisCard: React.FC<SEOAnalysisCardProps> = ({ analysis, isArabic })
         <CardTitle className={`flex items-center ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
           <Search className="w-5 h-5" />
           {t('onboarding.website.seo.title')}
-          <Badge className={getScoreBadge(analysis.seo.score)}>
-            {analysis.seo.score}/100
+          <Badge className={getScoreBadge(analysis.seoScore)}>
+            {analysis.seoScore}/100
           </Badge>
         </CardTitle>
       </CardHeader>
@@ -36,7 +37,7 @@ const SEOAnalysisCard: React.FC<SEOAnalysisCardProps> = ({ analysis, isArabic })
             Technical Stack Detected
           </h5>
           <div className={`flex flex-wrap gap-1 ${isArabic ? 'justify-end' : ''}`}>
-            {analysis.seo.technicalStack.map((tech: string, index: number) => (
+            {analysis.technicalDetails.techStack.map((tech: string, index: number) => (
               <Badge key={index} variant="outline" className="text-xs">
                 {tech}
               </Badge>
@@ -49,7 +50,7 @@ const SEOAnalysisCard: React.FC<SEOAnalysisCardProps> = ({ analysis, isArabic })
             {t('onboarding.website.seo.strengths')}
           </h5>
           <ul className="space-y-1">
-            {analysis.seo.strengths.map((strength: string, index: number) => (
+            {analysis.seoAnalysis.strengths.map((strength: string, index: number) => (
               <li key={index} className={`flex items-start ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'} text-sm text-green-700 dark:text-green-300`}>
                 <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <span>{strength}</span>
@@ -63,7 +64,7 @@ const SEOAnalysisCard: React.FC<SEOAnalysisCardProps> = ({ analysis, isArabic })
             Optimization Opportunities
           </h5>
           <ul className="space-y-1">
-            {analysis.seo.issues.map((issue: string, index: number) => (
+            {analysis.seoAnalysis.issues.map((issue: string, index: number) => (
               <li key={index} className={`flex items-start ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'} text-sm text-yellow-700 dark:text-yellow-300`}>
                 <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <span>{issue}</span>

@@ -1,53 +1,53 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Users } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { FileText, MessageSquare, Target } from 'lucide-react';
+import { RealWebsiteAnalysisResult } from '@/services/realWebsiteAnalysis';
 
 interface ContentAnalysisCardProps {
-  analysis: any;
+  analysis: RealWebsiteAnalysisResult;
   isArabic: boolean;
 }
 
 const ContentAnalysisCard: React.FC<ContentAnalysisCardProps> = ({ analysis, isArabic }) => {
+  const { t } = useLanguage();
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className={`flex items-center ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
-          <Users className="w-5 h-5" />
-          Content Intelligence
+          <FileText className="w-5 h-5" />
+          {t('onboarding.website.content.title')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              Total Pages
+        <div className={`grid grid-cols-3 gap-4 ${isArabic ? 'text-right' : ''}`}>
+          <div className="text-center">
+            <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+              {analysis.contentAnalysis.totalPages}
             </p>
-            <p className="text-lg font-semibold text-gray-900 dark:text-white">
-              {analysis.content.pages}
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              {t('onboarding.website.content.pages')}
             </p>
           </div>
-          <div>
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              Blog Posts
-            </p>
-            <p className="text-lg font-semibold text-gray-900 dark:text-white">
-              {analysis.content.blogPosts}
-            </p>
-          </div>
-        </div>
 
-        <div>
-          <h5 className="font-medium text-gray-900 dark:text-white mb-2">
-            Top Keywords
-          </h5>
-          <div className={`flex flex-wrap gap-1 ${isArabic ? 'justify-end' : ''}`}>
-            {analysis.content.topKeywords.map((keyword: string, index: number) => (
-              <Badge key={index} variant="secondary" className="text-xs">
-                {keyword}
-              </Badge>
-            ))}
+          <div className="text-center">
+            <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+              {analysis.contentAnalysis.blogPosts}
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              {t('onboarding.website.content.blog-posts')}
+            </p>
+          </div>
+
+          <div className="text-center">
+            <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+              {analysis.contentAnalysis.contentGaps.length}
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              {t('onboarding.website.content.gaps')}
+            </p>
           </div>
         </div>
 
@@ -56,9 +56,10 @@ const ContentAnalysisCard: React.FC<ContentAnalysisCardProps> = ({ analysis, isA
             Content Opportunities
           </h5>
           <ul className="space-y-1">
-            {analysis.content.contentGaps.map((gap: string, index: number) => (
-              <li key={index} className="text-sm text-blue-700 dark:text-blue-300">
-                • {gap}
+            {analysis.contentAnalysis.contentGaps.map((gap: string, index: number) => (
+              <li key={index} className={`flex items-start ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'} text-sm text-gray-600 dark:text-gray-300`}>
+                <Target className="w-4 h-4 mt-0.5 flex-shrink-0 text-purple-500" />
+                <span>{gap}</span>
               </li>
             ))}
           </ul>
