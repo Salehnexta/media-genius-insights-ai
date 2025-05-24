@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { OnboardingData } from '../OnboardingWizard';
-import { MockDataService } from '@/services/mockDataService';
+import { useRealWebsiteAnalysis } from '@/hooks/useRealWebsiteAnalysis';
+import { RealWebsiteAnalysisResult } from '@/services/realWebsiteAnalysis';
 import WebsiteAnalysisHeader from './website/WebsiteAnalysisHeader';
 import WebsiteAnalysisPlaceholder from './website/WebsiteAnalysisPlaceholder';
 import SEOAnalysisCard from './website/SEOAnalysisCard';
@@ -17,24 +18,37 @@ interface WebsiteAnalysisProps {
 }
 
 const WebsiteAnalysis: React.FC<WebsiteAnalysisProps> = ({ data, updateData, isArabic }) => {
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysis, setAnalysis] = useState<any>(null);
+  const { analyzeWebsite, getWebsiteAnalysis, analyzing } = useRealWebsiteAnalysis();
+  const [analysis, setAnalysis] = useState<RealWebsiteAnalysisResult | null>(null);
 
-  const startAnalysis = () => {
+  const startAnalysis = async () => {
     if (!data.website) return;
     
-    setIsAnalyzing(true);
-    // Simulate API call with enhanced mock data
-    setTimeout(() => {
-      const mockAnalysis = MockDataService.generateWebsiteAnalysis(data.website, data.industry || 'other');
-      setAnalysis(mockAnalysis);
-      setIsAnalyzing(false);
-    }, 3000);
+    console.log('Starting real website analysis for:', data.website);
+    const result = await analyzeWebsite(data.website);
+    if (result) {
+      setAnalysis(result);
+    }
+  };
+
+  const loadExistingAnalysis = async () => {
+    if (!data.website) return;
+    
+    const existingAnalysis = await getWebsiteAnalysis(data.website);
+    if (existingAnalysis) {
+      setAnalysis(existingAnalysis);
+    }
   };
 
   useEffect(() => {
-    if (data.website && !analysis && !isAnalyzing) {
-      startAnalysis();
+    if (data.website && !analysis && !analyzing) {
+      // First try to load existing analysis
+      loadExistingAnalysis().then(() => {
+        // If no existing analysis, start new one
+        if (!analysis) {
+          startAnalysis();
+        }
+      });
     }
   }, [data.website]);
 
@@ -42,7 +56,7 @@ const WebsiteAnalysis: React.FC<WebsiteAnalysisProps> = ({ data, updateData, isA
     return <WebsiteAnalysisPlaceholder type="no-website" isArabic={isArabic} />;
   }
 
-  if (isAnalyzing) {
+  if (analyzing) {
     return <WebsiteAnalysisPlaceholder type="analyzing" isArabic={isArabic} />;
   }
 

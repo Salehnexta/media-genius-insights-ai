@@ -167,6 +167,39 @@ export type Database = {
         }
         Relationships: []
       }
+      competitor_analysis: {
+        Row: {
+          analysis_data: Json
+          competitor_name: string
+          competitor_url: string | null
+          created_at: string
+          id: string
+          market_position: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          analysis_data?: Json
+          competitor_name: string
+          competitor_url?: string | null
+          created_at?: string
+          id?: string
+          market_position?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          analysis_data?: Json
+          competitor_name?: string
+          competitor_url?: string | null
+          created_at?: string
+          id?: string
+          market_position?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       content: {
         Row: {
           campaign_id: string | null
@@ -322,6 +355,42 @@ export type Database = {
         }
         Relationships: []
       }
+      social_media_accounts: {
+        Row: {
+          account_handle: string | null
+          account_url: string
+          created_at: string
+          id: string
+          last_sync: string | null
+          metrics_data: Json
+          platform: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_handle?: string | null
+          account_url: string
+          created_at?: string
+          id?: string
+          last_sync?: string | null
+          metrics_data?: Json
+          platform: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_handle?: string | null
+          account_url?: string
+          created_at?: string
+          id?: string
+          last_sync?: string | null
+          metrics_data?: Json
+          platform?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscription_plans: {
         Row: {
           created_at: string
@@ -469,6 +538,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      website_analysis: {
+        Row: {
+          analysis_data: Json
+          created_at: string
+          id: string
+          mobile_score: number | null
+          performance_score: number | null
+          seo_score: number | null
+          updated_at: string
+          user_id: string
+          website_url: string
+        }
+        Insert: {
+          analysis_data?: Json
+          created_at?: string
+          id?: string
+          mobile_score?: number | null
+          performance_score?: number | null
+          seo_score?: number | null
+          updated_at?: string
+          user_id: string
+          website_url: string
+        }
+        Update: {
+          analysis_data?: Json
+          created_at?: string
+          id?: string
+          mobile_score?: number | null
+          performance_score?: number | null
+          seo_score?: number | null
+          updated_at?: string
+          user_id?: string
+          website_url?: string
+        }
+        Relationships: []
       }
       zapier_webhooks: {
         Row: {

@@ -2,53 +2,51 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { LucideIcon } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 interface SocialPlatformInputProps {
   platform: {
     id: string;
     label: string;
-    icon: LucideIcon;
+    icon: React.ElementType;
     placeholder: string;
   };
   value: string;
   onChange: (platform: string, value: string) => void;
   isArabic: boolean;
+  isAnalyzing?: boolean;
 }
 
-const SocialPlatformInput: React.FC<SocialPlatformInputProps> = ({
-  platform,
-  value,
-  onChange,
-  isArabic
+const SocialPlatformInput: React.FC<SocialPlatformInputProps> = ({ 
+  platform, 
+  value, 
+  onChange, 
+  isArabic,
+  isAnalyzing = false 
 }) => {
   const Icon = platform.icon;
-  const hasAccount = value;
 
   return (
-    <div className="space-y-3">
-      <Label 
-        htmlFor={platform.id}
-        className={`flex items-center ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}
-      >
-        <Icon className="w-4 h-4" />
+    <div className="space-y-2">
+      <Label htmlFor={platform.id} className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
+        <Icon className="h-4 w-4" />
         {platform.label}
-        {hasAccount && (
-          <Badge variant="secondary" className="ml-auto">
-            Connected
-          </Badge>
-        )}
+        {isAnalyzing && <Loader2 className="h-3 w-3 animate-spin" />}
       </Label>
-      
       <Input
         id={platform.id}
         type="url"
+        placeholder={platform.placeholder}
         value={value || ''}
         onChange={(e) => onChange(platform.id, e.target.value)}
-        placeholder={platform.placeholder}
         className={isArabic ? 'text-right' : ''}
+        disabled={isAnalyzing}
       />
+      {value && !value.startsWith('http') && (
+        <p className="text-xs text-yellow-600">
+          Please include http:// or https:// in the URL
+        </p>
+      )}
     </div>
   );
 };
