@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -49,19 +48,22 @@ export const useOnboardingData = () => {
 
     setLoading(true);
     try {
-      // Use maybeSingle() and filter by user_id to avoid 406 errors
+      console.log('Loading onboarding data for user:', user.id);
+      
       const { data: existingData, error } = await supabase
         .from('onboarding_data')
         .select('*')
         .eq('user_id', user.id)
         .maybeSingle();
 
-      if (error) {
+      if (error && error.code !== 'PGRST116') {
         console.error('Error loading onboarding data:', error);
         return;
       }
 
       if (existingData) {
+        console.log('Found existing onboarding data:', existingData);
+        
         // Safely cast social_accounts from Json type to Record<string, string>
         const socialAccounts = existingData.social_accounts && 
           typeof existingData.social_accounts === 'object' && 
@@ -81,15 +83,20 @@ export const useOnboardingData = () => {
           budget: existingData.budget || '',
           completed: !!existingData.completed_at
         });
+      } else {
+        console.log('No existing onboarding data found - using defaults');
+        setData(defaultData);
       }
     } catch (error) {
       console.error('Error loading onboarding data:', error);
+      setData(defaultData);
     } finally {
       setLoading(false);
     }
   };
 
   const updateData = (updates: Partial<OnboardingData>) => {
+    console.log('Updating onboarding data:', updates);
     setData(prev => ({ ...prev, ...updates }));
   };
 
@@ -241,29 +248,27 @@ export const useOnboardingData = () => {
     console.log('Fetching onboarding data for user:', user.id);
     
     try {
-      // Using a more explicit query to ensure proper filtering
       const { data, error } = await supabase
         .from('onboarding_data')
         .select('*')
         .eq('user_id', user.id)
-        .limit(1)
-        .single();
+        .maybeSingle();
 
-      if (error) {
-        // If no data found, return null (this is expected for new users)
-        if (error.code === 'PGRST116' || error.message.includes('no rows')) {
-          console.log('No onboarding data found for user - this is normal for new users');
-          return null;
-        }
+      if (error && error.code !== 'PGRST116') {
         console.error('Error in getOnboardingData:', error);
         throw error;
       }
       
-      console.log('Onboarding data fetched successfully:', data);
-      return data;
+      if (data) {
+        console.log('Onboarding data fetched successfully:', data);
+        return data;
+      } else {
+        console.log('No onboarding data found for user - this is normal for new users');
+        return null;
+      }
     } catch (error) {
       console.error('Error fetching onboarding data:', error);
-      // For new users without onboarding data, return null instead of throwing
+      // For PGRST116 (no rows found), return null instead of throwing
       if (error.code === 'PGRST116') {
         console.log('No onboarding data exists for this user yet');
         return null;

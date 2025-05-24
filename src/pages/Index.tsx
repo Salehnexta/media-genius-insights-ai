@@ -14,20 +14,31 @@ const Index: React.FC = () => {
   const navigate = useNavigate();
   const { getOnboardingData, loading: onboardingLoading } = useOnboardingData();
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean | null>(null);
+  const [isChecking, setIsChecking] = useState(false);
   const isArabic = language === 'ar';
 
   useEffect(() => {
+    console.log('Index useEffect triggered:', { user: !!user, authLoading, onboardingLoading });
+    
     if (!authLoading && !user) {
+      console.log('No user found, redirecting to auth');
       navigate('/auth');
       return;
     }
 
-    if (user && !onboardingLoading) {
+    if (user && !onboardingLoading && !isChecking) {
       checkOnboardingStatus();
     }
-  }, [user, authLoading, onboardingLoading, navigate]);
+  }, [user, authLoading, onboardingLoading, navigate, isChecking]);
 
   const checkOnboardingStatus = async () => {
+    if (isChecking) {
+      console.log('Already checking onboarding status, skipping...');
+      return;
+    }
+
+    setIsChecking(true);
+    
     try {
       console.log('Checking onboarding status...');
       const onboardingData = await getOnboardingData();
@@ -48,10 +59,13 @@ const Index: React.FC = () => {
       // If there's an error, assume onboarding is not completed
       setHasCompletedOnboarding(false);
       navigate('/onboarding');
+    } finally {
+      setIsChecking(false);
     }
   };
 
-  if (authLoading || onboardingLoading || hasCompletedOnboarding === null) {
+  // Show loading while checking authentication or onboarding status
+  if (authLoading || onboardingLoading || hasCompletedOnboarding === null || isChecking) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
         <div className="text-center">

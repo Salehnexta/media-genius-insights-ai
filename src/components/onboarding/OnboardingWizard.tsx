@@ -29,11 +29,12 @@ export interface OnboardingData {
 }
 
 const OnboardingWizard: React.FC = () => {
-  const { language, toggleLanguage, setLanguage } = useLanguage();
+  const { language, toggleLanguage } = useLanguage();
   const navigate = useNavigate();
   const isArabic = language === 'ar';
   const [currentStep, setCurrentStep] = useState(0);
   const { data, updateData, saveData, loading, saving } = useOnboardingData();
+  const [autoSaveTimer, setAutoSaveTimer] = useState<NodeJS.Timeout | null>(null);
 
   const steps = [
     {
@@ -70,18 +71,40 @@ const OnboardingWizard: React.FC = () => {
 
   const progress = ((currentStep + 1) / steps.length) * 100;
 
-  // Auto-save data when it changes
+  // Auto-save data when it changes (with debouncing)
   useEffect(() => {
-    const saveTimer = setTimeout(() => {
+    if (autoSaveTimer) {
+      clearTimeout(autoSaveTimer);
+    }
+
+    const timer = setTimeout(() => {
       if (data && (data.skillLevel || data.businessName || data.website)) {
+        console.log('Auto-saving onboarding data...');
         saveData();
       }
     }, 2000); // Auto-save after 2 seconds of inactivity
 
-    return () => clearTimeout(saveTimer);
-  }, [data, saveData]);
+    setAutoSaveTimer(timer);
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [data]);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimer) {
+        clearTimeout(autoSaveTimer);
+      }
+    };
+  }, [autoSaveTimer]);
 
   const handleNext = async () => {
+    console.log('Handling next step from:', currentStep);
+    
     // Save current data before proceeding
     const saved = await saveData();
     if (!saved) {
@@ -93,11 +116,17 @@ const OnboardingWizard: React.FC = () => {
       setCurrentStep(currentStep + 1);
     } else {
       // Mark onboarding as complete and save
-      await updateData({ completed: true });
-      const finalSave = await saveData();
-      if (finalSave) {
-        navigate('/');
-      }
+      console.log('Completing onboarding...');
+      updateData({ completed: true });
+      
+      // Give a small delay to ensure state is updated
+      setTimeout(async () => {
+        const finalSave = await saveData();
+        if (finalSave) {
+          console.log('Onboarding completed successfully, navigating to dashboard');
+          navigate('/');
+        }
+      }, 100);
     }
   };
 
@@ -153,7 +182,7 @@ const OnboardingWizard: React.FC = () => {
         </div>
       </div>
     );
-  };
+  }
 
   return (
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
@@ -281,7 +310,12 @@ const OnboardingWizard: React.FC = () => {
             <div className="mt-8 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
               <h3 className="font-semibold mb-2">Debug Info:</h3>
               <pre className="text-xs text-gray-600 dark:text-gray-300">
-                {JSON.stringify(data, null, 2)}
+                {JSON.stringify({ 
+                  currentStep, 
+                  stepValid: isStepValid(),
+                  dataKeys: Object.keys(data),
+                  hasData: Object.keys(data).some(key => data[key] && data[key] !== '' && (!Array.isArray(data[key]) || data[key].length > 0))
+                }, null, 2)}
               </pre>
             </div>
           )}
