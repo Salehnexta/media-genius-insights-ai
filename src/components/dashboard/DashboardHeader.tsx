@@ -6,16 +6,17 @@ import { Download, Filter } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const DashboardHeader: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const isArabic = language === 'ar';
 
   return (
-    <div className="flex justify-between items-center mb-6">
-      <div>
+    <div className={`flex justify-between items-center mb-6 ${isArabic ? 'flex-row-reverse' : ''}`}>
+      <div className={isArabic ? 'text-right' : ''}>
         <h1 className="text-2xl font-bold">{t('dashboard.title')}</h1>
         <p className="text-muted-foreground">{t('dashboard.subtitle')}</p>
       </div>
       
-      <div className="flex items-center space-x-3">
+      <div className={`flex items-center ${isArabic ? 'space-x-reverse space-x-3' : 'space-x-3'}`}>
         <Select defaultValue="7days">
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select time period" />
@@ -34,8 +35,8 @@ const DashboardHeader: React.FC = () => {
           <Filter className="h-4 w-4" />
         </Button>
         
-        <Button variant="outline">
-          <Download className="h-4 w-4 mr-2" />
+        <Button variant="outline" className={isArabic ? 'flex-row-reverse' : ''}>
+          <Download className={`h-4 w-4 ${isArabic ? 'ml-2' : 'mr-2'}`} />
           {t('export')}
         </Button>
       </div>

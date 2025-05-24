@@ -55,7 +55,12 @@ const translations = {
     'campaigns.status': 'Status',
     'campaigns.active': 'Active',
     'campaigns.paused': 'Paused',
-    'campaigns.completed': 'Completed'
+    'campaigns.completed': 'Completed',
+    'overview': 'Overview',
+    'audience': 'Audience',
+    'competitors': 'Competitors',
+    'sentiment': 'Sentiment',
+    'content.creator': 'Content Creator'
   },
   ar: {
     'dashboard.title': 'لوحة تحليلات التسويق',
@@ -91,7 +96,12 @@ const translations = {
     'campaigns.status': 'الحالة',
     'campaigns.active': 'نشط',
     'campaigns.paused': 'متوقف',
-    'campaigns.completed': 'مكتمل'
+    'campaigns.completed': 'مكتمل',
+    'overview': 'نظرة عامة',
+    'audience': 'الجمهور',
+    'competitors': 'المنافسون',
+    'sentiment': 'المشاعر',
+    'content.creator': 'منشئ المحتوى'
   }
 };
 
