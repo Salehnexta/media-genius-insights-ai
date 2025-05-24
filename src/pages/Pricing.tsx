@@ -1,6 +1,9 @@
+
 import React, { useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CheckCircle, Zap, Users, Crown, Star } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import DynamicPricingCards from '@/components/pricing/DynamicPricingCards';
 
 const Pricing: React.FC = () => {

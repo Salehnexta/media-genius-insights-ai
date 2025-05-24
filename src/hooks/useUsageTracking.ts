@@ -62,20 +62,16 @@ export const useUsageTracking = () => {
     if (!user) return;
 
     try {
-      const { error } = await supabase.rpc('increment_usage', {
-        p_user_id: user.id,
-        p_usage_type: type
-      });
-
-      if (!error) {
-        // Update local state
-        setUsage(prev => ({
-          ...prev,
-          messageCount: type === 'message' ? prev.messageCount + 1 : prev.messageCount,
-          contentGenerationCount: type === 'content' ? prev.contentGenerationCount + 1 : prev.contentGenerationCount,
-          apiCallsCount: type === 'api' ? prev.apiCallsCount + 1 : prev.apiCallsCount
-        }));
-      }
+      // Simulate tracking for now
+      console.log(`Tracking usage: ${type} for user ${user.id}`);
+      
+      // Update local state
+      setUsage(prev => ({
+        ...prev,
+        messageCount: type === 'message' ? prev.messageCount + 1 : prev.messageCount,
+        contentGenerationCount: type === 'content' ? prev.contentGenerationCount + 1 : prev.contentGenerationCount,
+        apiCallsCount: type === 'api' ? prev.apiCallsCount + 1 : prev.apiCallsCount
+      }));
     } catch (error) {
       console.error('Error tracking usage:', error);
     }

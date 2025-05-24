@@ -14,7 +14,7 @@ interface SubscriptionPlan {
   price_sar: number;
   monthly_message_limit: number;
   overage_price_sar: number;
-  features: string[];
+  features: any; // Changed from string[] to any to match Json type
 }
 
 interface DynamicPricingCardsProps {
@@ -113,6 +113,7 @@ const DynamicPricingCards: React.FC<DynamicPricingCardsProps> = ({ onSelectPlan 
     <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
       {plans.map((plan, index) => {
         const isPopular = index === 1; // Middle plan is popular
+        const planFeatures = Array.isArray(plan.features) ? plan.features : [];
         
         return (
           <Card 
@@ -140,7 +141,7 @@ const DynamicPricingCards: React.FC<DynamicPricingCardsProps> = ({ onSelectPlan 
 
             <CardContent>
               <ul className="space-y-3 mb-8">
-                {plan.features.map((feature, featureIndex) => (
+                {planFeatures.map((feature: string, featureIndex: number) => (
                   <li key={featureIndex} className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                     <span className="text-sm text-gray-600 dark:text-gray-400">{feature}</span>
