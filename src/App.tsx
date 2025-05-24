@@ -59,8 +59,16 @@ function App() {
                 </LanguageProvider>
               } />
               <Route path="/pricing-ar" element={<PricingAr />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={
+                <LanguageProvider>
+                  <Privacy />
+                </LanguageProvider>
+              } />
+              <Route path="/terms" element={
+                <LanguageProvider>
+                  <Terms />
+                </LanguageProvider>
+              } />
               <Route path="/onboarding" element={
                 <ProtectedRoute>
                   <Onboarding />
