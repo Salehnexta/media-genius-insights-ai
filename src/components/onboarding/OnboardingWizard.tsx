@@ -1,8 +1,9 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useOnboardingData } from '@/hooks/useOnboardingData';
+import { useToast } from '@/hooks/use-toast';
 
 import SkillAssessment from './steps/SkillAssessment';
 import BusinessInfo from './steps/BusinessInfo';
@@ -34,11 +35,19 @@ export interface OnboardingData {
 const OnboardingWizard: React.FC = () => {
   const { language, toggleLanguage } = useLanguage();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const isArabic = language === 'ar';
+  
   const [currentStep, setCurrentStep] = useState(0);
-  const { data, updateData, saveData, loading, saving } = useOnboardingData();
-  const [autoSaveTimer, setAutoSaveTimer] = useState<NodeJS.Timeout | null>(null);
-
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  const { data, updateData, saveData, loading, saving, error: dataError } = useOnboardingData();
+  
+  // Use refs to prevent stale closures and memory leaks
+  const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const isMountedRef = useRef(true);
+  
   const steps = [
     {
       id: 'skills',
@@ -72,86 +81,186 @@ const OnboardingWizard: React.FC = () => {
     }
   ];
 
-  // Auto-save data when it changes (with debouncing)
+  // Memoized save function to prevent unnecessary re-renders
+  const memoizedSaveData = useCallback(async () => {
+    if (!isMountedRef.current) return false;
+    
+    try {
+      return await saveData();
+    } catch (error) {
+      console.error('Save error:', error);
+      setError(isArabic ? 'خطأ في حفظ البيانات' : 'Error saving data');
+      return false;
+    }
+  }, [saveData, isArabic]);
+
+  // Auto-save with proper cleanup and error handling
   useEffect(() => {
-    if (autoSaveTimer) {
-      clearTimeout(autoSaveTimer);
+    // Clear existing timer
+    if (autoSaveTimerRef.current) {
+      clearTimeout(autoSaveTimerRef.current);
+      autoSaveTimerRef.current = null;
     }
 
-    const timer = setTimeout(() => {
-      if (data && (data.skillLevel || data.businessName || data.website)) {
-        console.log('Auto-saving onboarding data...');
-        saveData();
-      }
-    }, 2000); // Auto-save after 2 seconds of inactivity
+    // Only auto-save if we have meaningful data and component is mounted
+    if (!data || !isMountedRef.current) return;
+    
+    const hasData = data.skillLevel || data.businessName || data.website || 
+                   (data.socialAccounts && Object.keys(data.socialAccounts).length > 0) ||
+                   (data.competitors && data.competitors.length > 0) ||
+                   (data.goals && data.goals.length > 0);
 
-    setAutoSaveTimer(timer);
+    if (!hasData) return;
+
+    const timer = setTimeout(async () => {
+      if (!isMountedRef.current) return;
+      
+      console.log('Auto-saving onboarding data...');
+      try {
+        await memoizedSaveData();
+      } catch (error) {
+        console.error('Auto-save failed:', error);
+      }
+    }, 2000);
+
+    autoSaveTimerRef.current = timer;
 
     return () => {
       if (timer) {
         clearTimeout(timer);
       }
     };
-  }, [data, saveData]);
+  }, [data, memoizedSaveData]);
 
-  // Cleanup timer on unmount
+  // Cleanup on unmount
   useEffect(() => {
+    isMountedRef.current = true;
+    
     return () => {
-      if (autoSaveTimer) {
-        clearTimeout(autoSaveTimer);
+      isMountedRef.current = false;
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+        autoSaveTimerRef.current = null;
       }
     };
-  }, [autoSaveTimer]);
+  }, []);
 
-  const handleNext = async () => {
+  // Handle navigation errors
+  useEffect(() => {
+    if (dataError) {
+      setError(dataError);
+      toast({
+        title: isArabic ? 'خطأ' : 'Error',
+        description: dataError,
+        variant: 'destructive'
+      });
+    }
+  }, [dataError, isArabic, toast]);
+
+  const handleNext = useCallback(async () => {
+    if (isNavigating || !isMountedRef.current) return;
+    
     console.log('Handling next step from:', currentStep);
+    setIsNavigating(true);
+    setError(null);
     
-    // Save current data before proceeding
-    const saved = await saveData();
-    if (!saved) {
-      console.error('Failed to save data');
-      return;
-    }
-    
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      // Mark onboarding as complete and save
-      console.log('Completing onboarding...');
-      updateData({ completed: true });
+    try {
+      // Save current data before proceeding
+      const saved = await memoizedSaveData();
+      if (!saved) {
+        throw new Error(isArabic ? 'فشل في حفظ البيانات' : 'Failed to save data');
+      }
       
-      // Give a small delay to ensure state is updated
-      setTimeout(async () => {
-        const finalSave = await saveData();
-        if (finalSave) {
-          console.log('Onboarding completed successfully, navigating to dashboard');
-          navigate('/');
+      if (currentStep < steps.length - 1) {
+        setCurrentStep(prev => prev + 1);
+      } else {
+        // Mark onboarding as complete
+        console.log('Completing onboarding...');
+        const completedData = { ...data, completed: true };
+        updateData(completedData);
+        
+        // Final save with completed status
+        const finalSave = await memoizedSaveData();
+        if (!finalSave) {
+          throw new Error(isArabic ? 'فشل في إكمال الإعداد' : 'Failed to complete onboarding');
         }
-      }, 100);
+        
+        console.log('Onboarding completed successfully, navigating to dashboard');
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Error in handleNext:', error);
+      const errorMessage = error instanceof Error ? error.message : 
+        (isArabic ? 'حدث خطأ غير متوقع' : 'An unexpected error occurred');
+      
+      setError(errorMessage);
+      toast({
+        title: isArabic ? 'خطأ' : 'Error',
+        description: errorMessage,
+        variant: 'destructive'
+      });
+    } finally {
+      if (isMountedRef.current) {
+        setIsNavigating(false);
+      }
     }
-  };
+  }, [currentStep, steps.length, memoizedSaveData, data, updateData, navigate, isNavigating, isArabic, toast]);
 
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+  const handlePrevious = useCallback(() => {
+    if (isNavigating || currentStep === 0) return;
+    
+    setCurrentStep(prev => prev - 1);
+    setError(null);
+  }, [currentStep, isNavigating]);
+
+  const handleStepClick = useCallback((stepIndex: number) => {
+    if (isNavigating || stepIndex > currentStep || stepIndex < 0) return;
+    
+    setCurrentStep(stepIndex);
+    setError(null);
+  }, [currentStep, isNavigating]);
+
+  const isStepValid = useCallback(() => {
+    try {
+      return validateStep(currentStep, data || {});
+    } catch (error) {
+      console.error('Validation error:', error);
+      return false;
     }
-  };
+  }, [currentStep, data]);
 
-  const handleStepClick = (stepIndex: number) => {
-    // Only allow navigation to completed or current step
-    if (stepIndex <= currentStep) {
-      setCurrentStep(stepIndex);
-    }
-  };
-
-  const isStepValid = () => validateStep(currentStep, data);
-
+  // Loading state
   if (loading) {
     return (
       <div className={`min-h-screen flex items-center justify-center ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p>{isArabic ? 'جاري التحميل...' : 'Loading...'}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
+        <div className="text-center max-w-md mx-auto p-6">
+          <div className="text-red-600 mb-4">
+            <h2 className="text-xl font-semibold mb-2">
+              {isArabic ? 'حدث خطأ' : 'An Error Occurred'}
+            </h2>
+            <p className="text-sm">{error}</p>
+          </div>
+          <button
+            onClick={() => {
+              setError(null);
+              window.location.reload();
+            }}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+          >
+            {isArabic ? 'إعادة المحاولة' : 'Try Again'}
+          </button>
         </div>
       </div>
     );
@@ -178,19 +287,21 @@ const OnboardingWizard: React.FC = () => {
             onStepClick={handleStepClick}
           />
 
-          <OnboardingContent
-            stepTitle={steps[currentStep].title}
-            stepComponent={steps[currentStep].component}
-            data={data}
-            updateData={updateData}
-            isArabic={isArabic}
-          />
+          {data && (
+            <OnboardingContent
+              stepTitle={steps[currentStep].title}
+              stepComponent={steps[currentStep].component}
+              data={data}
+              updateData={updateData}
+              isArabic={isArabic}
+            />
+          )}
 
           <OnboardingControls
             currentStep={currentStep}
             totalSteps={steps.length}
             isStepValid={isStepValid()}
-            saving={saving}
+            saving={saving || isNavigating}
             isArabic={isArabic}
             onPrevious={handlePrevious}
             onNext={handleNext}

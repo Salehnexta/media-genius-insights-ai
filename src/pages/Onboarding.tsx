@@ -2,11 +2,14 @@
 import React from 'react';
 import OnboardingWizard from '@/components/onboarding/OnboardingWizard';
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import { OnboardingErrorBoundary } from '@/components/onboarding/components/OnboardingErrorBoundary';
 
 const Onboarding: React.FC = () => {
   return (
     <LanguageProvider>
-      <OnboardingWizard />
+      <OnboardingErrorBoundary>
+        <OnboardingWizard />
+      </OnboardingErrorBoundary>
     </LanguageProvider>
   );
 };
