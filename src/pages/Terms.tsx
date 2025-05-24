@@ -21,10 +21,10 @@ const Terms: React.FC = () => {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Terms of Service
+            {isArabic ? 'شروط الخدمة' : 'Terms of Service'}
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
-            Last updated: {new Date().toLocaleDateString()}
+            {isArabic ? 'آخر تحديث:' : 'Last updated:'} {new Date().toLocaleDateString()}
           </p>
         </div>
 
@@ -33,17 +33,25 @@ const Terms: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="w-5 h-5 text-blue-600" />
-                Agreement to Terms
+                {isArabic ? 'الموافقة على الشروط' : 'Agreement to Terms'}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
-                By accessing and using MarketingGenius AI platform, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this service.
+                {isArabic 
+                  ? 'باستخدام منصة MarketingGenius AI، فإنك توافق على الالتزام بشروط الخدمة هذه وجميع القوانين واللوائح المعمول بها. إذا كنت لا توافق على أي من هذه الشروط، فأنت ممنوع من استخدام هذه الخدمة أو الوصول إليها.'
+                  : 'By accessing and using MarketingGenius AI platform, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this service.'
+                }
               </p>
               <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">AI-Powered Service</h4>
+                <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                  {isArabic ? 'خدمة مدعومة بالذكاء الاصطناعي' : 'AI-Powered Service'}
+                </h4>
                 <p className="text-sm text-blue-800 dark:text-blue-200">
-                  MarketingGenius AI uses artificial intelligence, including large language models, to provide marketing insights, content generation, and strategic recommendations. By using our service, you acknowledge and agree to AI processing of your data.
+                  {isArabic
+                    ? 'يستخدم MarketingGenius AI الذكاء الاصطناعي، بما في ذلك نماذج اللغة الكبيرة، لتقديم رؤى تسويقية وإنتاج المحتوى والتوصيات الاستراتيجية. باستخدام خدمتنا، فإنك تقر وتوافق على معالجة الذكاء الاصطناعي لبياناتك.'
+                    : 'MarketingGenius AI uses artificial intelligence, including large language models, to provide marketing insights, content generation, and strategic recommendations. By using our service, you acknowledge and agree to AI processing of your data.'
+                  }
                 </p>
               </div>
             </CardContent>
@@ -53,25 +61,33 @@ const Terms: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Bot className="w-5 h-5 text-purple-600" />
-                AI Services & Limitations
+                {isArabic ? 'خدمات الذكاء الاصطناعي والقيود' : 'AI Services & Limitations'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <h4 className="font-semibold mb-2">AI-Generated Content</h4>
+                <h4 className="font-semibold mb-2">
+                  {isArabic ? 'المحتوى المُنتج بالذكاء الاصطناعي' : 'AI-Generated Content'}
+                </h4>
                 <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                  <li>AI-generated content is provided for informational and creative purposes</li>
-                  <li>You are responsible for reviewing and validating all AI recommendations</li>
-                  <li>AI insights should not be considered as professional financial or legal advice</li>
-                  <li>We do not guarantee the accuracy or completeness of AI-generated content</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">Usage Limits</h4>
-                <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                  <li>AI interactions are subject to subscription plan limits</li>
-                  <li>Excessive use may result in temporary service restrictions</li>
-                  <li>Commercial use of AI-generated content must comply with licensing terms</li>
+                  <li>
+                    {isArabic 
+                      ? 'المحتوى المُنتج بالذكاء الاصطناعي مُقدم لأغراض إعلامية وإبداعية'
+                      : 'AI-generated content is provided for informational and creative purposes'
+                    }
+                  </li>
+                  <li>
+                    {isArabic
+                      ? 'أنت مسؤول عن مراجعة والتحقق من جميع توصيات الذكاء الاصطناعي'
+                      : 'You are responsible for reviewing and validating all AI recommendations'
+                    }
+                  </li>
+                  <li>
+                    {isArabic
+                      ? 'رؤى الذكاء الاصطناعي لا يجب اعتبارها نصائح مالية أو قانونية مهنية'
+                      : 'AI insights should not be considered as professional financial or legal advice'
+                    }
+                  </li>
                 </ul>
               </div>
             </CardContent>
@@ -81,27 +97,34 @@ const Terms: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CreditCard className="w-5 h-5 text-green-600" />
-                Subscription & Billing
+                {isArabic ? 'الاشتراك والفوترة' : 'Subscription & Billing'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <h4 className="font-semibold mb-2">Subscription Plans</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                  MarketingGenius AI offers various subscription tiers with different AI feature limits:
-                </p>
+                <h4 className="font-semibold mb-2">
+                  {isArabic ? 'خطط الاشتراك' : 'Subscription Plans'}
+                </h4>
                 <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                  <li>Monthly billing cycles with automatic renewal</li>
-                  <li>AI message limits based on subscription tier</li>
-                  <li>Overage charges may apply for usage beyond plan limits</li>
-                  <li>Plan changes take effect at the next billing cycle</li>
+                  <li>
+                    {isArabic
+                      ? 'دورات فوترة شهرية مع التجديد التلقائي'
+                      : 'Monthly billing cycles with automatic renewal'
+                    }
+                  </li>
+                  <li>
+                    {isArabic
+                      ? 'حدود رسائل الذكاء الاصطناعي حسب طبقة الاشتراك'
+                      : 'AI message limits based on subscription tier'
+                    }
+                  </li>
+                  <li>
+                    {isArabic
+                      ? 'قد تنطبق رسوم إضافية للاستخدام فوق حدود الخطة'
+                      : 'Overage charges may apply for usage beyond plan limits'
+                    }
+                  </li>
                 </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">Refund Policy</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Refunds are provided on a case-by-case basis within 30 days of subscription purchase. AI usage limits that have been consumed are non-refundable.
-                </p>
               </div>
             </CardContent>
           </Card>
@@ -110,29 +133,35 @@ const Terms: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Scale className="w-5 h-5 text-orange-600" />
-                Acceptable Use Policy
+                {isArabic ? 'سياسة الاستخدام المقبول' : 'Acceptable Use Policy'}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-semibold mb-2">Prohibited Uses</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    You agree not to use the AI service for:
-                  </p>
+                  <h4 className="font-semibold mb-2">
+                    {isArabic ? 'الاستخدامات المحظورة' : 'Prohibited Uses'}
+                  </h4>
                   <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                    <li>Generating misleading, false, or deceptive marketing content</li>
-                    <li>Creating content that violates intellectual property rights</li>
-                    <li>Attempting to reverse-engineer or circumvent AI limitations</li>
-                    <li>Sharing account credentials or reselling AI access</li>
-                    <li>Using the service for illegal or harmful activities</li>
+                    <li>
+                      {isArabic
+                        ? 'إنتاج محتوى تسويقي مضلل أو كاذب أو خادع'
+                        : 'Generating misleading, false, or deceptive marketing content'
+                      }
+                    </li>
+                    <li>
+                      {isArabic
+                        ? 'إنشاء محتوى ينتهك حقوق الملكية الفكرية'
+                        : 'Creating content that violates intellectual property rights'
+                      }
+                    </li>
+                    <li>
+                      {isArabic
+                        ? 'مشاركة بيانات اعتماد الحساب أو إعادة بيع الوصول للذكاء الاصطناعي'
+                        : 'Sharing account credentials or reselling AI access'
+                      }
+                    </li>
                   </ul>
-                </div>
-                <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg">
-                  <h4 className="font-semibold text-orange-900 dark:text-orange-100 mb-2">Content Responsibility</h4>
-                  <p className="text-sm text-orange-800 dark:text-orange-200">
-                    You are solely responsible for the content you create using our AI tools and must ensure compliance with applicable laws and regulations in your jurisdiction.
-                  </p>
                 </div>
               </div>
             </CardContent>
@@ -142,25 +171,21 @@ const Terms: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="w-5 h-5 text-red-600" />
-                Intellectual Property
+                {isArabic ? 'الملكية الفكرية' : 'Intellectual Property'}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-semibold mb-2">Platform Ownership</h4>
+                  <h4 className="font-semibold mb-2">
+                    {isArabic ? 'ملكية المنصة' : 'Platform Ownership'}
+                  </h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    MarketingGenius AI platform, including its AI models, algorithms, and interface, is owned by us and protected by intellectual property laws.
+                    {isArabic
+                      ? 'منصة MarketingGenius AI، بما في ذلك نماذج الذكاء الاصطناعي والخوارزميات والواجهة، مملوكة لنا ومحمية بقوانين الملكية الفكرية.'
+                      : 'MarketingGenius AI platform, including its AI models, algorithms, and interface, is owned by us and protected by intellectual property laws.'
+                    }
                   </p>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2">User-Generated Content</h4>
-                  <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                    <li>You retain rights to your original input data and business information</li>
-                    <li>AI-generated content may be subject to third-party model licensing terms</li>
-                    <li>You grant us limited rights to use your data for service improvement</li>
-                    <li>We may use aggregated, anonymized data for AI model training</li>
-                  </ul>
                 </div>
               </div>
             </CardContent>
@@ -170,47 +195,21 @@ const Terms: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-yellow-600" />
-                Disclaimers & Limitations
+                {isArabic ? 'إخلاء المسؤولية والقيود' : 'Disclaimers & Limitations'}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-semibold mb-2">Service Availability</h4>
+                  <h4 className="font-semibold mb-2">
+                    {isArabic ? 'توفر الخدمة' : 'Service Availability'}
+                  </h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    AI services are provided "as is" and may experience downtime due to maintenance, updates, or third-party service dependencies. We strive for 99.9% uptime but cannot guarantee uninterrupted service.
+                    {isArabic
+                      ? 'خدمات الذكاء الاصطناعي مُقدمة "كما هي" وقد تواجه توقفاً بسبب الصيانة أو التحديثات. نسعى لتحقيق 99.9% وقت تشغيل لكن لا يمكننا ضمان خدمة غير منقطعة.'
+                      : 'AI services are provided "as is" and may experience downtime due to maintenance or updates. We strive for 99.9% uptime but cannot guarantee uninterrupted service.'
+                    }
                   </p>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2">Limitation of Liability</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    We shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of AI-generated content or platform services. Our liability is limited to the amount paid for the service.
-                  </p>
-                </div>
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg">
-                  <h4 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-2">AI Accuracy Disclaimer</h4>
-                  <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                    AI-generated insights and recommendations are based on available data and algorithms. Results may vary and should be validated before implementation in business decisions.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Termination & Account Suspension</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div>
-                  <h4 className="font-semibold mb-2">Termination Rights</h4>
-                  <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                    <li>You may cancel your subscription at any time</li>
-                    <li>We may suspend accounts for terms violations</li>
-                    <li>Data export is available for 30 days after termination</li>
-                    <li>AI conversation history may be retained per privacy policy</li>
-                  </ul>
                 </div>
               </div>
             </CardContent>
@@ -219,18 +218,20 @@ const Terms: React.FC = () => {
           <Card className="bg-gray-50 dark:bg-gray-800/50">
             <CardContent className="pt-6">
               <div className="text-center">
-                <h3 className="font-semibold mb-2">Contact Information</h3>
+                <h3 className="font-semibold mb-2">
+                  {isArabic ? 'معلومات الاتصال' : 'Contact Information'}
+                </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                  For questions about these terms or our AI services:
+                  {isArabic
+                    ? 'للأسئلة حول هذه الشروط أو خدمات الذكاء الاصطناعي:'
+                    : 'For questions about these terms or our AI services:'
+                  }
                 </p>
                 <div className="space-y-1 text-sm">
                   <p>Email: legal@marketinggenius.ai</p>
-                  <p>Business Address: [Your Business Address]</p>
-                  <p>Phone: [Your Contact Number]</p>
+                  <p>{isArabic ? 'عنوان العمل:' : 'Business Address:'} [Your Business Address]</p>
+                  <p>{isArabic ? 'الهاتف:' : 'Phone:'} [Your Contact Number]</p>
                 </div>
-                <p className="text-xs text-gray-500 mt-4">
-                  These terms are governed by [Your Jurisdiction] law. Any disputes will be resolved through arbitration.
-                </p>
               </div>
             </CardContent>
           </Card>
