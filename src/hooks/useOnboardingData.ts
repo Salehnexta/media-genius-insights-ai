@@ -1,53 +1,29 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { OnboardingData, defaultOnboardingData } from './onboarding/types';
+import { loadOnboardingData, saveOnboardingData, saveUserPreferences, getOnboardingData } from './onboarding/onboardingService';
 
-export interface OnboardingData {
-  skillLevel: string;
-  experience: string;
-  businessName: string;
-  industry: string;
-  website: string;
-  socialAccounts: Record<string, string>;
-  competitors: string[];
-  goals: string[];
-  budget: string;
-  completed?: boolean;
-}
-
-const defaultData: OnboardingData = {
-  skillLevel: '',
-  experience: '',
-  businessName: '',
-  industry: '',
-  website: '',
-  socialAccounts: {},
-  competitors: [],
-  goals: [],
-  budget: '',
-  completed: false
-};
+export interface { OnboardingData } from './onboarding/types';
 
 export const useOnboardingData = () => {
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [data, setData] = useState<OnboardingData>(defaultData);
+  const [data, setData] = useState<OnboardingData>(defaultOnboardingData);
 
   // Load existing data when user is available
   useEffect(() => {
     if (user && !authLoading) {
-      loadOnboardingData();
+      loadExistingData();
     } else if (!user && !authLoading) {
-      // Reset to default data when user is not available
-      setData(defaultData);
+      setData(defaultOnboardingData);
     }
   }, [user, authLoading]);
 
-  const loadOnboardingData = async () => {
+  const loadExistingData = async () => {
     if (!user) {
       console.log('No user available for loading onboarding data');
       return;
@@ -55,54 +31,16 @@ export const useOnboardingData = () => {
 
     setLoading(true);
     try {
-      console.log('Loading onboarding data for user:', user.id);
+      const existingData = await loadOnboardingData(user.id);
       
-      // Fix: Get the most recent record only, ordered by updated_at desc
-      const { data: existingData, error } = await supabase
-        .from('onboarding_data')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('updated_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error loading onboarding data:', error);
-        setData(defaultData);
-        return;
-      }
-
       if (existingData) {
-        console.log('Found existing onboarding data:', existingData);
-        
-        const socialAccounts = existingData.social_accounts && 
-          typeof existingData.social_accounts === 'object' && 
-          !Array.isArray(existingData.social_accounts) 
-          ? existingData.social_accounts as Record<string, string>
-          : {};
-
-        // Check if onboarding is completed based on completed_at field
-        const isCompleted = existingData.completed_at !== null;
-
-        setData({
-          skillLevel: existingData.skill_level || '',
-          experience: existingData.experience || '',
-          businessName: existingData.business_name || '',
-          industry: existingData.industry || '',
-          website: existingData.website || '',
-          socialAccounts: socialAccounts,
-          competitors: existingData.competitors || [],
-          goals: existingData.goals || [],
-          budget: existingData.budget || '',
-          completed: isCompleted
-        });
+        setData(existingData);
       } else {
-        console.log('No existing onboarding data found - using defaults');
-        setData(defaultData);
+        setData(defaultOnboardingData);
       }
     } catch (error) {
       console.error('Unexpected error loading onboarding data:', error);
-      setData(defaultData);
+      setData(defaultOnboardingData);
     } finally {
       setLoading(false);
     }
@@ -114,10 +52,10 @@ export const useOnboardingData = () => {
   };
 
   const saveData = async () => {
-    return await saveOnboardingData(data);
+    return await saveOnboardingDataWithPreferences(data);
   };
 
-  const saveOnboardingData = async (dataToSave: OnboardingData) => {
+  const saveOnboardingDataWithPreferences = async (dataToSave: OnboardingData) => {
     if (!user) {
       console.error('No user available for saving onboarding data');
       toast({
@@ -130,118 +68,8 @@ export const useOnboardingData = () => {
 
     setSaving(true);
     try {
-      console.log('Saving onboarding data for user:', user.id, dataToSave);
-
-      // Check if there are any existing records (to handle duplicates)
-      const { data: existingRecords } = await supabase
-        .from('onboarding_data')
-        .select('id')
-        .eq('user_id', user.id)
-        .order('updated_at', { ascending: false });
-
-      const savePayload = {
-        skill_level: dataToSave.skillLevel,
-        experience: dataToSave.experience,
-        business_name: dataToSave.businessName,
-        industry: dataToSave.industry,
-        website: dataToSave.website,
-        social_accounts: dataToSave.socialAccounts,
-        competitors: dataToSave.competitors,
-        goals: dataToSave.goals,
-        budget: dataToSave.budget,
-        completed_at: dataToSave.completed ? new Date().toISOString() : null,
-        updated_at: new Date().toISOString()
-      };
-
-      console.log('Save payload:', savePayload);
-
-      if (existingRecords && existingRecords.length > 0) {
-        // Update the most recent record
-        const mostRecentId = existingRecords[0].id;
-        const { error: onboardingError } = await supabase
-          .from('onboarding_data')
-          .update(savePayload)
-          .eq('id', mostRecentId);
-
-        if (onboardingError) {
-          console.error('Update error:', onboardingError);
-          throw onboardingError;
-        }
-
-        // Delete any duplicate records
-        if (existingRecords.length > 1) {
-          const duplicateIds = existingRecords.slice(1).map(record => record.id);
-          console.log('Deleting duplicate records:', duplicateIds);
-          
-          const { error: deleteError } = await supabase
-            .from('onboarding_data')
-            .delete()
-            .in('id', duplicateIds);
-
-          if (deleteError) {
-            console.warn('Error deleting duplicates (non-critical):', deleteError);
-          }
-        }
-      } else {
-        // Create new record
-        const { error: onboardingError } = await supabase
-          .from('onboarding_data')
-          .insert({
-            user_id: user.id,
-            ...savePayload
-          });
-
-        if (onboardingError) {
-          console.error('Insert error:', onboardingError);
-          throw onboardingError;
-        }
-      }
-
-      // Create AI context for personalization
-      const aiContext = {
-        businessType: dataToSave.industry,
-        skillLevel: dataToSave.skillLevel,
-        experience: dataToSave.experience,
-        goals: dataToSave.goals,
-        budget: dataToSave.budget,
-        hasWebsite: !!dataToSave.website,
-        socialPlatforms: Object.keys(dataToSave.socialAccounts),
-        competitorCount: dataToSave.competitors.length
-      };
-
-      const { data: existingPrefs } = await supabase
-        .from('user_preferences')
-        .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      const prefsPayload = {
-        ai_context: aiContext,
-        personalization_data: {
-          onboardingCompleted: dataToSave.completed,
-          completedAt: dataToSave.completed ? new Date().toISOString() : null,
-          businessName: dataToSave.businessName
-        },
-        updated_at: new Date().toISOString()
-      };
-
-      if (existingPrefs) {
-        const { error: preferencesError } = await supabase
-          .from('user_preferences')
-          .update(prefsPayload)
-          .eq('user_id', user.id);
-
-        if (preferencesError) throw preferencesError;
-      } else {
-        const { error: preferencesError } = await supabase
-          .from('user_preferences')
-          .insert({
-            user_id: user.id,
-            ...prefsPayload
-          });
-
-        if (preferencesError) throw preferencesError;
-      }
+      await saveOnboardingData(user.id, dataToSave);
+      await saveUserPreferences(user.id, dataToSave);
 
       if (dataToSave.completed) {
         toast({
@@ -265,48 +93,21 @@ export const useOnboardingData = () => {
     }
   };
 
-  const getOnboardingData = async () => {
+  const getOnboardingDataWrapper = async () => {
     if (!user) {
       console.log('No user found, returning null');
       return null;
     }
 
-    console.log('Fetching onboarding data for user:', user.id);
-    
-    try {
-      // Fix: Get most recent record only
-      const { data, error } = await supabase
-        .from('onboarding_data')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('updated_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error in getOnboardingData:', error);
-        return null;
-      }
-      
-      if (data) {
-        console.log('Onboarding data fetched successfully:', data);
-        return data;
-      } else {
-        console.log('No onboarding data found for user - this is normal for new users');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error fetching onboarding data:', error);
-      return null;
-    }
+    return await getOnboardingData(user.id);
   };
 
   return {
     data,
     updateData,
     saveData,
-    saveOnboardingData,
-    getOnboardingData,
+    saveOnboardingData: saveOnboardingDataWithPreferences,
+    getOnboardingData: getOnboardingDataWrapper,
     loading,
     saving
   };

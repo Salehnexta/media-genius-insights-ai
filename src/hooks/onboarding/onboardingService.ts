@@ -1,0 +1,163 @@
+
+import { supabase } from '@/integrations/supabase/client';
+import { transformSupabaseToLocal, transformLocalToSupabase } from './transformers';
+import { OnboardingData } from './types';
+
+export const loadOnboardingData = async (userId: string) => {
+  console.log('Loading onboarding data for user:', userId);
+  
+  const { data: existingData, error } = await supabase
+    .from('onboarding_data')
+    .select('*')
+    .eq('user_id', userId)
+    .order('updated_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (error && error.code !== 'PGRST116') {
+    console.error('Error loading onboarding data:', error);
+    throw error;
+  }
+
+  if (existingData) {
+    console.log('Found existing onboarding data:', existingData);
+    return transformSupabaseToLocal(existingData);
+  }
+
+  console.log('No existing onboarding data found - using defaults');
+  return null;
+};
+
+export const saveOnboardingData = async (userId: string, data: OnboardingData) => {
+  console.log('Saving onboarding data for user:', userId, data);
+
+  // Check if there are any existing records
+  const { data: existingRecords } = await supabase
+    .from('onboarding_data')
+    .select('id')
+    .eq('user_id', userId)
+    .order('updated_at', { ascending: false });
+
+  const savePayload = transformLocalToSupabase(data);
+  console.log('Save payload:', savePayload);
+
+  if (existingRecords && existingRecords.length > 0) {
+    // Update the most recent record
+    const mostRecentId = existingRecords[0].id;
+    const { error: onboardingError } = await supabase
+      .from('onboarding_data')
+      .update(savePayload)
+      .eq('id', mostRecentId);
+
+    if (onboardingError) {
+      console.error('Update error:', onboardingError);
+      throw onboardingError;
+    }
+
+    // Delete any duplicate records
+    if (existingRecords.length > 1) {
+      const duplicateIds = existingRecords.slice(1).map(record => record.id);
+      console.log('Deleting duplicate records:', duplicateIds);
+      
+      const { error: deleteError } = await supabase
+        .from('onboarding_data')
+        .delete()
+        .in('id', duplicateIds);
+
+      if (deleteError) {
+        console.warn('Error deleting duplicates (non-critical):', deleteError);
+      }
+    }
+  } else {
+    // Create new record
+    const { error: onboardingError } = await supabase
+      .from('onboarding_data')
+      .insert({
+        user_id: userId,
+        ...savePayload
+      });
+
+    if (onboardingError) {
+      console.error('Insert error:', onboardingError);
+      throw onboardingError;
+    }
+  }
+};
+
+export const saveUserPreferences = async (userId: string, data: OnboardingData) => {
+  // Create AI context for personalization
+  const aiContext = {
+    businessType: data.industry,
+    skillLevel: data.skillLevel,
+    experience: data.experience,
+    goals: data.goals,
+    budget: data.budget,
+    hasWebsite: !!data.website,
+    socialPlatforms: Object.keys(data.socialAccounts),
+    competitorCount: data.competitors.length
+  };
+
+  const { data: existingPrefs } = await supabase
+    .from('user_preferences')
+    .select('id')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  const prefsPayload = {
+    ai_context: aiContext,
+    personalization_data: {
+      onboardingCompleted: data.completed,
+      completedAt: data.completed ? new Date().toISOString() : null,
+      businessName: data.businessName
+    },
+    updated_at: new Date().toISOString()
+  };
+
+  if (existingPrefs) {
+    const { error: preferencesError } = await supabase
+      .from('user_preferences')
+      .update(prefsPayload)
+      .eq('user_id', userId);
+
+    if (preferencesError) throw preferencesError;
+  } else {
+    const { error: preferencesError } = await supabase
+      .from('user_preferences')
+      .insert({
+        user_id: userId,
+        ...prefsPayload
+      });
+
+    if (preferencesError) throw preferencesError;
+  }
+};
+
+export const getOnboardingData = async (userId: string) => {
+  console.log('Fetching onboarding data for user:', userId);
+  
+  try {
+    const { data, error } = await supabase
+      .from('onboarding_data')
+      .select('*')
+      .eq('user_id', userId)
+      .order('updated_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      console.error('Error in getOnboardingData:', error);
+      return null;
+    }
+    
+    if (data) {
+      console.log('Onboarding data fetched successfully:', data);
+      return data;
+    } else {
+      console.log('No onboarding data found for user - this is normal for new users');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching onboarding data:', error);
+    return null;
+  }
+};
