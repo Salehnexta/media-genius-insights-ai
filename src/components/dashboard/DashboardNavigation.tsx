@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Campaign, BarChart3, Users, Settings, FileText, Target } from 'lucide-react';
+import { Megaphone, BarChart3, Users, Settings, FileText, Target } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,7 +14,7 @@ const DashboardNavigation = () => {
     {
       title: isArabic ? 'الحملات التسويقية' : 'Marketing Campaigns',
       description: isArabic ? 'إنشاء وإدارة حملاتك التسويقية' : 'Create and manage your marketing campaigns',
-      icon: Campaign,
+      icon: Megaphone,
       path: '/campaigns',
       color: 'from-blue-600 to-purple-600'
     },
