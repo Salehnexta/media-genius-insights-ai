@@ -47,10 +47,12 @@ const AuthForm: React.FC<AuthFormProps> = ({
           </Label>
           <Input
             id="fullName"
+            name="fullName"
             type="text"
             value={fullName}
             onChange={(e) => onFullNameChange(e.target.value)}
             required={!isLogin}
+            autoComplete="name"
             className="bg-white dark:bg-gray-800"
           />
         </div>
@@ -62,10 +64,12 @@ const AuthForm: React.FC<AuthFormProps> = ({
         </Label>
         <Input
           id="email"
+          name="email"
           type="email"
           value={email}
           onChange={(e) => onEmailChange(e.target.value)}
           required
+          autoComplete="email"
           className="bg-white dark:bg-gray-800"
         />
       </div>
@@ -77,10 +81,12 @@ const AuthForm: React.FC<AuthFormProps> = ({
         <div className="relative">
           <Input
             id="password"
+            name="password"
             type={showPassword ? 'text' : 'password'}
             value={password}
             onChange={(e) => onPasswordChange(e.target.value)}
             required
+            autoComplete={isLogin ? 'current-password' : 'new-password'}
             className="bg-white dark:bg-gray-800 pr-10"
           />
           <Button
@@ -89,6 +95,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
             size="sm"
             className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
             onClick={onTogglePassword}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? (
               <EyeOff className="h-4 w-4 text-gray-400" />
@@ -106,10 +113,12 @@ const AuthForm: React.FC<AuthFormProps> = ({
           </Label>
           <Input
             id="confirmPassword"
+            name="confirmPassword"
             type="password"
             value={confirmPassword}
             onChange={(e) => onConfirmPasswordChange(e.target.value)}
             required
+            autoComplete="new-password"
             className="bg-white dark:bg-gray-800"
           />
         </div>
