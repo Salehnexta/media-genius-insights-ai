@@ -72,7 +72,7 @@ export const saveOnboardingData = async (userId: string, data: OnboardingData) =
   
   // Ensure completion status is properly set
   if (data.completed) {
-    savePayload.completed_at = data.completedAt || new Date().toISOString();
+    savePayload.completed_at = new Date().toISOString();
   } else {
     savePayload.completed_at = null;
   }

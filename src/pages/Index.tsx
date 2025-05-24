@@ -12,7 +12,7 @@ const Index: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
   const { language } = useLanguage();
   const navigate = useNavigate();
-  const { data: onboardingData, loading: onboardingLoading } = useOnboardingData();
+  const { data: onboardingData, loading: onboardingLoading, getOnboardingData } = useOnboardingData();
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean | null>(null);
   const isArabic = language === 'ar';
 
@@ -33,25 +33,36 @@ const Index: React.FC = () => {
     }
 
     if (user && !onboardingLoading && hasCompletedOnboarding === null) {
-      console.log('Checking onboarding status from hook data...');
+      console.log('Checking onboarding status from database...');
       checkOnboardingStatus();
     }
-  }, [user, authLoading, onboardingLoading, navigate, hasCompletedOnboarding, onboardingData]);
+  }, [user, authLoading, onboardingLoading, navigate, hasCompletedOnboarding]);
 
-  const checkOnboardingStatus = () => {
-    console.log('Processing onboarding data:', onboardingData);
+  const checkOnboardingStatus = async () => {
+    if (!user) return;
     
-    // Use the hook's processed data which already handles the completed field correctly
-    const isCompleted = onboardingData?.completed === true;
-    console.log('Onboarding completed status:', isCompleted);
-    
-    setHasCompletedOnboarding(isCompleted);
-    
-    if (!isCompleted) {
-      console.log('Onboarding not completed, redirecting to onboarding...');
+    try {
+      // Get raw data from database to check completed_at field
+      const rawData = await getOnboardingData();
+      console.log('Raw onboarding data from database:', rawData);
+      
+      // Check if completed_at field exists and is not null
+      const isCompleted = rawData && rawData.completed_at !== null;
+      console.log('Onboarding completed status (from completed_at):', isCompleted);
+      
+      setHasCompletedOnboarding(isCompleted);
+      
+      if (!isCompleted) {
+        console.log('Onboarding not completed, redirecting to onboarding...');
+        navigate('/onboarding');
+      } else {
+        console.log('Onboarding completed, staying on dashboard');
+      }
+    } catch (error) {
+      console.error('Error checking onboarding status:', error);
+      // If there's an error, assume onboarding not completed
+      setHasCompletedOnboarding(false);
       navigate('/onboarding');
-    } else {
-      console.log('Onboarding completed, staying on dashboard');
     }
   };
 

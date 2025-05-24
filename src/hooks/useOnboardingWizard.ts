@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOnboardingData } from '@/hooks/useOnboardingData';
@@ -128,47 +129,44 @@ export const useOnboardingWizard = (isArabic: boolean) => {
         // Mark onboarding as complete and update local state
         const completedData = { 
           ...data, 
-          completed: true,
-          completedAt: new Date().toISOString()
+          completed: true
         };
         console.log('Data with completion status:', completedData);
         
         // Update local state first
         updateData(completedData);
         
-        // Save with completion status - use the updated data directly
-        console.log('Saving completed onboarding data...');
-        
-        // Create a temporary save function that uses the completed data
-        const saveCompletedData = async () => {
+        // Use setTimeout to allow the state update to complete before saving
+        setTimeout(async () => {
           try {
-            const { saveOnboardingData } = await import('@/hooks/useOnboardingData');
-            return true; // We'll call the saveData function but with the completed data
+            console.log('Saving completed onboarding data...');
+            const finalSaved = await memoizedSaveData();
+            console.log('Final save result:', finalSaved);
+            
+            if (finalSaved) {
+              console.log('Onboarding completed successfully, navigating to dashboard');
+              toast({
+                title: isArabic ? 'تم الانتهاء!' : 'Completed!',
+                description: isArabic ? 'تم إكمال الإعداد بنجاح' : 'Onboarding completed successfully',
+              });
+              
+              // Small delay to ensure save is processed
+              setTimeout(() => {
+                // Navigate to dashboard with replace to prevent back navigation
+                navigate('/', { replace: true });
+              }, 500);
+            } else {
+              throw new Error(isArabic ? 'فشل في إكمال الإعداد' : 'Failed to complete onboarding');
+            }
           } catch (error) {
-            console.error('Save error:', error);
-            return false;
+            console.error('Error completing onboarding:', error);
+            setError(error instanceof Error ? error.message : 'Failed to complete onboarding');
+          } finally {
+            if (isMountedRef.current) {
+              setIsNavigating(false);
+            }
           }
-        };
-        
-        // Force save the completed data
-        const finalSaved = await memoizedSaveData();
-        console.log('Final save result:', finalSaved);
-        
-        if (finalSaved) {
-          console.log('Onboarding completed successfully, navigating to dashboard');
-          toast({
-            title: isArabic ? 'تم الانتهاء!' : 'Completed!',
-            description: isArabic ? 'تم إكمال الإعداد بنجاح' : 'Onboarding completed successfully',
-          });
-          
-          // Small delay to ensure save is processed
-          setTimeout(() => {
-            // Navigate to dashboard with replace to prevent back navigation
-            navigate('/', { replace: true });
-          }, 500);
-        } else {
-          throw new Error(isArabic ? 'فشل في إكمال الإعداد' : 'Failed to complete onboarding');
-        }
+        }, 100);
       }
     } catch (error) {
       console.error('Error in handleNext:', error);
@@ -182,7 +180,7 @@ export const useOnboardingWizard = (isArabic: boolean) => {
         variant: 'destructive'
       });
     } finally {
-      if (isMountedRef.current) {
+      if (isMountedRef.current && currentStep < totalSteps - 1) {
         setIsNavigating(false);
       }
     }
