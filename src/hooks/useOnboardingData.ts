@@ -14,15 +14,79 @@ export interface OnboardingData {
   competitors: string[];
   goals: string[];
   budget: string;
+  completed?: boolean;
 }
+
+const defaultData: OnboardingData = {
+  skillLevel: '',
+  experience: '',
+  businessName: '',
+  industry: '',
+  website: '',
+  socialAccounts: {},
+  competitors: [],
+  goals: [],
+  budget: '',
+  completed: false
+};
 
 export const useOnboardingData = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [data, setData] = useState<OnboardingData>(defaultData);
 
-  const saveOnboardingData = async (data: OnboardingData) => {
+  // Load existing data on mount
+  useEffect(() => {
+    if (user) {
+      loadOnboardingData();
+    }
+  }, [user]);
+
+  const loadOnboardingData = async () => {
+    if (!user) return;
+
+    setLoading(true);
+    try {
+      const { data: existingData, error } = await supabase
+        .from('onboarding_data')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') throw error;
+
+      if (existingData) {
+        setData({
+          skillLevel: existingData.skill_level || '',
+          experience: existingData.experience || '',
+          businessName: existingData.business_name || '',
+          industry: existingData.industry || '',
+          website: existingData.website || '',
+          socialAccounts: existingData.social_accounts || {},
+          competitors: existingData.competitors || [],
+          goals: existingData.goals || [],
+          budget: existingData.budget || '',
+          completed: !!existingData.completed_at
+        });
+      }
+    } catch (error) {
+      console.error('Error loading onboarding data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateData = (updates: Partial<OnboardingData>) => {
+    setData(prev => ({ ...prev, ...updates }));
+  };
+
+  const saveData = async () => {
+    return await saveOnboardingData(data);
+  };
+
+  const saveOnboardingData = async (dataToSave: OnboardingData) => {
     if (!user) {
       toast({
         title: "Authentication required",
@@ -39,15 +103,16 @@ export const useOnboardingData = () => {
         .from('onboarding_data')
         .upsert({
           user_id: user.id,
-          skill_level: data.skillLevel,
-          experience: data.experience,
-          business_name: data.businessName,
-          industry: data.industry,
-          website: data.website,
-          social_accounts: data.socialAccounts,
-          competitors: data.competitors,
-          goals: data.goals,
-          budget: data.budget,
+          skill_level: dataToSave.skillLevel,
+          experience: dataToSave.experience,
+          business_name: dataToSave.businessName,
+          industry: dataToSave.industry,
+          website: dataToSave.website,
+          social_accounts: dataToSave.socialAccounts,
+          competitors: dataToSave.competitors,
+          goals: dataToSave.goals,
+          budget: dataToSave.budget,
+          completed_at: dataToSave.completed ? new Date().toISOString() : null,
           updated_at: new Date().toISOString()
         });
 
@@ -55,14 +120,14 @@ export const useOnboardingData = () => {
 
       // Create AI context for personalization
       const aiContext = {
-        businessType: data.industry,
-        skillLevel: data.skillLevel,
-        experience: data.experience,
-        goals: data.goals,
-        budget: data.budget,
-        hasWebsite: !!data.website,
-        socialPlatforms: Object.keys(data.socialAccounts),
-        competitorCount: data.competitors.length
+        businessType: dataToSave.industry,
+        skillLevel: dataToSave.skillLevel,
+        experience: dataToSave.experience,
+        goals: dataToSave.goals,
+        budget: dataToSave.budget,
+        hasWebsite: !!dataToSave.website,
+        socialPlatforms: Object.keys(dataToSave.socialAccounts),
+        competitorCount: dataToSave.competitors.length
       };
 
       // Save user preferences with AI context
@@ -72,19 +137,21 @@ export const useOnboardingData = () => {
           user_id: user.id,
           ai_context: aiContext,
           personalization_data: {
-            onboardingCompleted: true,
-            completedAt: new Date().toISOString(),
-            businessName: data.businessName
+            onboardingCompleted: dataToSave.completed,
+            completedAt: dataToSave.completed ? new Date().toISOString() : null,
+            businessName: dataToSave.businessName
           },
           updated_at: new Date().toISOString()
         });
 
       if (preferencesError) throw preferencesError;
 
-      toast({
-        title: "Onboarding completed!",
-        description: "Your preferences have been saved and your dashboard is being personalized.",
-      });
+      if (dataToSave.completed) {
+        toast({
+          title: "Onboarding completed!",
+          description: "Your preferences have been saved and your dashboard is being personalized.",
+        });
+      }
 
       return true;
     } catch (error) {
@@ -122,6 +189,9 @@ export const useOnboardingData = () => {
   };
 
   return {
+    data,
+    updateData,
+    saveData,
     saveOnboardingData,
     getOnboardingData,
     loading,
