@@ -9,6 +9,119 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      ai_conversations: {
+        Row: {
+          agent_type: string
+          context: Json
+          conversation_data: Json
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          agent_type: string
+          context?: Json
+          conversation_data?: Json
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          agent_type?: string
+          context?: Json
+          conversation_data?: Json
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ai_insights: {
+        Row: {
+          actionable: boolean
+          category: string
+          created_at: string
+          description: string
+          id: string
+          insight_type: string
+          is_read: boolean
+          metadata: Json
+          priority: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          actionable?: boolean
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          insight_type: string
+          is_read?: boolean
+          metadata?: Json
+          priority?: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          actionable?: boolean
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          insight_type?: string
+          is_read?: boolean
+          metadata?: Json
+          priority?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ai_usage_logs: {
+        Row: {
+          cost_sar: number | null
+          created_at: string
+          feature_type: string
+          id: string
+          subscription_id: string | null
+          tokens_used: number | null
+          usage_count: number
+          user_id: string
+        }
+        Insert: {
+          cost_sar?: number | null
+          created_at?: string
+          feature_type: string
+          id?: string
+          subscription_id?: string | null
+          tokens_used?: number | null
+          usage_count?: number
+          user_id: string
+        }
+        Update: {
+          cost_sar?: number | null
+          created_at?: string
+          feature_type?: string
+          id?: string
+          subscription_id?: string | null
+          tokens_used?: number | null
+          usage_count?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_usage_logs_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "user_subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaigns: {
         Row: {
           budget: number | null

@@ -1,47 +1,38 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import Header from '@/components/layout/Header';
 import PrivacyHeader from '@/components/privacy/PrivacyHeader';
-import DataProtectionSection from '@/components/privacy/DataProtectionSection';
 import InformationCollectionSection from '@/components/privacy/InformationCollectionSection';
 import DataUsageSection from '@/components/privacy/DataUsageSection';
 import DataSharingSection from '@/components/privacy/DataSharingSection';
+import DataProtectionSection from '@/components/privacy/DataProtectionSection';
 import UserRightsSection from '@/components/privacy/UserRightsSection';
+import AIDataSection from '@/components/privacy/AIDataSection';
+import DataRetentionSection from '@/components/privacy/DataRetentionSection';
 import SecuritySection from '@/components/privacy/SecuritySection';
 import ContactSection from '@/components/privacy/ContactSection';
-import DataRetentionSection from '@/components/privacy/DataRetentionSection';
-import AIDataSection from '@/components/privacy/AIDataSection';
 
-const Privacy: React.FC = () => {
-  const { language, setLanguage } = useLanguage();
+const Privacy = () => {
+  const { language } = useLanguage();
   const isArabic = language === 'ar';
 
-  // Check if user came from Arabic path and set language accordingly
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const langParam = urlParams.get('lang');
-    if (langParam === 'ar') {
-      setLanguage('ar');
-    }
-  }, [setLanguage]);
-
   return (
-    <div className={`container mx-auto px-4 py-8 ${isArabic ? 'rtl' : ''}`}>
-      <div className="max-w-4xl mx-auto">
+    <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
+      <Header isDarkMode={false} toggleDarkMode={() => {}} />
+      
+      <main className="container mx-auto px-6 py-8 max-w-4xl">
         <PrivacyHeader />
-        
-        <div className="space-y-6">
-          <DataProtectionSection />
-          <InformationCollectionSection />
-          <DataUsageSection />
-          <AIDataSection />
-          <DataSharingSection />
-          <UserRightsSection />
-          <SecuritySection />
-          <DataRetentionSection />
-          <ContactSection />
-        </div>
-      </div>
+        <InformationCollectionSection />
+        <DataUsageSection />
+        <DataSharingSection />
+        <DataProtectionSection />
+        <UserRightsSection />
+        <AIDataSection />
+        <DataRetentionSection />
+        <SecuritySection />
+        <ContactSection />
+      </main>
     </div>
   );
 };
