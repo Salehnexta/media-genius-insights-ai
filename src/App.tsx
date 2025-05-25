@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -21,7 +20,7 @@ import EnhancedProfile from '@/pages/EnhancedProfile';
 import Subscription from '@/pages/Subscription';
 import SubscriptionAr from '@/pages/SubscriptionAr';
 import Campaigns from '@/pages/Campaigns';
-import Agents from '@/pages/Agents';
+import UnifiedDashboard from '@/pages/Agents';
 import Insights from '@/pages/Insights';
 import ZapierSettings from '@/pages/ZapierSettings';
 import Debug from '@/pages/Debug';
@@ -38,20 +37,46 @@ function App() {
         <Router>
           <div className="min-h-screen bg-background">
             <Routes>
+              {/* Main unified dashboard */}
               <Route path="/" element={
                 <ProtectedRoute>
                   <AdminProvider>
                     <LanguageProvider>
-                      <Agents />
+                      <UnifiedDashboard />
                     </LanguageProvider>
                   </AdminProvider>
                 </ProtectedRoute>
               } />
+              
+              {/* Redirect legacy routes to main dashboard */}
               <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Navigate to="/" replace />
                 </ProtectedRoute>
               } />
+              <Route path="/agents" element={
+                <ProtectedRoute>
+                  <Navigate to="/" replace />
+                </ProtectedRoute>
+              } />
+              
+              {/* Keep other specialized pages for deep functionality */}
+              <Route path="/campaigns/create" element={
+                <ProtectedRoute>
+                  <LanguageProvider>
+                    <Campaigns />
+                  </LanguageProvider>
+                </ProtectedRoute>
+              } />
+              <Route path="/insights/detailed" element={
+                <ProtectedRoute>
+                  <LanguageProvider>
+                    <Insights />
+                  </LanguageProvider>
+                </ProtectedRoute>
+              } />
+              
+              {/* All other routes remain the same */}
               <Route path="/auth" element={
                 <LanguageProvider>
                   <Auth />
@@ -111,29 +136,6 @@ function App() {
               <Route path="/subscription-ar" element={
                 <ProtectedRoute>
                   <SubscriptionAr />
-                </ProtectedRoute>
-              } />
-              <Route path="/campaigns" element={
-                <ProtectedRoute>
-                  <LanguageProvider>
-                    <Campaigns />
-                  </LanguageProvider>
-                </ProtectedRoute>
-              } />
-              <Route path="/agents" element={
-                <ProtectedRoute>
-                  <AdminProvider>
-                    <LanguageProvider>
-                      <Agents />
-                    </LanguageProvider>
-                  </AdminProvider>
-                </ProtectedRoute>
-              } />
-              <Route path="/insights" element={
-                <ProtectedRoute>
-                  <LanguageProvider>
-                    <Insights />
-                  </LanguageProvider>
                 </ProtectedRoute>
               } />
               <Route path="/zapier-settings" element={

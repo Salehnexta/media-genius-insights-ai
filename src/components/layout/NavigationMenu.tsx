@@ -1,12 +1,13 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Target, Bot, Brain } from 'lucide-react';
+import { Home, Target, Bot, Brain, BarChart3 } from 'lucide-react';
 
 interface NavigationItem {
   label: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
+  description?: string;
 }
 
 interface NavigationMenuProps {
@@ -18,24 +19,22 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ isArabic }) => {
 
   const navigationItems: NavigationItem[] = [
     {
-      label: isArabic ? 'الرئيسية' : 'Home',
+      label: isArabic ? 'لوحة التحكم' : 'Dashboard',
       href: '/',
-      icon: Home
+      icon: Home,
+      description: isArabic ? 'لوحة التحكم الشاملة' : 'Unified Dashboard'
     },
     {
-      label: isArabic ? 'الحملات' : 'Campaigns',
-      href: '/campaigns',
-      icon: Target
+      label: isArabic ? 'إنشاء حملة' : 'Create Campaign',
+      href: '/campaigns/create',
+      icon: Target,
+      description: isArabic ? 'إنشاء حملة جديدة' : 'Create new campaign'
     },
     {
-      label: isArabic ? 'الوكلاء الذكيين' : 'AI Agents',
-      href: '/agents',
-      icon: Bot
-    },
-    {
-      label: isArabic ? 'الرؤى والتحليلات' : 'Insights & Analytics',
-      href: '/insights',
-      icon: Brain
+      label: isArabic ? 'تحليلات مفصلة' : 'Detailed Analytics',
+      href: '/insights/detailed',
+      icon: BarChart3,
+      description: isArabic ? 'تحليلات وإحصائيات مفصلة' : 'Detailed insights & analytics'
     }
   ];
 
@@ -46,6 +45,7 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ isArabic }) => {
           key={item.href}
           to={item.href}
           className={`text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors flex items-center gap-1 ${location.pathname === item.href ? 'text-blue-600 dark:text-blue-400' : ''}`}
+          title={item.description}
         >
           <item.icon className="h-4 w-4" />
           {item.label}
