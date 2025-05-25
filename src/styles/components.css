@@ -1,0 +1,54 @@
+
+/* Component-specific Styles */
+
+/* Chat Bubbles - Enhanced RTL */
+.chat-bubble-ai {
+  @apply bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm text-gray-900 dark:text-gray-100 relative;
+  max-width: 85%;
+}
+
+.chat-bubble-user {
+  @apply bg-primary text-primary-foreground p-3 rounded-lg shadow-sm relative;
+  max-width: 85%;
+}
+
+[dir="rtl"] .chat-bubble-ai,
+.rtl .chat-bubble-ai {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] .chat-bubble-user,
+.rtl .chat-bubble-user {
+  direction: rtl;
+  text-align: right;
+}
+
+/* RTL Cards and Statistics */
+[dir="rtl"] .stat-card {
+  text-align: right;
+}
+
+[dir="rtl"] .stat-card .icon {
+  order: -1;
+  margin-left: 0.5rem;
+  margin-right: 0;
+}
+
+[dir="rtl"] .stat-card .value {
+  text-align: right;
+}
+
+/* Mobile-specific RTL styles */
+@media (max-width: 768px) {
+  [dir="rtl"] .mobile-menu {
+    right: 0;
+    left: auto;
+  }
+  
+  [dir="rtl"] .mobile-nav-item {
+    text-align: right;
+    padding-right: 1rem;
+    padding-left: 0.5rem;
+  }
+}
