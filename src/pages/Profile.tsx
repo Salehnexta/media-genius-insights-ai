@@ -6,7 +6,16 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Loader2 } from 'lucide-react';
+import { 
+  Loader2, 
+  User, 
+  Settings, 
+  Shield, 
+  Languages, 
+  Palette, 
+  HelpCircle, 
+  FileText 
+} from 'lucide-react';
 import ProfileSidebar from '@/components/profile/ProfileSidebar';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import PersonalInfoSection from '@/components/profile/PersonalInfoSection';
@@ -108,42 +117,42 @@ const Profile: React.FC = () => {
     accountAge: 0
   });
 
-  // Menu items for sidebar navigation
+  // Menu items for sidebar navigation with proper icon imports
   const menuItems = [
     {
       id: 'profile',
       label: isArabic ? 'الملف الشخصي' : 'Profile',
-      icon: require('lucide-react').User
+      icon: User
     },
     {
       id: 'account-settings',
       label: isArabic ? 'إعدادات الحساب' : 'Account Settings',
-      icon: require('lucide-react').Settings
+      icon: Settings
     },
     {
       id: 'security-privacy',
       label: isArabic ? 'الأمان والخصوصية' : 'Security & Privacy',
-      icon: require('lucide-react').Shield
+      icon: Shield
     },
     {
       id: 'language',
       label: isArabic ? 'تغيير اللغة' : 'Language Settings',
-      icon: require('lucide-react').Languages
+      icon: Languages
     },
     {
       id: 'interface',
       label: isArabic ? 'تخصيص الواجهة' : 'Interface Customization',
-      icon: require('lucide-react').Palette
+      icon: Palette
     },
     {
       id: 'help-support',
       label: isArabic ? 'المساعدة والدعم' : 'Help & Support',
-      icon: require('lucide-react').HelpCircle
+      icon: HelpCircle
     },
     {
       id: 'terms',
       label: isArabic ? 'الشروط والأحكام' : 'Terms & Conditions',
-      icon: require('lucide-react').FileText
+      icon: FileText
     }
   ];
 
