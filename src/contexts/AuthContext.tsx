@@ -60,9 +60,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           console.log('User signed in:', session?.user?.id);
         } else if (event === 'SIGNED_OUT') {
           console.log('User signed out');
-          // Clear any stored state
-          setSession(null);
-          setUser(null);
         } else if (event === 'INITIAL_SESSION') {
           console.log('Initial session:', session?.user?.id);
         }
@@ -101,20 +98,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
-      setLoading(true);
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error('Error signing out:', error);
-      } else {
-        // Clear state immediately
-        setSession(null);
-        setUser(null);
-        console.log('Successfully signed out');
       }
     } catch (error) {
       console.error('Sign out error:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
