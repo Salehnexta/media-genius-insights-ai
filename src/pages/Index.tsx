@@ -3,29 +3,20 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
-import { useOnboardingData } from '@/hooks/useOnboardingData';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
-import DashboardTabsNew from '@/components/dashboard/DashboardTabsNew';
-import ChatSection from '@/components/dashboard/ChatSection';
 import { Loader2 } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const Index: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
   const { language } = useLanguage();
   const navigate = useNavigate();
-  const { data: onboardingData, loading: onboardingLoading, getOnboardingData } = useOnboardingData();
-  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean | null>(null);
-  const [checkingStatus, setCheckingStatus] = useState(true);
+  const [loading, setLoading] = useState(true);
   const isArabic = language === 'ar';
 
   useEffect(() => {
-    console.log('=== INDEX USEEFFECT DEBUG ===');
     console.log('Auth loading:', authLoading);
     console.log('User exists:', !!user);
-    console.log('User ID:', user?.id);
-    console.log('Onboarding loading:', onboardingLoading);
-    console.log('Has completed onboarding:', hasCompletedOnboarding);
-    console.log('Onboarding data from hook:', onboardingData);
     
     if (!authLoading && !user) {
       console.log('No user found, redirecting to auth');
@@ -33,71 +24,20 @@ const Index: React.FC = () => {
       return;
     }
 
-    if (user && !onboardingLoading && checkingStatus) {
-      console.log('User found and onboarding not loading, checking status...');
-      checkOnboardingStatus();
+    if (!authLoading) {
+      setLoading(false);
     }
-  }, [user, authLoading, onboardingLoading, navigate, checkingStatus]);
+  }, [user, authLoading, navigate]);
 
-  const checkOnboardingStatus = async () => {
-    if (!user) return;
-    
-    try {
-      console.log('=== CHECKING ONBOARDING STATUS ===');
-      setCheckingStatus(true);
-      
-      // Get raw data directly from database
-      console.log('Fetching raw data from database...');
-      const rawData = await getOnboardingData();
-      console.log('Raw onboarding data from database:', rawData);
-      
-      if (rawData) {
-        // Check if completed_at has any value (not null/undefined)
-        const isCompleted = rawData.completed_at !== null && rawData.completed_at !== undefined;
-        console.log('=== COMPLETION CHECK ===');
-        console.log('completed_at value:', rawData.completed_at);
-        console.log('completed_at is not null:', rawData.completed_at !== null);
-        console.log('completed_at is not undefined:', rawData.completed_at !== undefined);
-        console.log('Final isCompleted result:', isCompleted);
-        
-        setHasCompletedOnboarding(isCompleted);
-        
-        if (!isCompleted) {
-          console.log('Onboarding not completed, redirecting to onboarding page');
-          navigate('/onboarding');
-        } else {
-          console.log('Onboarding completed, staying on dashboard');
-        }
-      } else {
-        console.log('No onboarding data found, redirecting to onboarding');
-        setHasCompletedOnboarding(false);
-        navigate('/onboarding');
-      }
-    } catch (error) {
-      console.error('Error checking onboarding status:', error);
-      // If there's an error, assume onboarding not completed and redirect
-      setHasCompletedOnboarding(false);
-      navigate('/onboarding');
-    } finally {
-      setCheckingStatus(false);
-    }
-  };
-
-  // Show loading while checking authentication or onboarding status
-  if (authLoading || onboardingLoading || hasCompletedOnboarding === null || checkingStatus) {
+  // Show loading while checking authentication
+  if (authLoading || loading) {
     console.log('Showing loading state');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
           <p className="text-gray-600 dark:text-gray-300">
-            {isArabic ? 'جاري تحميل فريق التسويق الذكي...' : 'Loading your AI Marketing Team...'}
-          </p>
-          <p className="text-sm text-gray-500 mt-2">
-            Auth: {authLoading ? 'loading' : 'ready'} | 
-            Onboarding: {onboardingLoading ? 'loading' : 'ready'} | 
-            Status: {hasCompletedOnboarding === null ? 'checking' : hasCompletedOnboarding ? 'completed' : 'incomplete'} |
-            Checking: {checkingStatus ? 'yes' : 'no'}
+            {isArabic ? 'جاري تحميل لوحة التحكم...' : 'Loading dashboard...'}
           </p>
         </div>
       </div>
@@ -109,32 +49,85 @@ const Index: React.FC = () => {
     return null;
   }
 
-  // Only render dashboard if onboarding is completed
-  if (!hasCompletedOnboarding) {
-    console.log('Onboarding not completed, returning null (should redirect)');
-    return null;
-  }
-
-  console.log('Rendering dashboard');
   return (
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
       <DashboardHeader />
-      <div className={`flex ${isArabic ? 'flex-row-reverse' : ''}`}>
-        {/* AI Assistant Sidebar - Left for English, Right for Arabic */}
-        <aside className={`w-[35%] p-4 bg-white dark:bg-gray-900 ${isArabic ? 'border-l' : 'border-r'}`}>
-          <div className="sticky top-6">
-            <h2 className={`text-xl font-bold mb-4 ${isArabic ? 'text-right' : 'text-left'}`}>
-              {isArabic ? 'مدير التسويق الذكي' : 'AI Marketing Manager'}
-            </h2>
-            <ChatSection />
+      
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          {/* Welcome Section */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              {isArabic ? 'مرحباً بك في لوحة التحكم' : 'Welcome to Your Dashboard'}
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300">
+              {isArabic 
+                ? 'إدارة حسابك وإعداداتك من هنا'
+                : 'Manage your account and settings from here'
+              }
+            </p>
           </div>
-        </aside>
-        
-        {/* Main Content Area - 65% */}
-        <main className={`flex-1 w-[65%] px-4 py-6 ${isArabic ? 'pr-4 pl-4' : 'px-4'}`}>
-          <DashboardTabsNew />
-        </main>
-      </div>
+
+          {/* Quick Stats */}
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {isArabic ? 'الحالة' : 'Status'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-green-600">
+                  {isArabic ? 'نشط' : 'Active'}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {isArabic ? 'البريد الإلكتروني' : 'Email'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-lg font-medium text-gray-900 dark:text-white truncate">
+                  {user.email}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {isArabic ? 'تاريخ الانضمام' : 'Member Since'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-lg font-medium text-gray-900 dark:text-white">
+                  {user.created_at ? new Date(user.created_at).toLocaleDateString(isArabic ? 'ar-SA' : 'en-US') : 'N/A'}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Main Content */}
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                {isArabic ? 'لوحة التحكم الرئيسية' : 'Main Dashboard'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600 dark:text-gray-300">
+                {isArabic 
+                  ? 'مرحباً بك في منصة التسويق الذكي. يمكنك من هنا إدارة حسابك والوصول إلى جميع الخدمات المتاحة.'
+                  : 'Welcome to the AI Marketing Platform. From here you can manage your account and access all available services.'
+                }
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
     </div>
   );
 };

@@ -15,16 +15,6 @@ import PricingAr from '@/pages/PricingAr';
 import Privacy from '@/pages/Privacy';
 import PrivacyAr from '@/pages/PrivacyAr';
 import Terms from '@/pages/Terms';
-import Onboarding from '@/pages/Onboarding';
-import Profile from '@/pages/Profile';
-import EnhancedProfile from '@/pages/EnhancedProfile';
-import Subscription from '@/pages/Subscription';
-import SubscriptionAr from '@/pages/SubscriptionAr';
-import Campaigns from '@/pages/Campaigns';
-import Agents from '@/pages/Agents';
-import Insights from '@/pages/Insights';
-import ZapierSettings from '@/pages/ZapierSettings';
-import Debug from '@/pages/Debug';
 import NotFound from '@/pages/NotFound';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
@@ -76,70 +66,6 @@ function App() {
                 <LanguageProvider>
                   <Terms />
                 </LanguageProvider>
-              } />
-              <Route path="/onboarding" element={
-                <ProtectedRoute>
-                  <Onboarding />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile" element={
-                <ProtectedRoute>
-                  <LanguageProvider>
-                    <Profile />
-                  </LanguageProvider>
-                </ProtectedRoute>
-              } />
-              <Route path="/enhanced-profile" element={
-                <ProtectedRoute>
-                  <LanguageProvider>
-                    <EnhancedProfile />
-                  </LanguageProvider>
-                </ProtectedRoute>
-              } />
-              <Route path="/subscription" element={
-                <ProtectedRoute>
-                  <LanguageProvider>
-                    <Subscription />
-                  </LanguageProvider>
-                </ProtectedRoute>
-              } />
-              <Route path="/subscription-ar" element={
-                <ProtectedRoute>
-                  <SubscriptionAr />
-                </ProtectedRoute>
-              } />
-              <Route path="/campaigns" element={
-                <ProtectedRoute>
-                  <LanguageProvider>
-                    <Campaigns />
-                  </LanguageProvider>
-                </ProtectedRoute>
-              } />
-              <Route path="/agents" element={
-                <ProtectedRoute>
-                  <LanguageProvider>
-                    <Agents />
-                  </LanguageProvider>
-                </ProtectedRoute>
-              } />
-              <Route path="/insights" element={
-                <ProtectedRoute>
-                  <LanguageProvider>
-                    <Insights />
-                  </LanguageProvider>
-                </ProtectedRoute>
-              } />
-              <Route path="/zapier-settings" element={
-                <ProtectedRoute>
-                  <LanguageProvider>
-                    <ZapierSettings />
-                  </LanguageProvider>
-                </ProtectedRoute>
-              } />
-              <Route path="/debug" element={
-                <ProtectedRoute>
-                  <Debug />
-                </ProtectedRoute>
               } />
               <Route path="*" element={
                 <LanguageProvider>
