@@ -3,6 +3,8 @@ import { ChartContainer } from "@/components/ui/chart";
 import * as RechartsPrimitive from "recharts";
 import { getOverviewData } from '../ChartConfig';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import AIInsightsPanel from '../AIInsightsPanel';
+import PersonalizedRecommendations from '../PersonalizedRecommendations';
 
 interface OverviewTabProps {
   chartConfig: any;
@@ -40,6 +42,17 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ chartConfig }) => {
   return (
     <div className="p-4 h-full overflow-y-auto">
       <div className="space-y-6 max-w-full">
+        
+        {/* AI-Powered Top Section */}
+        <div className="grid lg:grid-cols-3 gap-6 mb-6">
+          <div className="lg:col-span-2">
+            <AIInsightsPanel />
+          </div>
+          <div>
+            <PersonalizedRecommendations maxItems={3} />
+          </div>
+        </div>
+
         {/* Modern Area Chart with Gradient */}
         <Card>
           <CardHeader className="pb-2">

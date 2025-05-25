@@ -4,36 +4,46 @@ import { ChartContainer } from "@/components/ui/chart";
 import * as RechartsPrimitive from "recharts";
 import { getOverviewData } from '../ChartConfig';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CampaignsTabProps {
   chartConfig: any;
 }
 
-const campaignData = [
-  { name: 'Jan', "Campaign A": 4000, "Campaign B": 2400, "Campaign C": 1800 },
-  { name: 'Feb', "Campaign A": 3000, "Campaign B": 1398, "Campaign C": 2300 },
-  { name: 'Mar', "Campaign A": 2000, "Campaign B": 9800, "Campaign C": 2290 },
-  { name: 'Apr', "Campaign A": 2780, "Campaign B": 3908, "Campaign C": 2000 },
-  { name: 'May', "Campaign A": 1890, "Campaign B": 4800, "Campaign C": 2181 },
-  { name: 'Jun', "Campaign A": 2390, "Campaign B": 3800, "Campaign C": 2500 }
-];
-
-const budgetAllocationData = [
-  { name: 'Campaign A', value: 40, fill: '#4285F4' },
-  { name: 'Campaign B', value: 30, fill: '#34A853' },
-  { name: 'Campaign C', value: 20, fill: '#FBBC05' },
-  { name: 'Campaign D', value: 10, fill: '#EA4335' }
-];
-
 const CampaignsTab: React.FC<CampaignsTabProps> = ({ chartConfig }) => {
   const overviewData = getOverviewData();
+  const { t } = useLanguage();
+
+  const campaignData = [
+    { name: t('month.jan'), [t('chart.campaign.a')]: 4000, [t('chart.campaign.b')]: 2400, [t('chart.campaign.c')]: 1800 },
+    { name: t('month.feb'), [t('chart.campaign.a')]: 3000, [t('chart.campaign.b')]: 1398, [t('chart.campaign.c')]: 2300 },
+    { name: t('month.mar'), [t('chart.campaign.a')]: 2000, [t('chart.campaign.b')]: 9800, [t('chart.campaign.c')]: 2290 },
+    { name: t('month.apr'), [t('chart.campaign.a')]: 2780, [t('chart.campaign.b')]: 3908, [t('chart.campaign.c')]: 2000 },
+    { name: t('month.may'), [t('chart.campaign.a')]: 1890, [t('chart.campaign.b')]: 4800, [t('chart.campaign.c')]: 2181 },
+    { name: t('month.jun'), [t('chart.campaign.a')]: 2390, [t('chart.campaign.b')]: 3800, [t('chart.campaign.c')]: 2500 }
+  ];
+
+  const budgetAllocationData = [
+    { name: t('chart.campaign.a'), value: 40, fill: '#4285F4' },
+    { name: t('chart.campaign.b'), value: 30, fill: '#34A853' },
+    { name: t('chart.campaign.c'), value: 20, fill: '#FBBC05' },
+    { name: t('chart.campaign.d'), value: 10, fill: '#EA4335' }
+  ];
+
+  const engagementData = [
+    { subject: t('chart.clicks'), A: 120, B: 110, C: 90, fullMark: 150 },
+    { subject: t('chart.views'), A: 98, B: 130, C: 85, fullMark: 150 },
+    { subject: t('chart.shares'), A: 86, B: 70, C: 90, fullMark: 150 },
+    { subject: t('chart.comments'), A: 99, B: 80, C: 65, fullMark: 150 },
+    { subject: t('chart.saves'), A: 85, B: 90, C: 80, fullMark: 150 }
+  ];
 
   return (
     <div className="p-4 h-full overflow-y-auto">
       <div className="space-y-6 max-w-full">
         <Card className="w-full">
           <CardHeader className="pb-2">
-            <CardTitle className="text-md font-medium">Campaign Performance</CardTitle>
+            <CardTitle className="text-md font-medium">{t('chart.campaign.performance')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-[300px] w-full">
@@ -44,9 +54,9 @@ const CampaignsTab: React.FC<CampaignsTabProps> = ({ chartConfig }) => {
                   <RechartsPrimitive.YAxis />
                   <RechartsPrimitive.Tooltip />
                   <RechartsPrimitive.Legend />
-                  <RechartsPrimitive.Bar dataKey="Campaign A" fill="#4285F4" />
-                  <RechartsPrimitive.Bar dataKey="Campaign B" fill="#34A853" />
-                  <RechartsPrimitive.Bar dataKey="Campaign C" fill="#FBBC05" />
+                  <RechartsPrimitive.Bar dataKey={t('chart.campaign.a')} fill="#4285F4" />
+                  <RechartsPrimitive.Bar dataKey={t('chart.campaign.b')} fill="#34A853" />
+                  <RechartsPrimitive.Bar dataKey={t('chart.campaign.c')} fill="#FBBC05" />
                 </RechartsPrimitive.BarChart>
               </RechartsPrimitive.ResponsiveContainer>
             </ChartContainer>
@@ -55,7 +65,7 @@ const CampaignsTab: React.FC<CampaignsTabProps> = ({ chartConfig }) => {
         
         <Card className="w-full">
           <CardHeader className="pb-2">
-            <CardTitle className="text-md font-medium">Budget Allocation</CardTitle>
+            <CardTitle className="text-md font-medium">{t('chart.budget.allocation')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-[300px] w-full">
@@ -104,7 +114,7 @@ const CampaignsTab: React.FC<CampaignsTabProps> = ({ chartConfig }) => {
                     ))}
                   </RechartsPrimitive.Pie>
                   <RechartsPrimitive.Tooltip 
-                    formatter={(value) => [`${value}%`, 'Budget']}
+                    formatter={(value) => [`${value}%`, t('chart.budget.label')]}
                     contentStyle={{ 
                       background: 'rgba(255, 255, 255, 0.95)', 
                       border: 'none', 
@@ -129,7 +139,7 @@ const CampaignsTab: React.FC<CampaignsTabProps> = ({ chartConfig }) => {
                     dominantBaseline="middle" 
                     className="text-xs fill-gray-500"
                   >
-                    Campaign A
+                    {t('chart.campaign.a')}
                   </text>
                 </RechartsPrimitive.PieChart>
               </RechartsPrimitive.ResponsiveContainer>
@@ -139,7 +149,7 @@ const CampaignsTab: React.FC<CampaignsTabProps> = ({ chartConfig }) => {
         
         <Card className="w-full">
           <CardHeader className="pb-2">
-            <CardTitle className="text-md font-medium">Campaign ROI</CardTitle>
+            <CardTitle className="text-md font-medium">{t('chart.campaign.roi')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-[300px] w-full">
@@ -150,9 +160,9 @@ const CampaignsTab: React.FC<CampaignsTabProps> = ({ chartConfig }) => {
                   <RechartsPrimitive.YAxis />
                   <RechartsPrimitive.Tooltip />
                   <RechartsPrimitive.Legend />
-                  <RechartsPrimitive.Line type="monotone" dataKey="Campaign A" stroke="#4285F4" />
-                  <RechartsPrimitive.Line type="monotone" dataKey="Campaign B" stroke="#34A853" />
-                  <RechartsPrimitive.Line type="monotone" dataKey="Campaign C" stroke="#FBBC05" />
+                  <RechartsPrimitive.Line type="monotone" dataKey={t('chart.campaign.a')} stroke="#4285F4" />
+                  <RechartsPrimitive.Line type="monotone" dataKey={t('chart.campaign.b')} stroke="#34A853" />
+                  <RechartsPrimitive.Line type="monotone" dataKey={t('chart.campaign.c')} stroke="#FBBC05" />
                 </RechartsPrimitive.LineChart>
               </RechartsPrimitive.ResponsiveContainer>
             </ChartContainer>
@@ -161,7 +171,7 @@ const CampaignsTab: React.FC<CampaignsTabProps> = ({ chartConfig }) => {
         
         <Card className="w-full">
           <CardHeader className="pb-2">
-            <CardTitle className="text-md font-medium">Engagement Metrics</CardTitle>
+            <CardTitle className="text-md font-medium">{t('chart.engagement.metrics')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-[300px] w-full">
@@ -170,20 +180,14 @@ const CampaignsTab: React.FC<CampaignsTabProps> = ({ chartConfig }) => {
                   cx="50%" 
                   cy="50%" 
                   outerRadius="80%" 
-                  data={[
-                    { subject: 'Clicks', A: 120, B: 110, C: 90, fullMark: 150 },
-                    { subject: 'Views', A: 98, B: 130, C: 85, fullMark: 150 },
-                    { subject: 'Shares', A: 86, B: 70, C: 90, fullMark: 150 },
-                    { subject: 'Comments', A: 99, B: 80, C: 65, fullMark: 150 },
-                    { subject: 'Saves', A: 85, B: 90, C: 80, fullMark: 150 }
-                  ]}
+                  data={engagementData}
                 >
                   <RechartsPrimitive.PolarGrid />
                   <RechartsPrimitive.PolarAngleAxis dataKey="subject" />
                   <RechartsPrimitive.PolarRadiusAxis />
-                  <RechartsPrimitive.Radar name="Campaign A" dataKey="A" stroke="#4285F4" fill="#4285F4" fillOpacity={0.6} />
-                  <RechartsPrimitive.Radar name="Campaign B" dataKey="B" stroke="#34A853" fill="#34A853" fillOpacity={0.6} />
-                  <RechartsPrimitive.Radar name="Campaign C" dataKey="C" stroke="#FBBC05" fill="#FBBC05" fillOpacity={0.6} />
+                  <RechartsPrimitive.Radar name={t('chart.campaign.a')} dataKey="A" stroke="#4285F4" fill="#4285F4" fillOpacity={0.6} />
+                  <RechartsPrimitive.Radar name={t('chart.campaign.b')} dataKey="B" stroke="#34A853" fill="#34A853" fillOpacity={0.6} />
+                  <RechartsPrimitive.Radar name={t('chart.campaign.c')} dataKey="C" stroke="#FBBC05" fill="#FBBC05" fillOpacity={0.6} />
                   <RechartsPrimitive.Legend />
                   <RechartsPrimitive.Tooltip />
                 </RechartsPrimitive.RadarChart>
