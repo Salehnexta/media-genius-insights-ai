@@ -67,17 +67,17 @@ const Index: React.FC = () => {
         </div>
       </div>
 
-      {/* Desktop/Tablet Layout - Chat always on left */}
+      {/* Desktop/Tablet Layout - Chat ALWAYS on left */}
       <div className="hidden md:flex flex-1 overflow-hidden">
-        {/* Chat Section - Always on the left (not affected by RTL) */}
-        <div className="w-full md:w-2/5 lg:w-1/3 xl:w-3/10 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+        {/* Chat Section - Always on the left (forced positioning) */}
+        <div className="w-full md:w-2/5 lg:w-1/3 xl:w-3/10 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 order-1">
           <div className="h-full">
             <ChatSection />
           </div>
         </div>
 
         {/* Dashboard Section - Main content */}
-        <div className="flex-1 bg-white dark:bg-gray-900">
+        <div className="flex-1 bg-white dark:bg-gray-900 order-2">
           <div className="h-full overflow-y-auto">
             <MarketingDashboardTabs />
           </div>

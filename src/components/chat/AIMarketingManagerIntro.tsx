@@ -18,7 +18,7 @@ const AIMarketingManagerIntro: React.FC = () => {
             </div>
             <div className={`flex-1 ${isArabic ? 'text-right' : ''}`}>
               <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                {isArabic ? 'مرحباً! أنا مدير التسويق الذكي' : 'Hello! I\'m your AI Marketing Manager'}
+                {isArabic ? 'مرحباً! أنا مدير التسويق' : 'Hello! I\'m your Marketing Manager'}
               </h3>
               <p className="text-sm text-blue-800 dark:text-blue-200 mb-3">
                 {isArabic 
@@ -31,19 +31,25 @@ const AIMarketingManagerIntro: React.FC = () => {
                 <div className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
                   <Users className="h-4 w-4 text-blue-600" />
                   <span className="text-sm">
-                    {isArabic ? 'إدارة فريق من 8 خبراء تسويق ذكيين' : 'Managing a team of 8 AI marketing experts'}
+                    {isArabic ? 'مدير التسويق' : 'Marketing Manager'}
                   </span>
                 </div>
                 <div className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
                   <Target className="h-4 w-4 text-blue-600" />
                   <span className="text-sm">
-                    {isArabic ? 'تطوير استراتيجيات تسويقية مخصصة' : 'Developing personalized marketing strategies'}
+                    {isArabic ? 'موظف السوشال ميديا والتجربة' : 'Social Media & Experience Specialist'}
                   </span>
                 </div>
                 <div className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
                   <Zap className="h-4 w-4 text-blue-600" />
                   <span className="text-sm">
-                    {isArabic ? 'عمل متواصل 24/7 لضمان نمو عملك' : 'Working 24/7 to ensure your business growth'}
+                    {isArabic ? 'موظف حملات التسويق والأداء' : 'Marketing Campaigns & Performance Specialist'}
+                  </span>
+                </div>
+                <div className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                  <Brain className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm">
+                    {isArabic ? 'موظف إنشاء المحتوى والاستراتيجية' : 'Content Creation & Strategy Specialist'}
                   </span>
                 </div>
               </div>
