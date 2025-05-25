@@ -1,83 +1,77 @@
 
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider } from '@/contexts/AuthContext';
-import { LanguageProvider } from '@/contexts/LanguageContext';
-import Index from '@/pages/Index';
-import Auth from '@/pages/Auth';
-import AuthAr from '@/pages/AuthAr';
-import RegisterAr from '@/pages/RegisterAr';
-import LandingPage from '@/pages/LandingPage';
-import LandingPageAr from '@/pages/LandingPageAr';
-import Pricing from '@/pages/Pricing';
-import PricingAr from '@/pages/PricingAr';
-import Privacy from '@/pages/Privacy';
-import PrivacyAr from '@/pages/PrivacyAr';
-import Terms from '@/pages/Terms';
-import NotFound from '@/pages/NotFound';
-import ProtectedRoute from '@/components/ProtectedRoute';
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import Index from "./pages/Index";
+import Auth from "./pages/Auth";
+import AuthAr from "./pages/AuthAr";
+import RegisterAr from "./pages/RegisterAr";
+import LandingPage from "./pages/LandingPage";
+import LandingPageAr from "./pages/LandingPageAr";
+import Pricing from "./pages/Pricing";
+import PricingAr from "./pages/PricingAr";
+import Privacy from "./pages/Privacy";
+import PrivacyAr from "./pages/PrivacyAr";
+import Terms from "./pages/Terms";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Router>
-          <div className="min-h-screen bg-background">
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <AuthProvider>
+      <LanguageProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
             <Routes>
-              <Route path="/" element={
-                <LanguageProvider>
-                  <Index />
-                </LanguageProvider>
-              } />
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <Navigate to="/" replace />
-                </ProtectedRoute>
-              } />
-              <Route path="/auth" element={
-                <LanguageProvider>
-                  <Auth />
-                </LanguageProvider>
-              } />
+              {/* Redirect root to Arabic landing page */}
+              <Route path="/" element={<Navigate to="/landing-ar" replace />} />
+              
+              {/* Landing pages */}
+              <Route path="/landing" element={<LandingPage />} />
+              <Route path="/landing-ar" element={<LandingPageAr />} />
+              
+              {/* Auth pages */}
+              <Route path="/auth" element={<Auth />} />
               <Route path="/auth-ar" element={<AuthAr />} />
               <Route path="/register-ar" element={<RegisterAr />} />
-              <Route path="/landing" element={
-                <LanguageProvider>
-                  <LandingPage />
-                </LanguageProvider>
-              } />
-              <Route path="/landing-ar" element={<LandingPageAr />} />
-              <Route path="/pricing" element={
-                <LanguageProvider>
-                  <Pricing />
-                </LanguageProvider>
-              } />
+              
+              {/* Dashboard */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Index />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Pricing pages */}
+              <Route path="/pricing" element={<Pricing />} />
               <Route path="/pricing-ar" element={<PricingAr />} />
-              <Route path="/privacy" element={
-                <LanguageProvider>
-                  <Privacy />
-                </LanguageProvider>
-              } />
+              
+              {/* Privacy pages */}
+              <Route path="/privacy" element={<Privacy />} />
               <Route path="/privacy-ar" element={<PrivacyAr />} />
-              <Route path="/terms" element={
-                <LanguageProvider>
-                  <Terms />
-                </LanguageProvider>
-              } />
-              <Route path="*" element={
-                <LanguageProvider>
-                  <NotFound />
-                </LanguageProvider>
-              } />
+              
+              {/* Terms */}
+              <Route path="/terms" element={<Terms />} />
+              
+              {/* 404 */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
-          </div>
-        </Router>
-      </AuthProvider>
-    </QueryClientProvider>
-  );
-}
+          </BrowserRouter>
+        </TooltipProvider>
+      </LanguageProvider>
+    </AuthProvider>
+  </QueryClientProvider>
+);
 
 export default App;

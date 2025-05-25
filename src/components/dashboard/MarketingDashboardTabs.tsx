@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart3, DollarSign, Target, TrendingUp, Users } from 'lucide-react';
+import { Brain, Users, Target, BarChart3, Search } from 'lucide-react';
 import PerformanceOverviewTab from './tabs/PerformanceOverviewTab';
 import BudgetAllocationTab from './tabs/BudgetAllocationTab';
 import StrategicInitiativesTab from './tabs/StrategicInitiativesTab';
@@ -16,28 +16,28 @@ const MarketingDashboardTabs: React.FC = () => {
   const tabs = [
     {
       id: 'performance-overview',
-      label: isArabic ? 'نظرة عامة على الأداء' : 'Performance Overview',
-      icon: <BarChart3 className="h-4 w-4" />
+      label: isArabic ? 'مدير التسويق' : 'Marketing Manager',
+      icon: <Brain className="h-4 w-4" />
     },
     {
       id: 'budget-allocation',
-      label: isArabic ? 'تخصيص الميزانية' : 'Budget Allocation',
-      icon: <DollarSign className="h-4 w-4" />
+      label: isArabic ? 'موظف السوشال ميديا والتجربة' : 'Social Media & Experience',
+      icon: <Users className="h-4 w-4" />
     },
     {
       id: 'strategic-initiatives',
-      label: isArabic ? 'المبادرات الاستراتيجية' : 'Strategic Initiatives',
+      label: isArabic ? 'موظف حملات التسويق والأداء' : 'Marketing Campaigns & Performance',
       icon: <Target className="h-4 w-4" />
     },
     {
       id: 'executive-dashboard',
-      label: isArabic ? 'لوحة معلومات المديرين التنفيذيين' : 'Executive Dashboard',
-      icon: <TrendingUp className="h-4 w-4" />
+      label: isArabic ? 'موظف إنشاء المحتوى والاستراتيجية' : 'Content Creation & Strategy',
+      icon: <BarChart3 className="h-4 w-4" />
     },
     {
       id: 'competitor-analysis',
-      label: isArabic ? 'تحليل المنافسين' : 'Competitor Analysis',
-      icon: <Users className="h-4 w-4" />
+      label: isArabic ? 'موظف تحسين محركات البحث وتحليلات البيانات' : 'SEO & Data Analytics',
+      icon: <Search className="h-4 w-4" />
     }
   ];
 

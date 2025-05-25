@@ -51,10 +51,10 @@ const LandingPageArContent: React.FC = () => {
           
           <div className="flex items-center gap-3">
             <span className="text-xl font-bold text-gray-900 dark:text-white">
-              فريق التسويق
+              فريق التسويق الذكي
             </span>
             <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-lg">MG</span>
+              <Brain className="text-white h-6 w-6" />
             </div>
           </div>
         </div>
@@ -64,7 +64,7 @@ const LandingPageArContent: React.FC = () => {
       <section className="container mx-auto px-4 py-16 text-center">
         <Badge variant="secondary" className="mb-6">
           <Globe className="w-4 h-4 ml-2" />
-          فريق التسويق
+          فريق التسويق الذكي
         </Badge>
         
         <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
@@ -81,7 +81,7 @@ const LandingPageArContent: React.FC = () => {
         <div className="flex gap-4 justify-center">
           <Button 
             size="lg" 
-            onClick={() => navigate('/register-ar')}
+            onClick={() => navigate('/auth-ar')}
             className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
           >
             ابدأ مجاناً
@@ -139,7 +139,7 @@ const LandingPageArContent: React.FC = () => {
             <Button 
               size="lg" 
               variant="secondary"
-              onClick={() => navigate('/register-ar')}
+              onClick={() => navigate('/auth-ar')}
             >
               ابدأ رحلتك اليوم
             </Button>
@@ -155,10 +155,10 @@ const LandingPageArContent: React.FC = () => {
             <div className="text-center md:text-right">
               <div className="flex items-center justify-center md:justify-end gap-3 mb-4">
                 <span className="text-lg font-bold text-gray-900 dark:text-white">
-                  فريق التسويق
+                  فريق التسويق الذكي
                 </span>
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold">MG</span>
+                  <Brain className="text-white h-4 w-4" />
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-300 text-sm">
@@ -181,8 +181,8 @@ const LandingPageArContent: React.FC = () => {
                   </Button>
                 </li>
                 <li>
-                  <Button variant="link" onClick={() => navigate('/register-ar')} className="text-gray-600 dark:text-gray-300 p-0 h-auto">
-                    إنشاء حساب
+                  <Button variant="link" onClick={() => navigate('/dashboard')} className="text-gray-600 dark:text-gray-300 p-0 h-auto">
+                    لوحة التحكم
                   </Button>
                 </li>
               </ul>
@@ -228,7 +228,7 @@ const LandingPageArContent: React.FC = () => {
           {/* Copyright */}
           <div className="border-t border-gray-200 dark:border-gray-700 mt-8 pt-8 text-center">
             <p className="text-gray-600 dark:text-gray-300 text-sm">
-              © 2024 فريق التسويق. جميع الحقوق محفوظة.
+              © 2024 فريق التسويق الذكي. جميع الحقوق محفوظة.
             </p>
           </div>
         </div>
