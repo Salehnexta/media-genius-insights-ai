@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,14 +11,19 @@ import { useToast } from '@/hooks/use-toast';
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
 
 const ForgotPasswordAr: React.FC = () => {
-  const { language } = useLanguage();
+  const { setLanguage } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const isArabic = language === 'ar';
   
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+
+  useEffect(() => {
+    setLanguage('ar');
+    document.documentElement.dir = 'rtl';
+    document.documentElement.lang = 'ar';
+  }, [setLanguage]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,10 +61,10 @@ const ForgotPasswordAr: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-4 rtl`} dir="rtl">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-4" dir="rtl">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold font-arabic">
+          <CardTitle className="text-2xl font-bold font-arabic text-right">
             استعادة كلمة المرور
           </CardTitle>
         </CardHeader>
@@ -67,7 +72,7 @@ const ForgotPasswordAr: React.FC = () => {
           {!sent ? (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="font-arabic">
+                <Label htmlFor="email" className="font-arabic text-right block">
                   البريد الإلكتروني
                 </Label>
                 <Input
@@ -78,12 +83,13 @@ const ForgotPasswordAr: React.FC = () => {
                   placeholder="أدخل بريدك الإلكتروني"
                   required
                   className="text-right font-arabic"
+                  dir="rtl"
                 />
               </div>
               
               <Button 
                 type="submit" 
-                className="w-full"
+                className="w-full font-arabic"
                 disabled={loading}
               >
                 <Mail className="w-4 h-4 ml-2" />
@@ -94,7 +100,7 @@ const ForgotPasswordAr: React.FC = () => {
               </Button>
             </form>
           ) : (
-            <div className="text-center space-y-4 font-arabic">
+            <div className="text-center space-y-4 font-arabic text-right">
               <CheckCircle className="w-16 h-16 text-green-500 mx-auto" />
               <h3 className="text-lg font-semibold">
                 تم إرسال البريد
@@ -108,7 +114,7 @@ const ForgotPasswordAr: React.FC = () => {
           <div className="mt-6 text-center font-arabic">
             <Link 
               to="/auth-ar" 
-              className="inline-flex items-center text-blue-600 hover:text-blue-800 flex-row-reverse"
+              className="inline-flex items-center text-blue-600 hover:text-blue-800 flex-row-reverse font-arabic"
             >
               <ArrowLeft className="w-4 h-4 mx-2" />
               العودة لتسجيل الدخول
