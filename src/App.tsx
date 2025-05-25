@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,6 +20,11 @@ import PrivacyAr from "./pages/PrivacyAr";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
+import ForgotPassword from "./pages/ForgotPassword";
+import TeamManagement from "./pages/TeamManagement";
+import UserManagement from "./pages/UserManagement";
+import HelpCenter from "./pages/HelpCenter";
+import Billing from "./pages/Billing";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +48,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/auth-ar" element={<AuthAr />} />
               <Route path="/register-ar" element={<RegisterAr />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
               
               {/* Dashboard */}
               <Route
@@ -59,6 +66,45 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Management pages */}
+              <Route
+                path="/team-management"
+                element={
+                  <ProtectedRoute>
+                    <TeamManagement />
+                  </ProtectedRoute>
+                }
+              />
+              
+              <Route
+                path="/user-management"
+                element={
+                  <ProtectedRoute>
+                    <UserManagement />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Support and Help */}
+              <Route
+                path="/help-center"
+                element={
+                  <ProtectedRoute>
+                    <HelpCenter />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Billing */}
+              <Route
+                path="/billing"
+                element={
+                  <ProtectedRoute>
+                    <Billing />
                   </ProtectedRoute>
                 }
               />
