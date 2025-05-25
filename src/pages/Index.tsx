@@ -54,23 +54,23 @@ const Index: React.FC = () => {
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col`} dir={isArabic ? 'rtl' : 'ltr'}>
       <DashboardHeader />
       
-      {/* Mobile Layout - Stack vertically */}
+      {/* Mobile Layout - Chat at bottom */}
       <div className="md:hidden flex-1 flex flex-col overflow-hidden">
-        {/* Chat Section - Top on mobile */}
-        <div className="h-64 border-b border-gray-200 dark:border-gray-700">
-          <ChatSection />
-        </div>
-
-        {/* Dashboard Section - Bottom on mobile */}
+        {/* Dashboard Section - Top on mobile */}
         <div className="flex-1 bg-white dark:bg-gray-900 overflow-y-auto">
           <MarketingDashboardTabs />
         </div>
+
+        {/* Chat Section - Fixed at bottom on mobile */}
+        <div className="h-64 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+          <ChatSection />
+        </div>
       </div>
 
-      {/* Desktop/Tablet Layout - Side by side */}
+      {/* Desktop/Tablet Layout - Chat always on left */}
       <div className="hidden md:flex flex-1 overflow-hidden">
-        {/* Chat Section - Positioned based on RTL/LTR */}
-        <div className={`w-full md:w-2/5 lg:w-1/3 xl:w-3/10 ${isArabic ? 'border-l' : 'border-r'} border-gray-200 dark:border-gray-700`}>
+        {/* Chat Section - Always on the left (not affected by RTL) */}
+        <div className="w-full md:w-2/5 lg:w-1/3 xl:w-3/10 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
           <div className="h-full">
             <ChatSection />
           </div>
