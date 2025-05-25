@@ -4,7 +4,6 @@
 @import './styles/rtl.css';
 @import './styles/animations.css';
 @import './styles/components.css';
-@import './styles/dashboard.css';
 
 @tailwind base;
 @tailwind components;
