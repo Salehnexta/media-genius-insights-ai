@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Target, Bot, Brain, BarChart3 } from 'lucide-react';
+import { Home, Settings, User } from 'lucide-react';
 
 interface NavigationItem {
   label: string;
@@ -25,16 +25,16 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ isArabic }) => {
       description: isArabic ? 'لوحة التحكم الشاملة' : 'Unified Dashboard'
     },
     {
-      label: isArabic ? 'إنشاء حملة' : 'Create Campaign',
-      href: '/campaigns/create',
-      icon: Target,
-      description: isArabic ? 'إنشاء حملة جديدة' : 'Create new campaign'
+      label: isArabic ? 'الملف الشخصي' : 'Profile',
+      href: '/profile',
+      icon: User,
+      description: isArabic ? 'إدارة الملف الشخصي' : 'Manage your profile'
     },
     {
-      label: isArabic ? 'تحليلات مفصلة' : 'Detailed Analytics',
-      href: '/insights/detailed',
-      icon: BarChart3,
-      description: isArabic ? 'تحليلات وإحصائيات مفصلة' : 'Detailed insights & analytics'
+      label: isArabic ? 'الإعدادات' : 'Settings',
+      href: '/zapier-settings',
+      icon: Settings,
+      description: isArabic ? 'إعدادات التطبيق' : 'Application settings'
     }
   ];
 

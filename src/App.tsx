@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -19,9 +20,7 @@ import Profile from '@/pages/Profile';
 import EnhancedProfile from '@/pages/EnhancedProfile';
 import Subscription from '@/pages/Subscription';
 import SubscriptionAr from '@/pages/SubscriptionAr';
-import Campaigns from '@/pages/Campaigns';
 import UnifiedDashboard from '@/pages/Agents';
-import Insights from '@/pages/Insights';
 import ZapierSettings from '@/pages/ZapierSettings';
 import Debug from '@/pages/Debug';
 import NotFound from '@/pages/NotFound';
@@ -59,24 +58,18 @@ function App() {
                   <Navigate to="/" replace />
                 </ProtectedRoute>
               } />
-              
-              {/* Keep other specialized pages for deep functionality */}
-              <Route path="/campaigns/create" element={
+              <Route path="/campaigns" element={
                 <ProtectedRoute>
-                  <LanguageProvider>
-                    <Campaigns />
-                  </LanguageProvider>
+                  <Navigate to="/" replace />
                 </ProtectedRoute>
               } />
-              <Route path="/insights/detailed" element={
+              <Route path="/insights" element={
                 <ProtectedRoute>
-                  <LanguageProvider>
-                    <Insights />
-                  </LanguageProvider>
+                  <Navigate to="/" replace />
                 </ProtectedRoute>
               } />
               
-              {/* All other routes remain the same */}
+              {/* Essential standalone pages */}
               <Route path="/auth" element={
                 <LanguageProvider>
                   <Auth />
