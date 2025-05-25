@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -109,17 +110,23 @@ function App() {
               } />
               <Route path="/campaigns" element={
                 <ProtectedRoute>
-                  <Campaigns />
+                  <LanguageProvider>
+                    <Campaigns />
+                  </LanguageProvider>
                 </ProtectedRoute>
               } />
               <Route path="/agents" element={
                 <ProtectedRoute>
-                  <Agents />
+                  <LanguageProvider>
+                    <Agents />
+                  </LanguageProvider>
                 </ProtectedRoute>
               } />
               <Route path="/insights" element={
                 <ProtectedRoute>
-                  <Insights />
+                  <LanguageProvider>
+                    <Insights />
+                  </LanguageProvider>
                 </ProtectedRoute>
               } />
               <Route path="/zapier-settings" element={
