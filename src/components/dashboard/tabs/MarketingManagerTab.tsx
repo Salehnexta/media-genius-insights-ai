@@ -1,314 +1,313 @@
-
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Brain, TrendingUp, DollarSign, Users, Target, Heart } from 'lucide-react';
-import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+
+const COLORS = ['#10B981', '#3B82F6', '#EF4444', '#F59E0B', '#6366F1', '#06B6D4'];
 
 const MarketingManagerTab: React.FC = () => {
   const { language } = useLanguage();
   const isArabic = language === 'ar';
 
-  // Mock data for charts
-  const budgetData = [
-    { name: isArabic ? 'التسويق الرقمي' : 'Digital Marketing', value: 40, amount: 120000 },
-    { name: isArabic ? 'وسائل التواصل' : 'Social Media', value: 25, amount: 75000 },
-    { name: isArabic ? 'الإعلانات التقليدية' : 'Traditional Ads', value: 20, amount: 60000 },
-    { name: isArabic ? 'التسويق بالمحتوى' : 'Content Marketing', value: 15, amount: 45000 }
+  // Mock data for customer words (with both English and Arabic examples)
+  const customerWordsData = isArabic ? [
+    { text: 'ممتاز', value: 85 },
+    { text: 'جودة', value: 72 },
+    { text: 'خدمة', value: 68 },
+    { text: 'سريع', value: 65 },
+    { text: 'موصى', value: 58 },
+    { text: 'احترافي', value: 55 },
+    { text: 'دعم', value: 52 },
+    { text: 'فعال', value: 48 },
+    { text: 'مفيد', value: 45 },
+    { text: 'رائع', value: 42 },
+    { text: 'سهل', value: 38 },
+    { text: 'موثوق', value: 35 },
+    { text: 'نظيف', value: 32 },
+    { text: 'أنيق', value: 28 },
+    { text: 'مبتكر', value: 25 }
+  ] : [
+    { text: 'excellent', value: 85 },
+    { text: 'quality', value: 72 },
+    { text: 'service', value: 68 },
+    { text: 'fast', value: 65 },
+    { text: 'recommended', value: 58 },
+    { text: 'professional', value: 55 },
+    { text: 'support', value: 52 },
+    { text: 'efficient', value: 48 },
+    { text: 'helpful', value: 45 },
+    { text: 'amazing', value: 42 },
+    { text: 'easy', value: 38 },
+    { text: 'reliable', value: 35 },
+    { text: 'clean', value: 32 },
+    { text: 'elegant', value: 28 },
+    { text: 'innovative', value: 25 }
   ];
 
-  const roiData = [
-    { month: isArabic ? 'يناير' : 'Jan', roi: 15 },
-    { month: isArabic ? 'فبراير' : 'Feb', roi: 18 },
-    { month: isArabic ? 'مارس' : 'Mar', roi: 22 },
-    { month: isArabic ? 'أبريل' : 'Apr', roi: 25 },
-    { month: isArabic ? 'مايو' : 'May', roi: 28 },
-    { month: isArabic ? 'يونيو' : 'Jun', roi: 32 }
-  ];
-
-  const marketShareData = [
-    { competitor: isArabic ? 'شركتنا' : 'Our Company', share: 35, sentiment: 85 },
-    { competitor: isArabic ? 'المنافس أ' : 'Competitor A', share: 28, sentiment: 65 },
-    { competitor: isArabic ? 'المنافس ب' : 'Competitor B', share: 22, sentiment: 70 },
-    { competitor: isArabic ? 'المنافس ج' : 'Competitor C', share: 15, sentiment: 55 }
-  ];
-
+  // Mock data for customer sentiment
   const sentimentData = [
-    { type: isArabic ? 'إيجابي' : 'Positive', value: 65, color: '#10b981' },
-    { type: isArabic ? 'محايد' : 'Neutral', value: 25, color: '#f59e0b' },
-    { type: isArabic ? 'سلبي' : 'Negative', value: 10, color: '#ef4444' }
+    { 
+      name: isArabic ? 'إيجابي' : 'Positive', 
+      value: 65, 
+      fill: '#10B981',
+      count: 1250 
+    },
+    { 
+      name: isArabic ? 'محايد' : 'Neutral', 
+      value: 25, 
+      fill: '#F59E0B',
+      count: 480 
+    },
+    { 
+      name: isArabic ? 'سلبي' : 'Negative', 
+      value: 10, 
+      fill: '#EF4444',
+      count: 190 
+    }
   ];
 
-  const customerWords = [
-    { word: isArabic ? 'جودة عالية' : 'excellent quality', frequency: 95, size: 32 },
-    { word: isArabic ? 'خدمة ممتازة' : 'great service', frequency: 88, size: 28 },
-    { word: isArabic ? 'سعر مناسب' : 'fair price', frequency: 82, size: 26 },
-    { word: isArabic ? 'تسليم سريع' : 'fast delivery', frequency: 76, size: 24 },
-    { word: isArabic ? 'دعم فني' : 'tech support', frequency: 70, size: 22 },
-    { word: isArabic ? 'سهولة الاستخدام' : 'user friendly', frequency: 65, size: 20 },
-    { word: isArabic ? 'موثوق' : 'reliable', frequency: 60, size: 18 },
-    { word: isArabic ? 'مفيد' : 'helpful', frequency: 55, size: 16 },
-    { word: isArabic ? 'مريح' : 'convenient', frequency: 50, size: 16 },
-    { word: isArabic ? 'مبتكر' : 'innovative', frequency: 45, size: 14 },
-    { word: isArabic ? 'آمن' : 'secure', frequency: 42, size: 14 },
-    { word: isArabic ? 'سلس' : 'smooth', frequency: 38, size: 12 },
-    { word: isArabic ? 'مميز' : 'unique', frequency: 35, size: 12 },
-    { word: isArabic ? 'واضح' : 'clear', frequency: 32, size: 12 },
-    { word: isArabic ? 'فعال' : 'effective', frequency: 28, size: 10 }
+  // Mock data for key performance indicators (KPIs)
+  const kpiData = [
+    { 
+      name: isArabic ? 'الإيرادات' : 'Revenue', 
+      value: 125000, 
+      prefix: '$', 
+      suffix: 'K', 
+      change: 12, 
+      isPositive: true 
+    },
+    { 
+      name: isArabic ? 'العملاء الجدد' : 'New Customers', 
+      value: 450, 
+      prefix: '', 
+      suffix: '', 
+      change: 8, 
+      isPositive: true 
+    },
+    { 
+      name: isArabic ? 'معدل التحويل' : 'Conversion Rate', 
+      value: 3.2, 
+      prefix: '', 
+      suffix: '%', 
+      change: 2, 
+      isPositive: false 
+    }
   ];
 
-  const topKeywords = [
-    { word: isArabic ? 'جودة عالية' : 'High Quality', frequency: 89 },
-    { word: isArabic ? 'خدمة ممتازة' : 'Excellent Service', frequency: 76 },
-    { word: isArabic ? 'أسعار مناسبة' : 'Fair Prices', frequency: 65 },
-    { word: isArabic ? 'تسليم سريع' : 'Fast Delivery', frequency: 58 },
-    { word: isArabic ? 'دعم فني' : 'Technical Support', frequency: 45 }
+  // Mock data for budget distribution
+  const budgetData = [
+    { name: isArabic ? 'إعلانات السوشيال ميديا' : 'Social Media Ads', value: 40 },
+    { name: isArabic ? 'إعلانات محركات البحث' : 'Search Engine Ads', value: 30 },
+    { name: isArabic ? 'التسويق بالمحتوى' : 'Content Marketing', value: 20 },
+    { name: isArabic ? 'التسويق بالبريد الإلكتروني' : 'Email Marketing', value: 10 }
   ];
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+  // Mock data for return on investment (ROI)
+  const roiData = [
+    { name: isArabic ? 'يناير' : 'Jan', ROI: 2.1 },
+    { name: isArabic ? 'فبراير' : 'Feb', ROI: 2.5 },
+    { name: isArabic ? 'مارس' : 'Mar', ROI: 2.3 },
+    { name: isArabic ? 'أبريل' : 'Apr', ROI: 2.8 },
+    { name: isArabic ? 'مايو' : 'May', ROI: 2.6 },
+    { name: isArabic ? 'يونيو' : 'Jun', ROI: 2.9 }
+  ];
+
+  // Mock data for share of voice vs competitors
+  const shareOfVoiceData = [
+    { name: isArabic ? 'نحن' : 'We', percentage: 45 },
+    { name: isArabic ? 'المنافس 1' : 'Competitor 1', percentage: 25 },
+    { name: isArabic ? 'المنافس 2' : 'Competitor 2', percentage: 15 },
+    { name: isArabic ? 'المنافس 3' : 'Competitor 3', percentage: 10 }
+  ];
+
+  // Mock data for competitor comparison
+  const competitorData = [
+    { 
+      name: isArabic ? 'نحن' : 'We', 
+      reach: 150000, 
+      engagement: 4.5, 
+      sentiment: 0.85 
+    },
+    { 
+      name: isArabic ? 'المنافس 1' : 'Competitor 1', 
+      reach: 130000, 
+      engagement: 4.2, 
+      sentiment: 0.78 
+    },
+    { 
+      name: isArabic ? 'المنافس 2' : 'Competitor 2', 
+      reach: 110000, 
+      engagement: 3.9, 
+      sentiment: 0.82 
+    }
+  ];
 
   return (
-    <div className={`p-6 h-full overflow-y-auto ${isArabic ? 'rtl' : ''}`}>
-      <div className="space-y-6">
-        {/* Header */}
-        <div>
-          <h2 className={`text-2xl font-bold mb-4 ${isArabic ? 'text-right' : 'text-left'}`}>
-            {isArabic ? 'لوحة تحكم مدير التسويق' : 'Marketing Manager Dashboard'}
-          </h2>
+    <div className={`p-6 space-y-6 ${isArabic ? 'rtl' : ''}`}>
+      {/* Header Section */}
+      <div className="flex items-center justify-between">
+        <h2 className={`text-2xl font-bold ${isArabic ? 'text-right font-arabic' : ''}`}>
+          {isArabic ? 'نظرة عامة على أداء التسويق' : 'Marketing Performance Overview'}
+        </h2>
+        <div className="space-x-2">
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            {isArabic ? 'تحديث البيانات' : 'Update Data'}
+          </button>
+          <button className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded">
+            {isArabic ? 'تصدير التقرير' : 'Export Report'}
+          </button>
         </div>
+      </div>
 
-        {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
-                <DollarSign className="h-5 w-5 text-green-600" />
-                <Badge variant="secondary">ROI</Badge>
-              </div>
-              <CardTitle className={`text-sm ${isArabic ? 'text-right' : 'text-left'}`}>
-                {isArabic ? 'العائد على الاستثمار' : 'Return on Investment'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">32%</div>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                {isArabic ? '+5% من الشهر الماضي' : '+5% from last month'}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
-                <Users className="h-5 w-5 text-blue-600" />
-                <Badge variant="secondary">CAC</Badge>
-              </div>
-              <CardTitle className={`text-sm ${isArabic ? 'text-right' : 'text-left'}`}>
-                {isArabic ? 'تكلفة اكتساب العملاء' : 'Customer Acquisition Cost'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-600">$45</div>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                {isArabic ? '-12% من الشهر الماضي' : '-12% from last month'}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
-                <Target className="h-5 w-5 text-purple-600" />
-                <Badge variant="secondary">CVR</Badge>
-              </div>
-              <CardTitle className={`text-sm ${isArabic ? 'text-right' : 'text-left'}`}>
-                {isArabic ? 'معدل التحويل' : 'Conversion Rate'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-purple-600">8.4%</div>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                {isArabic ? '+2.1% من الشهر الماضي' : '+2.1% from last month'}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
-                <Heart className="h-5 w-5 text-red-600" />
-                <Badge variant="secondary">Sentiment</Badge>
-              </div>
-              <CardTitle className={`text-sm ${isArabic ? 'text-right' : 'text-left'}`}>
-                {isArabic ? 'مؤشر المشاعر العام' : 'Overall Sentiment'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-red-600">85%</div>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                {isArabic ? '+8% إيجابية' : '+8% positive'}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Charts Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Budget Distribution Pie Chart */}
+      {/* Enhanced Grid Layout with Word Cloud */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - KPIs and Budget */}
+        <div className="space-y-6">
+          {/* Key Performance Indicators (KPIs) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {kpiData.map((kpi, index) => (
+              <Card key={index}>
+                <CardHeader>
+                  <CardTitle className={`text-lg ${isArabic ? 'text-right font-arabic' : ''}`}>
+                    {kpi.name}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
+                    <div className={`text-2xl font-bold ${isArabic ? 'font-arabic' : ''}`}>
+                      {kpi.prefix}{kpi.value}{kpi.suffix}
+                    </div>
+                    <div className={`text-sm ${kpi.isPositive ? 'text-green-500' : 'text-red-500'}`}>
+                      {kpi.isPositive ? '+' : '-'}
+                      {kpi.change}%
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          
+          {/* Budget Distribution Chart */}
           <Card>
             <CardHeader>
-              <CardTitle className={`${isArabic ? 'text-right' : 'text-left'}`}>
+              <CardTitle className={`text-lg ${isArabic ? 'text-right font-arabic' : ''}`}>
                 {isArabic ? 'توزيع الميزانية حسب القنوات' : 'Budget Distribution by Channels'}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={budgetData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {budgetData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* ROI Trend Line Chart */}
-          <Card>
-            <CardHeader>
-              <CardTitle className={`${isArabic ? 'text-right' : 'text-left'}`}>
-                {isArabic ? 'اتجاه العائد على الاستثمار' : 'ROI Trend Over Time'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={roiData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="roi" stroke="#8884d8" strokeWidth={2} />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* Market Share vs Competitors */}
-          <Card>
-            <CardHeader>
-              <CardTitle className={`${isArabic ? 'text-right' : 'text-left'}`}>
-                {isArabic ? 'حصة السوق مقابل المنافسين' : 'Market Share vs Competitors'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={marketShareData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="competitor" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="share" fill="#8884d8" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* Sentiment Analysis */}
-          <Card>
-            <CardHeader>
-              <CardTitle className={`${isArabic ? 'text-right' : 'text-left'}`}>
-                {isArabic ? 'تحليل المشاعر العام' : 'Overall Sentiment Analysis'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={sentimentData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ type, percent }) => `${type} ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {sentimentData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={budgetData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {budgetData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      formatter={(value) => [`$${value}K`, isArabic ? 'الميزانية' : 'Budget']}
+                      labelStyle={{ direction: isArabic ? 'rtl' : 'ltr' }}
+                    />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Customer Words Cloud and Top Keywords */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Center Column - Customer Words Cloud */}
+        <div className="space-y-6">
           {/* Customer Words Cloud */}
           <Card>
             <CardHeader>
-              <CardTitle className={`${isArabic ? 'text-right' : 'text-left'}`}>
-                {isArabic ? 'سحابة الكلمات الأكثر ذكراً من العملاء' : 'Customer Words Cloud'}
+              <CardTitle className={`text-lg ${isArabic ? 'text-right font-arabic' : ''}`}>
+                {isArabic ? 'الكلمات الأكثر ذكراً من العملاء' : 'Most Mentioned Customer Words'}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="relative h-80 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
-                <div className="flex flex-wrap justify-center items-center h-full gap-2">
-                  {customerWords.map((item, index) => (
+              <div className="h-80 flex flex-wrap items-center justify-center p-4">
+                {customerWordsData.map((word, index) => {
+                  const fontSize = Math.max(12, Math.min(32, word.value / 3));
+                  const opacity = Math.max(0.4, word.value / 100);
+                  return (
                     <span
                       key={index}
-                      className="cursor-pointer transition-all duration-200 hover:scale-110"
+                      className={`inline-block m-1 font-semibold cursor-pointer hover:scale-110 transition-transform ${isArabic ? 'font-arabic' : ''}`}
                       style={{
-                        fontSize: `${item.size}px`,
-                        color: `hsl(${(item.frequency * 3.6)}, 70%, 50%)`,
-                        fontWeight: Math.floor(item.frequency / 20) * 100 + 400,
-                        transform: `rotate(${Math.random() * 20 - 10}deg)`,
+                        fontSize: `${fontSize}px`,
+                        color: COLORS[index % COLORS.length],
+                        opacity: opacity
                       }}
-                      title={`${item.word} - ${item.frequency}% frequency`}
+                      title={`${isArabic ? 'ذُكرت' : 'Mentioned'} ${word.value} ${isArabic ? 'مرة' : 'times'}`}
                     >
-                      {item.word}
+                      {word.text}
                     </span>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
 
-          {/* Top Keywords */}
+          {/* Customer Sentiment Analysis */}
           <Card>
             <CardHeader>
-              <CardTitle className={`${isArabic ? 'text-right' : 'text-left'}`}>
-                {isArabic ? 'الكلمات الأكثر ذكراً من العملاء' : 'Top Customer Keywords'}
+              <CardTitle className={`text-lg ${isArabic ? 'text-right font-arabic' : ''}`}>
+                {isArabic ? 'تحليل مشاعر العملاء' : 'Customer Sentiment Analysis'}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {topKeywords.map((keyword, index) => (
-                  <div key={index} className={`flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
-                    <span className="font-medium">{keyword.word}</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                        <div 
-                          className="bg-blue-600 h-2 rounded-full" 
-                          style={{ width: `${keyword.frequency}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-sm text-gray-600">{keyword.frequency}%</span>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={sentimentData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {sentimentData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      formatter={(value, name, props) => [
+                        `${value}% (${props.payload.count} ${isArabic ? 'تعليق' : 'comments'})`, 
+                        isArabic ? 'المشاعر' : 'Sentiment'
+                      ]}
+                      labelStyle={{ direction: isArabic ? 'rtl' : 'ltr' }}
+                    />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              
+              {/* Sentiment Summary */}
+              <div className={`mt-4 space-y-2 ${isArabic ? 'text-right' : ''}`}>
+                {sentimentData.map((item, index) => (
+                  <div key={index} className={`flex items-center justify-between p-2 rounded ${isArabic ? 'flex-row-reverse' : ''}`}>
+                    <div className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                      <div 
+                        className="w-3 h-3 rounded-full" 
+                        style={{ backgroundColor: item.fill }}
+                      />
+                      <span className={`font-medium ${isArabic ? 'font-arabic' : ''}`}>{item.name}</span>
                     </div>
+                    <span className={`text-sm text-gray-600 ${isArabic ? 'font-arabic' : ''}`}>
+                      {item.count} {isArabic ? 'تعليق' : 'comments'}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -316,42 +315,120 @@ const MarketingManagerTab: React.FC = () => {
           </Card>
         </div>
 
-        {/* Campaign Performance Summary */}
-        <Card>
-          <CardHeader>
-            <CardTitle className={`${isArabic ? 'text-right' : 'text-left'}`}>
-              {isArabic ? 'ملخص أداء الحملات' : 'Campaign Performance Summary'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className={`flex justify-between items-center p-3 border rounded-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
-                <div>
-                  <h4 className="font-semibold">{isArabic ? 'حملة الصيف 2024' : 'Summer Campaign 2024'}</h4>
-                  <p className="text-sm text-gray-600">{isArabic ? 'الميزانية: $50,000' : 'Budget: $50,000'}</p>
-                </div>
-                <Badge variant="secondary">ROI: 28%</Badge>
+        {/* Right Column - ROI and Performance */}
+        <div className="space-y-6">
+          {/* Return on Investment (ROI) Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle className={`text-lg ${isArabic ? 'text-right font-arabic' : ''}`}>
+                {isArabic ? 'عائد الاستثمار الشهري' : 'Monthly Return on Investment'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={roiData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="name" 
+                      tick={{ fontSize: 12 }}
+                      interval={0}
+                      angle={isArabic ? 45 : -45}
+                      textAnchor={isArabic ? 'start' : 'end'}
+                    />
+                    <YAxis />
+                    <Tooltip 
+                      formatter={(value) => [`${value}`, isArabic ? 'عائد الاستثمار' : 'ROI']}
+                      labelStyle={{ direction: isArabic ? 'rtl' : 'ltr' }}
+                    />
+                    <Bar dataKey="ROI" fill="#82ca9d" />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
-              
-              <div className={`flex justify-between items-center p-3 border rounded-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
-                <div>
-                  <h4 className="font-semibold">{isArabic ? 'حملة المنتج الجديد' : 'New Product Launch'}</h4>
-                  <p className="text-sm text-gray-600">{isArabic ? 'الميزانية: $75,000' : 'Budget: $75,000'}</p>
-                </div>
-                <Badge variant="secondary">ROI: 35%</Badge>
+            </CardContent>
+          </Card>
+          
+          {/* Share of Voice Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle className={`text-lg ${isArabic ? 'text-right font-arabic' : ''}`}>
+                {isArabic ? 'حصة الصوت مقابل المنافسين' : 'Share of Voice vs Competitors'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={shareOfVoiceData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="name" 
+                      tick={{ fontSize: 12 }}
+                      interval={0}
+                      angle={isArabic ? 45 : -45}
+                      textAnchor={isArabic ? 'start' : 'end'}
+                    />
+                    <YAxis />
+                    <Tooltip 
+                      formatter={(value) => [`${value}%`, isArabic ? 'حصة الصوت' : 'Share of Voice']}
+                      labelStyle={{ direction: isArabic ? 'rtl' : 'ltr' }}
+                    />
+                    <Bar dataKey="percentage" fill="#3B82F6" />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
-              
-              <div className={`flex justify-between items-center p-3 border rounded-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
-                <div>
-                  <h4 className="font-semibold">{isArabic ? 'حملة العلامة التجارية' : 'Brand Awareness Campaign'}</h4>
-                  <p className="text-sm text-gray-600">{isArabic ? 'الميزانية: $30,000' : 'Budget: $30,000'}</p>
-                </div>
-                <Badge variant="secondary">ROI: 22%</Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
+
+      {/* Competitor Comparison Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className={`text-lg ${isArabic ? 'text-right font-arabic' : ''}`}>
+            {isArabic ? 'مقارنة الأداء مع المنافسين' : 'Performance Comparison with Competitors'}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-800">
+                <tr>
+                  <th className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${isArabic ? 'text-right font-arabic' : ''}`}>
+                    {isArabic ? 'المنافس' : 'Competitor'}
+                  </th>
+                  <th className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${isArabic ? 'text-right font-arabic' : ''}`}>
+                    {isArabic ? 'الوصول' : 'Reach'}
+                  </th>
+                  <th className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${isArabic ? 'text-right font-arabic' : ''}`}>
+                    {isArabic ? 'التفاعل' : 'Engagement'}
+                  </th>
+                  <th className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${isArabic ? 'text-right font-arabic' : ''}`}>
+                    {isArabic ? 'المشاعر' : 'Sentiment'}
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                {competitorData.map((competitor, index) => (
+                  <tr key={index}>
+                    <td className={`px-6 py-4 whitespace-nowrap ${isArabic ? 'font-arabic' : ''}`}>
+                      {competitor.name}
+                    </td>
+                    <td className={`px-6 py-4 whitespace-nowrap ${isArabic ? 'font-arabic' : ''}`}>
+                      {competitor.reach}
+                    </td>
+                    <td className={`px-6 py-4 whitespace-nowrap ${isArabic ? 'font-arabic' : ''}`}>
+                      {competitor.engagement}
+                    </td>
+                    <td className={`px-6 py-4 whitespace-nowrap ${isArabic ? 'font-arabic' : ''}`}>
+                      {competitor.sentiment}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
