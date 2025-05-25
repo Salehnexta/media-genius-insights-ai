@@ -66,22 +66,9 @@ const Index: React.FC = () => {
       
       {/* Main Content - Split Layout like Lovable */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Preview/Dashboard Section - Left Side (60%) */}
-        <div className={`w-3/5 bg-white dark:bg-gray-900 ${isArabic ? 'border-l border-r-0' : 'border-r'} border-gray-200 dark:border-gray-700`}>
+        {/* Preview/Dashboard Section - Left Side (70%) */}
+        <div className={`w-7/10 bg-white dark:bg-gray-900 ${isArabic ? 'border-l border-r-0' : 'border-r'} border-gray-200 dark:border-gray-700`} style={{width: '70%'}}>
           <div className="h-full overflow-y-auto p-6">
-            {/* Welcome Section */}
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                {isArabic ? 'مرحباً بك في لوحة التحكم' : 'Welcome to Your Dashboard'}
-              </h1>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">
-                {isArabic 
-                  ? 'إدارة حسابك وإعداداتك من هنا'
-                  : 'Manage your account and settings from here'
-                }
-              </p>
-            </div>
-
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <Card className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-700">
@@ -158,8 +145,8 @@ const Index: React.FC = () => {
           </div>
         </div>
 
-        {/* Chat Section - Right Side (40%) */}
-        <div className={`w-2/5 ${isArabic ? 'border-r border-l-0' : 'border-l'} border-gray-200 dark:border-gray-700`}>
+        {/* Chat Section - Right Side (30%) */}
+        <div className={`${isArabic ? 'border-r border-l-0' : 'border-l'} border-gray-200 dark:border-gray-700`} style={{width: '30%'}}>
           <div className="h-full">
             <ChatSection />
           </div>
