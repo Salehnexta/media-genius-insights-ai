@@ -66,15 +66,8 @@ const Index: React.FC = () => {
       
       {/* Main Content - Split Layout like Lovable */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Chat Section - Left Side */}
-        <div className={`w-1/2 border-r border-gray-200 dark:border-gray-700 ${isArabic ? 'border-l border-r-0' : ''}`}>
-          <div className="h-full">
-            <ChatSection />
-          </div>
-        </div>
-
-        {/* Preview/Dashboard Section - Right Side */}
-        <div className={`w-1/2 bg-white dark:bg-gray-900 ${isArabic ? 'border-r border-l-0' : ''}`}>
+        {/* Preview/Dashboard Section - Left Side (60%) */}
+        <div className={`w-3/5 bg-white dark:bg-gray-900 ${isArabic ? 'border-l border-r-0' : 'border-r'} border-gray-200 dark:border-gray-700`}>
           <div className="h-full overflow-y-auto p-6">
             {/* Welcome Section */}
             <div className="mb-6">
@@ -162,6 +155,13 @@ const Index: React.FC = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Chat Section - Right Side (40%) */}
+        <div className={`w-2/5 ${isArabic ? 'border-r border-l-0' : 'border-l'} border-gray-200 dark:border-gray-700`}>
+          <div className="h-full">
+            <ChatSection />
           </div>
         </div>
       </div>
