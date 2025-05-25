@@ -51,21 +51,21 @@ const Index: React.FC = () => {
   }
 
   return (
-    <div className={`responsive-layout bg-gray-50 dark:bg-gray-950`} dir={isArabic ? 'rtl' : 'ltr'}>
+    <div className={`h-screen bg-gray-50 dark:bg-gray-950 flex flex-col`} dir={isArabic ? 'rtl' : 'ltr'}>
       <DashboardHeader />
       
-      {/* Main Content - Responsive Layout */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-        {/* Chat Section - Responsive Width */}
-        <div className="w-full lg:w-3/10 lg:max-w-md border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 mobile-dashboard-section">
-          <div className="h-full mobile-chat-layout" style={{ direction: isArabic ? 'rtl' : 'ltr' }}>
+      {/* Main Content - Chat always on left regardless of language */}
+      <div className="flex-1 flex overflow-hidden" style={{ direction: 'ltr' }}>
+        {/* Chat Section - Always on Left (30%) */}
+        <div className="w-3/10 border-r border-gray-200 dark:border-gray-700" style={{width: '30%'}}>
+          <div className="h-full" style={{ direction: isArabic ? 'rtl' : 'ltr' }}>
             <ChatSection />
           </div>
         </div>
 
-        {/* Dashboard Section - Responsive Width */}
+        {/* Dashboard Section - Right Side (70%) */}
         <div className="flex-1 bg-white dark:bg-gray-900" style={{ direction: isArabic ? 'rtl' : 'ltr' }}>
-          <div className="h-full overflow-y-auto mobile-padding tablet-padding desktop-padding">
+          <div className="h-full overflow-y-auto">
             <MarketingDashboardTabs />
           </div>
         </div>

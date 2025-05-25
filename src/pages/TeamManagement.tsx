@@ -84,43 +84,43 @@ const TeamManagement: React.FC = () => {
   };
 
   return (
-    <div className={`responsive-container min-h-screen bg-gray-50 dark:bg-gray-950 mobile-padding tablet-padding desktop-padding ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
-      <div className="max-w-6xl mx-auto space-y-4 lg:space-y-8">
+    <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 p-8 ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
+      <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
-        <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${isArabic ? 'sm:flex-row-reverse' : ''}`}>
+        <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
           <div className={`${isArabic ? 'text-right' : ''}`}>
-            <h1 className={`responsive-text-lg lg:text-3xl font-bold ${isArabic ? 'font-arabic' : ''}`}>
+            <h1 className={`text-3xl font-bold ${isArabic ? 'font-arabic' : ''}`}>
               {isArabic ? 'إدارة الفريق' : 'Team Management'}
             </h1>
-            <p className={`text-gray-600 dark:text-gray-400 mt-2 responsive-text-sm ${isArabic ? 'font-arabic' : ''}`}>
+            <p className={`text-gray-600 dark:text-gray-400 mt-2 ${isArabic ? 'font-arabic' : ''}`}>
               {isArabic ? 'إدارة أعضاء الفريق والصلاحيات' : 'Manage team members and permissions'}
             </p>
           </div>
-          <Users className="h-6 w-6 lg:h-8 lg:w-8 text-blue-600" />
+          <Users className="h-8 w-8 text-blue-600" />
         </div>
 
         {/* Team Stats */}
-        <div className="responsive-grid">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card>
-            <CardContent className="p-4 lg:p-6">
+            <CardContent className="p-6">
               <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
                 <div className={`${isArabic ? 'text-right' : ''}`}>
-                  <p className={`responsive-text-base lg:text-2xl font-bold ${isArabic ? 'font-arabic' : ''}`}>12</p>
-                  <p className={`text-gray-600 dark:text-gray-400 responsive-text-sm ${isArabic ? 'font-arabic' : ''}`}>
+                  <p className={`text-2xl font-bold ${isArabic ? 'font-arabic' : ''}`}>12</p>
+                  <p className={`text-gray-600 dark:text-gray-400 ${isArabic ? 'font-arabic' : ''}`}>
                     {isArabic ? 'إجمالي الأعضاء' : 'Total Members'}
                   </p>
                 </div>
-                <Users className="h-6 w-6 lg:h-8 lg:w-8 text-blue-600" />
+                <Users className="h-8 w-8 text-blue-600" />
               </div>
             </CardContent>
           </Card>
           
           <Card>
-            <CardContent className="p-4 lg:p-6">
+            <CardContent className="p-6">
               <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
                 <div className={`${isArabic ? 'text-right' : ''}`}>
-                  <p className={`responsive-text-base lg:text-2xl font-bold text-green-600 ${isArabic ? 'font-arabic' : ''}`}>10</p>
-                  <p className={`text-gray-600 dark:text-gray-400 responsive-text-sm ${isArabic ? 'font-arabic' : ''}`}>
+                  <p className={`text-2xl font-bold text-green-600 ${isArabic ? 'font-arabic' : ''}`}>10</p>
+                  <p className={`text-gray-600 dark:text-gray-400 ${isArabic ? 'font-arabic' : ''}`}>
                     {isArabic ? 'نشط' : 'Active'}
                   </p>
                 </div>
@@ -130,15 +130,15 @@ const TeamManagement: React.FC = () => {
           </Card>
           
           <Card>
-            <CardContent className="p-4 lg:p-6">
+            <CardContent className="p-6">
               <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
                 <div className={`${isArabic ? 'text-right' : ''}`}>
-                  <p className={`responsive-text-base lg:text-2xl font-bold text-yellow-600 ${isArabic ? 'font-arabic' : ''}`}>2</p>
-                  <p className={`text-gray-600 dark:text-gray-400 responsive-text-sm ${isArabic ? 'font-arabic' : ''}`}>
+                  <p className={`text-2xl font-bold text-yellow-600 ${isArabic ? 'font-arabic' : ''}`}>2</p>
+                  <p className={`text-gray-600 dark:text-gray-400 ${isArabic ? 'font-arabic' : ''}`}>
                     {isArabic ? 'دعوات معلقة' : 'Pending'}
                   </p>
                 </div>
-                <Calendar className="h-6 w-6 lg:h-8 lg:w-8 text-yellow-600" />
+                <Calendar className="h-8 w-8 text-yellow-600" />
               </div>
             </CardContent>
           </Card>
@@ -147,13 +147,13 @@ const TeamManagement: React.FC = () => {
         {/* Invite New Member */}
         <Card>
           <CardHeader>
-            <CardTitle className={`flex items-center gap-3 responsive-text-base ${isArabic ? 'flex-row-reverse font-arabic' : ''}`}>
-              <UserPlus className="h-4 w-4 lg:h-5 lg:w-5" />
+            <CardTitle className={`flex items-center gap-3 ${isArabic ? 'flex-row-reverse font-arabic' : ''}`}>
+              <UserPlus className="h-5 w-5" />
               {isArabic ? 'دعوة عضو جديد' : 'Invite New Member'}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className={`flex flex-col sm:flex-row gap-4 ${isArabic ? 'sm:flex-row-reverse' : ''}`}>
+            <div className={`flex gap-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
               <Input
                 type="email"
                 placeholder={isArabic ? 'البريد الإلكتروني' : 'Email address'}
@@ -161,7 +161,7 @@ const TeamManagement: React.FC = () => {
                 onChange={(e) => setNewMemberEmail(e.target.value)}
                 className={`flex-1 ${isArabic ? 'text-right' : ''}`}
               />
-              <Button onClick={handleInviteMember} className="w-full sm:w-auto">
+              <Button onClick={handleInviteMember}>
                 <Mail className="h-4 w-4 mr-2" />
                 <span className={isArabic ? 'font-arabic' : ''}>
                   {isArabic ? 'إرسال دعوة' : 'Send Invite'}
@@ -174,30 +174,30 @@ const TeamManagement: React.FC = () => {
         {/* Team Members List */}
         <Card>
           <CardHeader>
-            <CardTitle className={`responsive-text-base ${isArabic ? 'font-arabic' : ''}`}>
+            <CardTitle className={`${isArabic ? 'font-arabic' : ''}`}>
               {isArabic ? 'أعضاء الفريق' : 'Team Members'}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {teamMembers.map((member) => (
-                <div key={member.id} className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border rounded-lg gap-4 ${isArabic ? 'sm:flex-row-reverse' : ''}`}>
+                <div key={member.id} className={`flex items-center justify-between p-4 border rounded-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
                   <div className={`flex items-center gap-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
                     <Avatar>
                       <AvatarImage src={member.avatar} />
                       <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div className={`${isArabic ? 'text-right' : ''}`}>
-                      <h3 className={`font-semibold responsive-text-sm ${isArabic ? 'font-arabic' : ''}`}>{member.name}</h3>
-                      <p className={`text-gray-600 dark:text-gray-400 responsive-text-sm ${isArabic ? 'font-arabic' : ''}`}>{member.email}</p>
+                      <h3 className={`font-semibold ${isArabic ? 'font-arabic' : ''}`}>{member.name}</h3>
+                      <p className={`text-gray-600 dark:text-gray-400 ${isArabic ? 'font-arabic' : ''}`}>{member.email}</p>
                     </div>
                   </div>
                   
-                  <div className={`flex flex-wrap items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
-                    <Badge className={`${getRoleColor(member.role)} text-white responsive-text-sm ${isArabic ? 'font-arabic' : ''}`}>
+                  <div className={`flex items-center gap-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                    <Badge className={`${getRoleColor(member.role)} text-white ${isArabic ? 'font-arabic' : ''}`}>
                       {member.role}
                     </Badge>
-                    <Badge variant={member.status === 'active' ? 'default' : 'secondary'} className="responsive-text-sm">
+                    <Badge variant={member.status === 'active' ? 'default' : 'secondary'}>
                       {member.status === 'active' 
                         ? (isArabic ? 'نشط' : 'Active')
                         : (isArabic ? 'غير نشط' : 'Inactive')
