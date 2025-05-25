@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -69,53 +68,6 @@ const Profile: React.FC = () => {
   const [activeSection, setActiveSection] = useState('profile');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [profile, setProfile] = useState<ProfileData>({
-    id: '',
-    full_name: '',
-    username: '',
-    avatar_url: '',
-    bio: '',
-    phone: '',
-    location: '',
-    company_name: '',
-    job_title: '',
-    website: '',
-    timezone: 'UTC',
-    language_preference: 'en',
-    status: 'active',
-    email: '',
-    created_at: '',
-    last_login: ''
-  });
-
-  const [settings, setSettings] = useState<Settings>({
-    emailNotifications: true,
-    pushNotifications: true,
-    marketingEmails: false,
-    twoFactorAuth: false,
-    profileVisibility: 'public',
-    dataSharing: false,
-    theme: 'light',
-    fontSize: 'medium',
-    dashboardLayout: 'default'
-  });
-
-  const [subscription, setSubscription] = useState<any>(null);
-  const [socialLinks, setSocialLinks] = useState({
-    linkedin: '',
-    twitter: '',
-    facebook: '',
-    instagram: '',
-    website: '',
-    github: ''
-  });
-
-  const [stats, setStats] = useState({
-    profileCompletion: 0,
-    totalLogins: 0,
-    lastActivity: '',
-    accountAge: 0
-  });
 
   // Menu items for sidebar navigation with proper icon imports
   const menuItems = [
@@ -356,9 +308,9 @@ const Profile: React.FC = () => {
 
   return (
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
-      <div className="container mx-auto px-4 py-8">
-        {/* Profile Header */}
-        <div className="mb-8">
+      <div className="container mx-auto px-4 py-4 sm:py-8">
+        {/* Profile Header - Responsive */}
+        <div className="mb-6 sm:mb-8">
           <ProfileHeader
             profile={profile}
             stats={stats}
@@ -368,29 +320,33 @@ const Profile: React.FC = () => {
           />
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar */}
-          <ProfileSidebar
-            profile={profile}
-            user={user}
-            subscription={subscription}
-            menuItems={menuItems}
-            activeSection={activeSection}
-            onSectionChange={setActiveSection}
-            onSignOut={handleSignOut}
-            getSubscriptionBadge={getSubscriptionBadge}
-          />
+        {/* Main Content Grid - Responsive */}
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 lg:gap-8">
+          {/* Sidebar - Full width on mobile, sidebar on desktop */}
+          <div className="xl:col-span-1">
+            <div className="lg:sticky lg:top-8">
+              <ProfileSidebar
+                profile={profile}
+                user={user}
+                subscription={subscription}
+                menuItems={menuItems}
+                activeSection={activeSection}
+                onSectionChange={setActiveSection}
+                onSignOut={handleSignOut}
+                getSubscriptionBadge={getSubscriptionBadge}
+              />
+            </div>
+          </div>
 
           {/* Main Content */}
-          <div className="lg:col-span-3">
-            <Card className="shadow-lg border-0 bg-white dark:bg-gray-900">
-              <CardHeader className="border-b">
-                <CardTitle className={`text-2xl font-bold ${isArabic ? 'text-right font-arabic' : ''}`}>
+          <div className="xl:col-span-3">
+            <Card className="shadow-sm lg:shadow-lg border-0 bg-white dark:bg-gray-900">
+              <CardHeader className="border-b p-4 sm:p-6">
+                <CardTitle className={`text-xl sm:text-2xl font-bold ${isArabic ? 'text-right font-arabic' : ''}`}>
                   {menuItems.find(item => item.id === activeSection)?.label}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-8">
+              <CardContent className="p-4 sm:p-6 lg:p-8">
                 {renderActiveSection()}
               </CardContent>
             </Card>
