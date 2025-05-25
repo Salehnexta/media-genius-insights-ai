@@ -40,6 +40,9 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
   const { language } = useLanguage();
   const isArabic = language === 'ar';
 
+  // Safely get the subscription plan name
+  const subscriptionPlanName = subscription?.subscription_plans?.name || subscription?.plan || 'free';
+
   return (
     <Card className="lg:col-span-1 h-fit">
       <CardHeader className="text-center">
@@ -56,7 +59,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
           <div className="mt-4">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Crown className="h-4 w-4 text-yellow-500" />
-              {getSubscriptionBadge(subscription.subscription_plans.name)}
+              {getSubscriptionBadge(subscriptionPlanName)}
             </div>
           </div>
         )}
