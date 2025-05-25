@@ -2,21 +2,14 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Brain, User } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Brain } from 'lucide-react';
 import LanguageToggle from '@/components/layout/LanguageToggle';
+import UserMenu from '@/components/layout/UserMenu';
 
 const DashboardHeader: React.FC = () => {
   const { user } = useAuth();
   const { language, toggleLanguage } = useLanguage();
-  const navigate = useNavigate();
   const isArabic = language === 'ar';
-
-  const handleProfileClick = () => {
-    navigate('/enhanced-profile');
-  };
 
   return (
     <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800" dir={isArabic ? 'rtl' : 'ltr'}>
@@ -36,20 +29,8 @@ const DashboardHeader: React.FC = () => {
           <div className={`flex items-center gap-4 ${isArabic ? 'order-3' : 'order-3'}`}>
             <LanguageToggle isArabic={isArabic} onToggle={toggleLanguage} />
             
-            {/* Profile Button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleProfileClick}
-              className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}
-            >
-              <Avatar className="h-8 w-8">
-                <AvatarFallback>
-                  {user?.email?.charAt(0).toUpperCase() || 'U'}
-                </AvatarFallback>
-              </Avatar>
-              <User className="h-4 w-4" />
-            </Button>
+            {/* Enhanced User Menu */}
+            <UserMenu />
           </div>
         </div>
       </div>

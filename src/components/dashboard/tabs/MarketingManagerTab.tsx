@@ -40,6 +40,24 @@ const MarketingManagerTab: React.FC = () => {
     { type: isArabic ? 'سلبي' : 'Negative', value: 10, color: '#ef4444' }
   ];
 
+  const customerWords = [
+    { word: isArabic ? 'جودة عالية' : 'excellent quality', frequency: 95, size: 32 },
+    { word: isArabic ? 'خدمة ممتازة' : 'great service', frequency: 88, size: 28 },
+    { word: isArabic ? 'سعر مناسب' : 'fair price', frequency: 82, size: 26 },
+    { word: isArabic ? 'تسليم سريع' : 'fast delivery', frequency: 76, size: 24 },
+    { word: isArabic ? 'دعم فني' : 'tech support', frequency: 70, size: 22 },
+    { word: isArabic ? 'سهولة الاستخدام' : 'user friendly', frequency: 65, size: 20 },
+    { word: isArabic ? 'موثوق' : 'reliable', frequency: 60, size: 18 },
+    { word: isArabic ? 'مفيد' : 'helpful', frequency: 55, size: 16 },
+    { word: isArabic ? 'مريح' : 'convenient', frequency: 50, size: 16 },
+    { word: isArabic ? 'مبتكر' : 'innovative', frequency: 45, size: 14 },
+    { word: isArabic ? 'آمن' : 'secure', frequency: 42, size: 14 },
+    { word: isArabic ? 'سلس' : 'smooth', frequency: 38, size: 12 },
+    { word: isArabic ? 'مميز' : 'unique', frequency: 35, size: 12 },
+    { word: isArabic ? 'واضح' : 'clear', frequency: 32, size: 12 },
+    { word: isArabic ? 'فعال' : 'effective', frequency: 28, size: 10 }
+  ];
+
   const topKeywords = [
     { word: isArabic ? 'جودة عالية' : 'High Quality', frequency: 89 },
     { word: isArabic ? 'خدمة ممتازة' : 'Excellent Service', frequency: 76 },
@@ -238,8 +256,38 @@ const MarketingManagerTab: React.FC = () => {
           </Card>
         </div>
 
-        {/* Keywords Cloud and Campaign Details */}
+        {/* Customer Words Cloud and Top Keywords */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Customer Words Cloud */}
+          <Card>
+            <CardHeader>
+              <CardTitle className={`${isArabic ? 'text-right' : 'text-left'}`}>
+                {isArabic ? 'سحابة الكلمات الأكثر ذكراً من العملاء' : 'Customer Words Cloud'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="relative h-80 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+                <div className="flex flex-wrap justify-center items-center h-full gap-2">
+                  {customerWords.map((item, index) => (
+                    <span
+                      key={index}
+                      className="cursor-pointer transition-all duration-200 hover:scale-110"
+                      style={{
+                        fontSize: `${item.size}px`,
+                        color: `hsl(${(item.frequency * 3.6)}, 70%, 50%)`,
+                        fontWeight: Math.floor(item.frequency / 20) * 100 + 400,
+                        transform: `rotate(${Math.random() * 20 - 10}deg)`,
+                      }}
+                      title={`${item.word} - ${item.frequency}% frequency`}
+                    >
+                      {item.word}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Top Keywords */}
           <Card>
             <CardHeader>
@@ -266,43 +314,43 @@ const MarketingManagerTab: React.FC = () => {
               </div>
             </CardContent>
           </Card>
-
-          {/* Campaign Performance Summary */}
-          <Card>
-            <CardHeader>
-              <CardTitle className={`${isArabic ? 'text-right' : 'text-left'}`}>
-                {isArabic ? 'ملخص أداء الحملات' : 'Campaign Performance Summary'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className={`flex justify-between items-center p-3 border rounded-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
-                  <div>
-                    <h4 className="font-semibold">{isArabic ? 'حملة الصيف 2024' : 'Summer Campaign 2024'}</h4>
-                    <p className="text-sm text-gray-600">{isArabic ? 'الميزانية: $50,000' : 'Budget: $50,000'}</p>
-                  </div>
-                  <Badge variant="secondary">ROI: 28%</Badge>
-                </div>
-                
-                <div className={`flex justify-between items-center p-3 border rounded-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
-                  <div>
-                    <h4 className="font-semibold">{isArabic ? 'حملة المنتج الجديد' : 'New Product Launch'}</h4>
-                    <p className="text-sm text-gray-600">{isArabic ? 'الميزانية: $75,000' : 'Budget: $75,000'}</p>
-                  </div>
-                  <Badge variant="secondary">ROI: 35%</Badge>
-                </div>
-                
-                <div className={`flex justify-between items-center p-3 border rounded-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
-                  <div>
-                    <h4 className="font-semibold">{isArabic ? 'حملة العلامة التجارية' : 'Brand Awareness Campaign'}</h4>
-                    <p className="text-sm text-gray-600">{isArabic ? 'الميزانية: $30,000' : 'Budget: $30,000'}</p>
-                  </div>
-                  <Badge variant="secondary">ROI: 22%</Badge>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
+
+        {/* Campaign Performance Summary */}
+        <Card>
+          <CardHeader>
+            <CardTitle className={`${isArabic ? 'text-right' : 'text-left'}`}>
+              {isArabic ? 'ملخص أداء الحملات' : 'Campaign Performance Summary'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className={`flex justify-between items-center p-3 border rounded-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
+                <div>
+                  <h4 className="font-semibold">{isArabic ? 'حملة الصيف 2024' : 'Summer Campaign 2024'}</h4>
+                  <p className="text-sm text-gray-600">{isArabic ? 'الميزانية: $50,000' : 'Budget: $50,000'}</p>
+                </div>
+                <Badge variant="secondary">ROI: 28%</Badge>
+              </div>
+              
+              <div className={`flex justify-between items-center p-3 border rounded-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
+                <div>
+                  <h4 className="font-semibold">{isArabic ? 'حملة المنتج الجديد' : 'New Product Launch'}</h4>
+                  <p className="text-sm text-gray-600">{isArabic ? 'الميزانية: $75,000' : 'Budget: $75,000'}</p>
+                </div>
+                <Badge variant="secondary">ROI: 35%</Badge>
+              </div>
+              
+              <div className={`flex justify-between items-center p-3 border rounded-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
+                <div>
+                  <h4 className="font-semibold">{isArabic ? 'حملة العلامة التجارية' : 'Brand Awareness Campaign'}</h4>
+                  <p className="text-sm text-gray-600">{isArabic ? 'الميزانية: $30,000' : 'Budget: $30,000'}</p>
+                </div>
+                <Badge variant="secondary">ROI: 22%</Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

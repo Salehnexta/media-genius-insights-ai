@@ -55,16 +55,16 @@ const Index: React.FC = () => {
       <DashboardHeader />
       
       {/* Main Content - Chat always on left regardless of language */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden" style={{ direction: 'ltr' }}>
         {/* Chat Section - Always on Left (30%) */}
         <div className="w-3/10 border-r border-gray-200 dark:border-gray-700" style={{width: '30%'}}>
-          <div className="h-full">
+          <div className="h-full" style={{ direction: isArabic ? 'rtl' : 'ltr' }}>
             <ChatSection />
           </div>
         </div>
 
         {/* Dashboard Section - Right Side (70%) */}
-        <div className="flex-1 bg-white dark:bg-gray-900">
+        <div className="flex-1 bg-white dark:bg-gray-900" style={{ direction: isArabic ? 'rtl' : 'ltr' }}>
           <div className="h-full overflow-y-auto">
             <MarketingDashboardTabs />
           </div>
