@@ -18,11 +18,9 @@ import PricingAr from "./pages/PricingAr";
 import Privacy from "./pages/Privacy";
 import PrivacyAr from "./pages/PrivacyAr";
 import Terms from "./pages/Terms";
-import TermsAr from "./pages/TermsAr";
 import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import ForgotPassword from "./pages/ForgotPassword";
-import ForgotPasswordAr from "./pages/ForgotPasswordAr";
 import TeamManagement from "./pages/TeamManagement";
 import UserManagement from "./pages/UserManagement";
 import HelpCenter from "./pages/HelpCenter";
@@ -51,7 +49,6 @@ const App = () => (
               <Route path="/auth-ar" element={<AuthAr />} />
               <Route path="/register-ar" element={<RegisterAr />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/forgot-password-ar" element={<ForgotPasswordAr />} />
               
               {/* Dashboard */}
               <Route
@@ -122,7 +119,6 @@ const App = () => (
               
               {/* Terms */}
               <Route path="/terms" element={<Terms />} />
-              <Route path="/terms-ar" element={<TermsAr />} />
               
               {/* 404 */}
               <Route path="*" element={<NotFound />} />

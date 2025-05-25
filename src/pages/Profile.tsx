@@ -1,151 +1,222 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useUserRoles } from '@/hooks/useUserRoles';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { 
+  Loader2, 
+  User, 
+  Settings, 
+  Shield, 
+  Languages, 
+  Palette, 
+  HelpCircle, 
+  FileText 
+} from 'lucide-react';
+import ProfileSidebar from '@/components/profile/ProfileSidebar';
+import ProfileHeader from '@/components/profile/ProfileHeader';
+import PersonalInfoSection from '@/components/profile/PersonalInfoSection';
+import AccountSettingsSection from '@/components/profile/AccountSettingsSection';
+import SecurityPrivacySection from '@/components/profile/SecurityPrivacySection';
+import LanguageSection from '@/components/profile/LanguageSection';
+import InterfaceCustomizationSection from '@/components/profile/InterfaceCustomizationSection';
+import HelpSupportSection from '@/components/profile/HelpSupportSection';
+import TermsConditionsSection from '@/components/profile/TermsConditionsSection';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import BreadcrumbNavigation from '@/components/layout/BreadcrumbNavigation';
-import BackButton from '@/components/layout/BackButton';
-import ProfileHeader from '@/components/profile/ProfileHeader';
-import ProfileSidebar from '@/components/profile/ProfileSidebar';
-import PersonalInfoSection from '@/components/profile/PersonalInfoSection';
-import { User, Settings, CreditCard, Shield, Bell, HelpCircle, LogOut } from 'lucide-react';
+
+interface ProfileData {
+  id: string;
+  full_name: string;
+  username: string;
+  avatar_url: string;
+  bio: string;
+  phone: string;
+  location: string;
+  company_name: string;
+  job_title: string;
+  website: string;
+  timezone: string;
+  language_preference: string;
+  status: string;
+  email: string;
+  created_at: string;
+  last_login: string;
+}
+
+interface Settings {
+  emailNotifications: boolean;
+  pushNotifications: boolean;
+  marketingEmails: boolean;
+  twoFactorAuth: boolean;
+  profileVisibility: string;
+  dataSharing: boolean;
+  theme: string;
+  fontSize: string;
+  dashboardLayout: string;
+}
 
 const Profile: React.FC = () => {
   const { user, signOut } = useAuth();
-  const { language } = useLanguage();
-  const { userRoles, isAdmin } = useUserRoles();
+  const { language, toggleLanguage } = useLanguage();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const isArabic = language === 'ar';
 
-  const [profile, setProfile] = useState<any>({
+  const [activeSection, setActiveSection] = useState('profile');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [profile, setProfile] = useState<ProfileData>({
+    id: '',
     full_name: '',
     username: '',
-    email: user?.email || '',
+    avatar_url: '',
+    bio: '',
     phone: '',
     location: '',
-    bio: '',
-    avatar_url: '',
-    cover_photo_url: '',
     company_name: '',
     job_title: '',
+    website: '',
     timezone: 'UTC',
-    language_preference: language,
-    status: 'active'
+    language_preference: 'en',
+    status: 'active',
+    email: '',
+    created_at: '',
+    last_login: ''
   });
 
-  const [socialLinks, setSocialLinks] = useState<any>({
-    linkedin: '',
-    twitter: '',
-    github: '',
-    website: ''
+  const [settings, setSettings] = useState<Settings>({
+    emailNotifications: true,
+    pushNotifications: true,
+    marketingEmails: false,
+    twoFactorAuth: false,
+    profileVisibility: 'public',
+    dataSharing: false,
+    theme: 'light',
+    fontSize: 'medium',
+    dashboardLayout: 'default'
   });
 
   const [subscription, setSubscription] = useState<any>(null);
-  const [activeSection, setActiveSection] = useState('personal');
-  const [loading, setLoading] = useState(false);
+  const [socialLinks, setSocialLinks] = useState({
+    linkedin: '',
+    twitter: '',
+    facebook: '',
+    instagram: '',
+    website: '',
+    github: ''
+  });
 
-  // Calculate profile completion and stats
-  const calculateStats = () => {
-    const fields = ['full_name', 'bio', 'company_name', 'location', 'phone'];
-    const completed = fields.filter(field => profile[field] && profile[field].trim() !== '').length;
-    const profileCompletion = Math.round((completed / fields.length) * 100);
-    
-    return {
-      profileCompletion,
-      totalConnections: 0,
-      profileViews: 0,
-      lastLoginDate: user?.last_sign_in_at ? new Date(user.last_sign_in_at) : new Date()
-    };
-  };
+  const [stats, setStats] = useState({
+    profileCompletion: 0,
+    totalLogins: 0,
+    lastActivity: '',
+    accountAge: 0
+  });
 
-  const stats = calculateStats();
-
-  // Menu items for sidebar
+  // Menu items for sidebar navigation with proper icon imports
   const menuItems = [
-    { id: 'personal', label: isArabic ? 'المعلومات الشخصية' : 'Personal Info', icon: User },
-    { id: 'settings', label: isArabic ? 'الإعدادات' : 'Settings', icon: Settings },
-    { id: 'billing', label: isArabic ? 'الفواتير' : 'Billing', icon: CreditCard },
-    { id: 'notifications', label: isArabic ? 'الإشعارات' : 'Notifications', icon: Bell },
-    { id: 'help', label: isArabic ? 'المساعدة' : 'Help & Support', icon: HelpCircle },
-    ...(isAdmin() ? [{ id: 'admin', label: isArabic ? 'إدارة النظام' : 'Admin Panel', icon: Shield }] : [])
+    {
+      id: 'profile',
+      label: isArabic ? 'الملف الشخصي' : 'Profile',
+      icon: User
+    },
+    {
+      id: 'account-settings',
+      label: isArabic ? 'إعدادات الحساب' : 'Account Settings',
+      icon: Settings
+    },
+    {
+      id: 'security-privacy',
+      label: isArabic ? 'الأمان والخصوصية' : 'Security & Privacy',
+      icon: Shield
+    },
+    {
+      id: 'language',
+      label: isArabic ? 'تغيير اللغة' : 'Language Settings',
+      icon: Languages
+    },
+    {
+      id: 'interface',
+      label: isArabic ? 'تخصيص الواجهة' : 'Interface Customization',
+      icon: Palette
+    },
+    {
+      id: 'help-support',
+      label: isArabic ? 'المساعدة والدعم' : 'Help & Support',
+      icon: HelpCircle
+    },
+    {
+      id: 'terms',
+      label: isArabic ? 'الشروط والأحكام' : 'Terms & Conditions',
+      icon: FileText
+    }
   ];
 
-  // Load profile data
   useEffect(() => {
-    const loadProfile = async () => {
-      if (!user) return;
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
 
-      try {
-        // Load profile data
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .maybeSingle();
+    loadProfileData();
+  }, [user, navigate]);
 
-        if (profileData) {
-          setProfile(prev => ({ ...prev, ...profileData }));
-        }
-
-        // Load social links
-        const { data: socialData } = await supabase
-          .from('social_links')
-          .select('*')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-        if (socialData) {
-          setSocialLinks(socialData);
-        }
-
-        // Load subscription data
-        const { data: subscriptionData } = await supabase
-          .from('user_subscriptions')
-          .select(`
-            *,
-            subscription_plans (*)
-          `)
-          .eq('user_id', user.id)
-          .eq('status', 'active')
-          .maybeSingle();
-
-        if (subscriptionData) {
-          setSubscription(subscriptionData);
-        }
-      } catch (error) {
-        console.error('Error loading profile:', error);
-      }
-    };
-
-    loadProfile();
-  }, [user]);
-
-  const handleProfileSave = async (updatedProfile: any) => {
-    if (!user) return;
-
-    setLoading(true);
+  const loadProfileData = async () => {
     try {
-      const { error } = await supabase
+      setLoading(true);
+
+      // Load profile data
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .upsert({
-          id: user.id,
-          ...updatedProfile,
-          updated_at: new Date().toISOString()
-        });
+        .select('*')
+        .eq('id', user?.id)
+        .single();
 
-      if (error) throw error;
+      if (profileError && profileError.code !== 'PGRST116') {
+        console.error('Error loading profile:', profileError);
+      }
 
-      setProfile(updatedProfile);
-      toast({
-        title: isArabic ? "تم الحفظ بنجاح" : "Profile Updated",
-        description: isArabic ? "تم حفظ معلومات الملف الشخصي بنجاح" : "Your profile has been updated successfully"
+      // Calculate profile completion
+      const completionFields = ['full_name', 'bio', 'company_name', 'location', 'phone'];
+      const completedFields = completionFields.filter(field => profileData?.[field]);
+      const completionPercentage = Math.round((completedFields.length / completionFields.length) * 100);
+
+      // Set profile data
+      setProfile({
+        id: user?.id || '',
+        full_name: profileData?.full_name || '',
+        username: profileData?.username || '',
+        avatar_url: profileData?.avatar_url || '',
+        bio: profileData?.bio || '',
+        phone: profileData?.phone || '',
+        location: profileData?.location || '',
+        company_name: profileData?.company_name || '',
+        job_title: profileData?.job_title || '',
+        website: profileData?.website || '',
+        timezone: profileData?.timezone || 'UTC',
+        language_preference: profileData?.language_preference || 'en',
+        status: profileData?.status || 'active',
+        email: user?.email || '',
+        created_at: user?.created_at || '',
+        last_login: new Date().toISOString()
       });
+
+      setStats({
+        profileCompletion: completionPercentage,
+        totalLogins: 0,
+        lastActivity: new Date().toISOString(),
+        accountAge: Math.floor((new Date().getTime() - new Date(user?.created_at || '').getTime()) / (1000 * 60 * 60 * 24))
+      });
+
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error('Error loading profile data:', error);
       toast({
         title: isArabic ? "خطأ" : "Error",
-        description: isArabic ? "حدث خطأ أثناء حفظ الملف الشخصي" : "Failed to update profile",
+        description: isArabic ? "فشل في تحميل بيانات الملف الشخصي" : "Failed to load profile data",
         variant: "destructive"
       });
     } finally {
@@ -153,103 +224,176 @@ const Profile: React.FC = () => {
     }
   };
 
-  const handleSocialLinksChange = async (updatedLinks: any) => {
-    if (!user) return;
-
+  const handleProfileSave = async (updatedProfile: Partial<ProfileData>) => {
     try {
+      setSaving(true);
+
       const { error } = await supabase
-        .from('social_links')
+        .from('profiles')
         .upsert({
-          user_id: user.id,
-          ...updatedLinks,
+          id: user?.id,
+          ...updatedProfile,
           updated_at: new Date().toISOString()
         });
 
       if (error) throw error;
 
-      setSocialLinks(updatedLinks);
+      setProfile(prev => ({ ...prev, ...updatedProfile }));
+
       toast({
-        title: isArabic ? "تم الحفظ بنجاح" : "Links Updated",
-        description: isArabic ? "تم حفظ روابط التواصل الاجتماعي بنجاح" : "Your social links have been updated successfully"
+        title: isArabic ? "تم الحفظ" : "Saved",
+        description: isArabic ? "تم حفظ التغييرات بنجاح" : "Changes saved successfully"
       });
+
     } catch (error) {
-      console.error('Error updating social links:', error);
+      console.error('Error saving profile:', error);
       toast({
         title: isArabic ? "خطأ" : "Error",
-        description: isArabic ? "حدث خطأ أثناء حفظ الروابط" : "Failed to update social links",
+        description: isArabic ? "فشل في حفظ التغييرات" : "Failed to save changes",
         variant: "destructive"
       });
+    } finally {
+      setSaving(false);
     }
   };
 
   const handleSignOut = async () => {
     try {
       await signOut();
-      toast({
-        title: isArabic ? "تم تسجيل الخروج" : "Signed Out",
-        description: isArabic ? "تم تسجيل الخروج بنجاح" : "You have been signed out successfully"
-      });
+      navigate('/auth');
     } catch (error) {
       console.error('Error signing out:', error);
     }
   };
 
   const getSubscriptionBadge = (planName: string) => {
-    const colors = {
-      'free': 'bg-gray-500',
-      'basic': 'bg-blue-500',
-      'premium': 'bg-purple-500',
-      'enterprise': 'bg-gold-500'
+    const badges = {
+      free: <Badge variant="secondary">{isArabic ? 'مجاني' : 'Free'}</Badge>,
+      pro: <Badge className="bg-blue-600">{isArabic ? 'احترافي' : 'Pro'}</Badge>,
+      enterprise: <Badge className="bg-purple-600">{isArabic ? 'مؤسسي' : 'Enterprise'}</Badge>
     };
-    
-    const color = colors[planName.toLowerCase() as keyof typeof colors] || 'bg-gray-500';
-    
-    return (
-      <span className={`px-2 py-1 rounded-full text-xs text-white ${color} ${isArabic ? 'font-arabic' : ''}`}>
-        {planName}
-      </span>
-    );
+    return badges[planName as keyof typeof badges] || badges.free;
   };
 
+  const renderActiveSection = () => {
+    switch (activeSection) {
+      case 'profile':
+        return (
+          <PersonalInfoSection
+            profile={profile}
+            socialLinks={socialLinks}
+            isArabic={isArabic}
+            onSave={handleProfileSave}
+            onSocialLinksChange={setSocialLinks}
+            loading={saving}
+          />
+        );
+      case 'account-settings':
+        return (
+          <AccountSettingsSection
+            settings={settings}
+            isArabic={isArabic}
+            onSettingsChange={setSettings}
+            onSignOut={handleSignOut}
+            loading={saving}
+          />
+        );
+      case 'security-privacy':
+        return (
+          <SecurityPrivacySection
+            settings={settings}
+            isArabic={isArabic}
+            onSettingsChange={setSettings}
+            loading={saving}
+          />
+        );
+      case 'language':
+        return (
+          <LanguageSection
+            currentLanguage={language}
+            isArabic={isArabic}
+            onLanguageChange={toggleLanguage}
+          />
+        );
+      case 'interface':
+        return (
+          <InterfaceCustomizationSection
+            settings={settings}
+            isArabic={isArabic}
+            onSettingsChange={setSettings}
+            loading={saving}
+          />
+        );
+      case 'help-support':
+        return (
+          <HelpSupportSection
+            isArabic={isArabic}
+          />
+        );
+      case 'terms':
+        return (
+          <TermsConditionsSection
+            isArabic={isArabic}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <p className="text-gray-600 dark:text-gray-300">
+            {isArabic ? 'جاري تحميل الملف الشخصي...' : 'Loading profile...'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 p-8 ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
-      <div className="max-w-6xl mx-auto space-y-8">
-        <BreadcrumbNavigation />
-        <BackButton showHome />
-        
-        <ProfileHeader 
-          profile={profile}
-          stats={stats}
-          isArabic={isArabic}
-          onSave={handleProfileSave}
-          loading={loading}
-        />
-        
-        <div className={`grid grid-cols-1 lg:grid-cols-4 gap-8 ${isArabic ? 'grid-cols-1 lg:grid-cols-4' : ''}`}>
-          <div className="lg:col-span-1">
-            <ProfileSidebar 
-              profile={profile}
-              user={user}
-              subscription={subscription}
-              menuItems={menuItems}
-              activeSection={activeSection}
-              onSectionChange={setActiveSection}
-              onSignOut={handleSignOut}
-              getSubscriptionBadge={getSubscriptionBadge}
-            />
-          </div>
+    <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
+      <div className="container mx-auto px-4 py-8">
+        {/* Profile Header */}
+        <div className="mb-8">
+          <ProfileHeader
+            profile={profile}
+            stats={stats}
+            isArabic={isArabic}
+            onSave={handleProfileSave}
+            loading={saving}
+          />
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Sidebar */}
+          <ProfileSidebar
+            profile={profile}
+            user={user}
+            subscription={subscription}
+            menuItems={menuItems}
+            activeSection={activeSection}
+            onSectionChange={setActiveSection}
+            onSignOut={handleSignOut}
+            getSubscriptionBadge={getSubscriptionBadge}
+          />
+
+          {/* Main Content */}
           <div className="lg:col-span-3">
-            {activeSection === 'personal' && (
-              <PersonalInfoSection 
-                profile={profile}
-                socialLinks={socialLinks}
-                isArabic={isArabic}
-                onSave={handleProfileSave}
-                onSocialLinksChange={handleSocialLinksChange}
-                loading={loading}
-              />
-            )}
-            {/* Other sections can be added here based on activeSection */}
+            <Card className="shadow-lg border-0 bg-white dark:bg-gray-900">
+              <CardHeader className="border-b">
+                <CardTitle className={`text-2xl font-bold ${isArabic ? 'text-right font-arabic' : ''}`}>
+                  {menuItems.find(item => item.id === activeSection)?.label}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-8">
+                {renderActiveSection()}
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

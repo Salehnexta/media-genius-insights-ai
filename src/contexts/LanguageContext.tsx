@@ -31,13 +31,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     localStorage.setItem('language', language);
     document.documentElement.lang = language;
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
-    
-    // Add Arabic font styles
-    if (language === 'ar') {
-      document.body.style.fontFamily = '"Cairo", "Noto Sans Arabic", sans-serif';
-    } else {
-      document.body.style.fontFamily = '';
-    }
   }, [language]);
 
   const toggleLanguage = () => {
@@ -71,9 +64,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   return (
     <LanguageContext.Provider value={value}>
-      <div className={language === 'ar' ? 'rtl' : 'ltr'} dir={language === 'ar' ? 'rtl' : 'ltr'}>
-        {children}
-      </div>
+      {children}
     </LanguageContext.Provider>
   );
 };

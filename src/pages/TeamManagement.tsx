@@ -1,17 +1,14 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useUserRoles } from '@/hooks/useUserRoles';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
-import BreadcrumbNavigation from '@/components/layout/BreadcrumbNavigation';
-import BackButton from '@/components/layout/BackButton';
-import RoleAssignment from '@/components/admin/RoleAssignment';
-import { Users, UserPlus, Settings, Mail, Calendar, MoreVertical, Shield } from 'lucide-react';
+import { Users, UserPlus, Settings, Mail, Calendar, MoreVertical } from 'lucide-react';
 
 interface TeamMember {
   id: string;
@@ -27,7 +24,6 @@ interface TeamMember {
 const TeamManagement: React.FC = () => {
   const { user } = useAuth();
   const { language } = useLanguage();
-  const { canManageUsers, isAdmin } = useUserRoles();
   const { toast } = useToast();
   const isArabic = language === 'ar';
   
@@ -54,29 +50,6 @@ const TeamManagement: React.FC = () => {
   
   const [newMemberEmail, setNewMemberEmail] = useState('');
   const [selectedRole, setSelectedRole] = useState('member');
-
-  // Check permissions
-  if (!canManageUsers()) {
-    return (
-      <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 p-8 ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
-        <div className="max-w-6xl mx-auto">
-          <BreadcrumbNavigation />
-          <BackButton showHome />
-          <Card>
-            <CardContent className="p-8 text-center">
-              <Shield className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h2 className={`text-xl font-semibold mb-2 ${isArabic ? 'font-arabic' : ''}`}>
-                {isArabic ? 'غير مصرح' : 'Access Denied'}
-              </h2>
-              <p className={`text-gray-600 dark:text-gray-400 ${isArabic ? 'font-arabic' : ''}`}>
-                {isArabic ? 'ليس لديك صلاحية للوصول لهذه الصفحة' : 'You do not have permission to access this page'}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
 
   const handleInviteMember = async () => {
     if (!newMemberEmail) {
@@ -113,9 +86,6 @@ const TeamManagement: React.FC = () => {
   return (
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 p-8 ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
       <div className="max-w-6xl mx-auto space-y-8">
-        <BreadcrumbNavigation />
-        <BackButton showHome />
-        
         {/* Header */}
         <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
           <div className={`${isArabic ? 'text-right' : ''}`}>
@@ -209,52 +179,34 @@ const TeamManagement: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-6">
+            <div className="space-y-4">
               {teamMembers.map((member) => (
-                <div key={member.id} className="space-y-4">
-                  <div className={`flex items-center justify-between p-4 border rounded-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
-                    <div className={`flex items-center gap-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
-                      <Avatar>
-                        <AvatarImage src={member.avatar} />
-                        <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <div className={`${isArabic ? 'text-right' : ''}`}>
-                        <h3 className={`font-semibold ${isArabic ? 'font-arabic' : ''}`}>{member.name}</h3>
-                        <p className={`text-gray-600 dark:text-gray-400 ${isArabic ? 'font-arabic' : ''}`}>{member.email}</p>
-                      </div>
-                    </div>
-                    
-                    <div className={`flex items-center gap-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
-                      <Badge className={`${getRoleColor(member.role)} text-white ${isArabic ? 'font-arabic' : ''}`}>
-                        {member.role}
-                      </Badge>
-                      <Badge variant={member.status === 'active' ? 'default' : 'secondary'}>
-                        {member.status === 'active' 
-                          ? (isArabic ? 'نشط' : 'Active')
-                          : (isArabic ? 'غير نشط' : 'Inactive')
-                        }
-                      </Badge>
-                      <Button variant="ghost" size="sm">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
+                <div key={member.id} className={`flex items-center justify-between p-4 border rounded-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
+                  <div className={`flex items-center gap-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                    <Avatar>
+                      <AvatarImage src={member.avatar} />
+                      <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div className={`${isArabic ? 'text-right' : ''}`}>
+                      <h3 className={`font-semibold ${isArabic ? 'font-arabic' : ''}`}>{member.name}</h3>
+                      <p className={`text-gray-600 dark:text-gray-400 ${isArabic ? 'font-arabic' : ''}`}>{member.email}</p>
                     </div>
                   </div>
                   
-                  {/* Role management for each member */}
-                  {isAdmin() && (
-                    <RoleAssignment
-                      targetUserId={member.id}
-                      targetUserName={member.name}
-                      currentRoles={['user']} // This would come from real data
-                      onRoleChange={() => {
-                        // Refresh team members data
-                        toast({
-                          title: isArabic ? "تم التحديث" : "Updated",
-                          description: isArabic ? "تم تحديث أدوار المستخدم" : "User roles updated"
-                        });
-                      }}
-                    />
-                  )}
+                  <div className={`flex items-center gap-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                    <Badge className={`${getRoleColor(member.role)} text-white ${isArabic ? 'font-arabic' : ''}`}>
+                      {member.role}
+                    </Badge>
+                    <Badge variant={member.status === 'active' ? 'default' : 'secondary'}>
+                      {member.status === 'active' 
+                        ? (isArabic ? 'نشط' : 'Active')
+                        : (isArabic ? 'غير نشط' : 'Inactive')
+                      }
+                    </Badge>
+                    <Button variant="ghost" size="sm">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
