@@ -51,10 +51,10 @@ const Index: React.FC = () => {
   }
 
   return (
-    <div className={`h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : 'ltr'} flex flex-col`} dir={isArabic ? 'rtl' : 'ltr'}>
+    <div className={`h-screen bg-gray-50 dark:bg-gray-950 flex flex-col`} dir={isArabic ? 'rtl' : 'ltr'}>
       <DashboardHeader />
       
-      {/* Main Content - Chat always on left, Dashboard on right */}
+      {/* Main Content - Chat always on left regardless of language */}
       <div className="flex-1 flex overflow-hidden">
         {/* Chat Section - Always on Left (30%) */}
         <div className="w-3/10 border-r border-gray-200 dark:border-gray-700" style={{width: '30%'}}>
