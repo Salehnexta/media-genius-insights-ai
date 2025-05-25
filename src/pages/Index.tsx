@@ -61,99 +61,110 @@ const Index: React.FC = () => {
   }
 
   return (
-    <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
+    <div className={`h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : 'ltr'} flex flex-col`} dir={isArabic ? 'rtl' : 'ltr'}>
       <DashboardHeader />
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Welcome Section */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              {isArabic ? 'مرحباً بك في لوحة التحكم' : 'Welcome to Your Dashboard'}
-            </h1>
-            <p className="text-gray-600 dark:text-gray-300">
-              {isArabic 
-                ? 'إدارة حسابك وإعداداتك من هنا'
-                : 'Manage your account and settings from here'
-              }
-            </p>
+      {/* Main Content - Split Layout like Lovable */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Chat Section - Left Side */}
+        <div className={`w-1/2 border-r border-gray-200 dark:border-gray-700 ${isArabic ? 'border-l border-r-0' : ''}`}>
+          <div className="h-full">
+            <ChatSection />
           </div>
+        </div>
 
-          {/* Quick Stats */}
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  {isArabic ? 'الحالة' : 'Status'}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-green-600">
-                  {isArabic ? 'نشط' : 'Active'}
+        {/* Preview/Dashboard Section - Right Side */}
+        <div className={`w-1/2 bg-white dark:bg-gray-900 ${isArabic ? 'border-r border-l-0' : ''}`}>
+          <div className="h-full overflow-y-auto p-6">
+            {/* Welcome Section */}
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                {isArabic ? 'مرحباً بك في لوحة التحكم' : 'Welcome to Your Dashboard'}
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">
+                {isArabic 
+                  ? 'إدارة حسابك وإعداداتك من هنا'
+                  : 'Manage your account and settings from here'
+                }
+              </p>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <Card className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-700">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                    {isArabic ? 'الحالة' : 'Status'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-lg font-bold text-blue-700 dark:text-blue-300">
+                    {isArabic ? 'نشط' : 'Active'}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-200 dark:border-green-700">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xs font-medium text-green-600 dark:text-green-400">
+                    {isArabic ? 'البريد الإلكتروني' : 'Email'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-sm font-medium text-green-700 dark:text-green-300 truncate">
+                    {user?.email || 'user@example.com'}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border-purple-200 dark:border-purple-700">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xs font-medium text-purple-600 dark:text-purple-400">
+                    {isArabic ? 'تاريخ الانضمام' : 'Member Since'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-sm font-medium text-purple-700 dark:text-purple-300">
+                    {user?.created_at ? new Date(user.created_at).toLocaleDateString(isArabic ? 'ar-SA' : 'en-US') : 'N/A'}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Charts Grid */}
+            <div className="space-y-4">
+              {/* Performance and Sentiment */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="min-h-[250px]">
+                  <PerformanceTrendsChart 
+                    data={overviewData} 
+                    chartConfig={chartConfig} 
+                  />
                 </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  {isArabic ? 'البريد الإلكتروني' : 'Email'}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-lg font-medium text-gray-900 dark:text-white truncate">
-                  {user.email}
+                <div className="min-h-[250px]">
+                  <SentimentAnalysisChart 
+                    data={sentimentData} 
+                    chartConfig={chartConfig} 
+                  />
                 </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  {isArabic ? 'تاريخ الانضمام' : 'Member Since'}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-lg font-medium text-gray-900 dark:text-white">
-                  {user.created_at ? new Date(user.created_at).toLocaleDateString(isArabic ? 'ar-SA' : 'en-US') : 'N/A'}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Main Content Grid */}
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Charts Section */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Performance Trends and Sentiment Analysis */}
-              <div className="grid lg:grid-cols-2 gap-6">
-                <PerformanceTrendsChart 
-                  data={overviewData} 
-                  chartConfig={chartConfig} 
-                />
-                <SentimentAnalysisChart 
-                  data={sentimentData} 
-                  chartConfig={chartConfig} 
-                />
               </div>
 
               {/* Share of Voice and Media Mentions */}
-              <div className="grid lg:grid-cols-2 gap-6">
-                <ShareOfVoiceChart 
-                  data={shareOfVoiceData} 
-                  chartConfig={chartConfig} 
-                />
-                <MediaMentionsStats />
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="min-h-[250px]">
+                  <ShareOfVoiceChart 
+                    data={shareOfVoiceData} 
+                    chartConfig={chartConfig} 
+                  />
+                </div>
+                <div className="min-h-[250px]">
+                  <MediaMentionsStats />
+                </div>
               </div>
-            </div>
-
-            {/* Chat Section */}
-            <div className="lg:col-span-1">
-              <ChatSection />
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };
