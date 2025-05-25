@@ -404,3 +404,57 @@
     order: 2 !important;
   }
 }
+
+/* Improved responsive grid layout */
+[dir="rtl"] .grid-cols-1 {
+  grid-template-columns: 1fr;
+}
+
+[dir="rtl"] .grid-cols-12 {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+/* Fix for overflow issues */
+[dir="rtl"] .overflow-x-hidden {
+  overflow-x: hidden;
+}
+
+[dir="rtl"] .overflow-x-auto {
+  overflow-x: auto;
+}
+
+/* Enhanced responsive design for RTL */
+@media (max-width: 1024px) {
+  [dir="rtl"] .lg\:col-span-4 {
+    grid-column: span 12 / span 12;
+  }
+  
+  [dir="rtl"] .lg\:grid-cols-12 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Table RTL improvements */
+[dir="rtl"] table {
+  direction: rtl;
+}
+
+[dir="rtl"] th,
+[dir="rtl"] td {
+  text-align: right;
+}
+
+/* Chart tooltip RTL */
+[dir="rtl"] .recharts-tooltip-wrapper {
+  direction: rtl;
+}
+
+[dir="rtl"] .recharts-legend-wrapper {
+  direction: rtl;
+}
+
+/* Word cloud RTL spacing */
+[dir="rtl"] .word-cloud-container {
+  direction: rtl;
+  text-align: center;
+}
