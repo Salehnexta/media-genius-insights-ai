@@ -1,162 +1,32 @@
 
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider } from '@/contexts/AuthContext';
-import { AdminProvider } from '@/contexts/AdminContext';
-import { LanguageProvider } from '@/contexts/LanguageContext';
-import Auth from '@/pages/Auth';
-import AuthAr from '@/pages/AuthAr';
-import RegisterAr from '@/pages/RegisterAr';
-import LandingPage from '@/pages/LandingPage';
-import LandingPageAr from '@/pages/LandingPageAr';
-import Pricing from '@/pages/Pricing';
-import PricingAr from '@/pages/PricingAr';
-import Privacy from '@/pages/Privacy';
-import PrivacyAr from '@/pages/PrivacyAr';
-import Terms from '@/pages/Terms';
-import Onboarding from '@/pages/Onboarding';
-import Profile from '@/pages/Profile';
-import EnhancedProfile from '@/pages/EnhancedProfile';
-import Subscription from '@/pages/Subscription';
-import SubscriptionAr from '@/pages/SubscriptionAr';
-import UnifiedDashboard from '@/pages/Agents';
-import ZapierSettings from '@/pages/ZapierSettings';
-import Debug from '@/pages/Debug';
-import NotFound from '@/pages/NotFound';
-import Admin from '@/pages/Admin';
-import ProtectedRoute from '@/components/ProtectedRoute';
+import React from "react";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Router>
-          <div className="min-h-screen bg-background">
-            <Routes>
-              {/* Main unified dashboard */}
-              <Route path="/" element={
-                <ProtectedRoute>
-                  <AdminProvider>
-                    <LanguageProvider>
-                      <UnifiedDashboard />
-                    </LanguageProvider>
-                  </AdminProvider>
-                </ProtectedRoute>
-              } />
-              
-              {/* Redirect legacy routes to main dashboard */}
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <Navigate to="/" replace />
-                </ProtectedRoute>
-              } />
-              <Route path="/agents" element={
-                <ProtectedRoute>
-                  <Navigate to="/" replace />
-                </ProtectedRoute>
-              } />
-              <Route path="/campaigns" element={
-                <ProtectedRoute>
-                  <Navigate to="/" replace />
-                </ProtectedRoute>
-              } />
-              <Route path="/insights" element={
-                <ProtectedRoute>
-                  <Navigate to="/" replace />
-                </ProtectedRoute>
-              } />
-              
-              {/* Essential standalone pages */}
-              <Route path="/auth" element={
-                <LanguageProvider>
-                  <Auth />
-                </LanguageProvider>
-              } />
-              <Route path="/auth-ar" element={<AuthAr />} />
-              <Route path="/register-ar" element={<RegisterAr />} />
-              <Route path="/landing" element={
-                <LanguageProvider>
-                  <LandingPage />
-                </LanguageProvider>
-              } />
-              <Route path="/landing-ar" element={<LandingPageAr />} />
-              <Route path="/pricing" element={
-                <LanguageProvider>
-                  <Pricing />
-                </LanguageProvider>
-              } />
-              <Route path="/pricing-ar" element={<PricingAr />} />
-              <Route path="/privacy" element={
-                <LanguageProvider>
-                  <Privacy />
-                </LanguageProvider>
-              } />
-              <Route path="/privacy-ar" element={<PrivacyAr />} />
-              <Route path="/terms" element={
-                <LanguageProvider>
-                  <Terms />
-                </LanguageProvider>
-              } />
-              <Route path="/onboarding" element={
-                <ProtectedRoute>
-                  <Onboarding />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile" element={
-                <ProtectedRoute>
-                  <LanguageProvider>
-                    <Profile />
-                  </LanguageProvider>
-                </ProtectedRoute>
-              } />
-              <Route path="/enhanced-profile" element={
-                <ProtectedRoute>
-                  <LanguageProvider>
-                    <EnhancedProfile />
-                  </LanguageProvider>
-                </ProtectedRoute>
-              } />
-              <Route path="/subscription" element={
-                <ProtectedRoute>
-                  <LanguageProvider>
-                    <Subscription />
-                  </LanguageProvider>
-                </ProtectedRoute>
-              } />
-              <Route path="/subscription-ar" element={
-                <ProtectedRoute>
-                  <SubscriptionAr />
-                </ProtectedRoute>
-              } />
-              <Route path="/zapier-settings" element={
-                <ProtectedRoute>
-                  <LanguageProvider>
-                    <ZapierSettings />
-                  </LanguageProvider>
-                </ProtectedRoute>
-              } />
-              <Route path="/debug" element={
-                <ProtectedRoute>
-                  <LanguageProvider>
-                    <Debug />
-                  </LanguageProvider>
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/*" element={<Admin />} />
-              <Route path="*" element={
-                <LanguageProvider>
-                  <NotFound />
-                </LanguageProvider>
-              } />
-            </Routes>
-          </div>
-        </Router>
-      </AuthProvider>
-    </QueryClientProvider>
-  );
-}
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <LanguageProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </LanguageProvider>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;

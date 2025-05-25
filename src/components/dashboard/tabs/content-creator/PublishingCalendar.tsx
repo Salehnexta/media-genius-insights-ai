@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,6 @@ import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ScheduledPost {
   id: number;
@@ -40,8 +38,6 @@ const PublishingCalendar: React.FC<PublishingCalendarProps> = ({
   generatedImage,
   isMobile = false
 }) => {
-  const { t } = useLanguage();
-
   const platformIcons = {
     twitter: <Twitter className="h-4 w-4 sm:h-5 sm:w-5" />,
     instagram: <Instagram className="h-4 w-4 sm:h-5 sm:w-5" />,
@@ -53,7 +49,7 @@ const PublishingCalendar: React.FC<PublishingCalendarProps> = ({
     if (!selectedDate || !generatedContent) {
       toast({
         title: "Error",
-        description: t('error.date.content'),
+        description: "Please select a date and generate content first",
         variant: "destructive"
       });
       return;
@@ -74,8 +70,8 @@ const PublishingCalendar: React.FC<PublishingCalendarProps> = ({
     }));
 
     toast({
-      title: t('success.post.scheduled'),
-      description: t('success.post.message').replace('{platform}', platform).replace('{date}', format(selectedDate, "PPP"))
+      title: "Post Scheduled",
+      description: `Your ${platform} post has been scheduled for ${format(selectedDate, "PPP")}`
     });
   };
 
@@ -84,13 +80,13 @@ const PublishingCalendar: React.FC<PublishingCalendarProps> = ({
       <CardHeader className="pb-1 sm:pb-2">
         <CardTitle className={`${isMobile ? 'text-sm' : 'text-sm sm:text-md'} font-medium flex items-center gap-2`}>
           <CalendarDays className="h-4 w-4 sm:h-5 sm:w-5" />
-          {t('content.calendar')}
+          Publishing Calendar
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="space-y-3">
-            <Label className={`${isMobile ? 'text-xs' : 'text-sm'}`}>{t('content.calendar.date')}</Label>
+            <Label className={`${isMobile ? 'text-xs' : 'text-sm'}`}>Select Publishing Date</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -101,7 +97,7 @@ const PublishingCalendar: React.FC<PublishingCalendarProps> = ({
                   )}
                 >
                   <CalendarDays className="mr-2 h-4 w-4" />
-                  {selectedDate ? format(selectedDate, "PPP") : t('content.calendar.pick')}
+                  {selectedDate ? format(selectedDate, "PPP") : "Pick a date"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -121,15 +117,15 @@ const PublishingCalendar: React.FC<PublishingCalendarProps> = ({
               className={`w-full ${isMobile ? 'text-xs' : 'text-sm'}`}
               size="sm"
             >
-              {t('content.calendar.schedule')}
+              Schedule Post
             </Button>
           </div>
           
           <div className="space-y-3">
-            <Label className={`${isMobile ? 'text-xs' : 'text-sm'}`}>{t('content.calendar.scheduled')}</Label>
+            <Label className={`${isMobile ? 'text-xs' : 'text-sm'}`}>Scheduled Posts</Label>
             <div className="max-h-32 sm:max-h-48 overflow-y-auto border rounded-md p-2">
               {Object.entries(scheduledPosts).length === 0 ? (
-                <p className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-xs sm:text-sm'}`}>{t('content.calendar.no.posts')}</p>
+                <p className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-xs sm:text-sm'}`}>No posts scheduled yet</p>
               ) : (
                 Object.entries(scheduledPosts).map(([date, posts]) => (
                   <div key={date} className="mb-3">

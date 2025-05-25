@@ -4,7 +4,6 @@ import UserInfoSection from './content-creator/UserInfoSection';
 import PublishingCalendar from './content-creator/PublishingCalendar';
 import ImageGenerator from './content-creator/ImageGenerator';
 import TextGenerator from './content-creator/TextGenerator';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ContentCreatorTabProps {
   chartConfig: any;
@@ -23,7 +22,7 @@ const ContentCreatorTab: React.FC<ContentCreatorTabProps> = ({ chartConfig }) =>
   const [platform, setPlatform] = useState("twitter");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedContent, setGeneratedContent] = useState("");
-  const isMobile = useIsMobile();
+  const [isMobile, setIsMobile] = useState(false);
   
   // Image generation states
   const [imagePrompt, setImagePrompt] = useState("");
@@ -36,9 +35,19 @@ const ContentCreatorTab: React.FC<ContentCreatorTabProps> = ({ chartConfig }) =>
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [scheduledPosts, setScheduledPosts] = useState<{[key: string]: ScheduledPost[]}>({});
 
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
-    <div className={`h-full overflow-y-auto ${isMobile ? 'px-3 py-4' : 'p-4'}`}>
-      <div className={`space-y-6 max-w-full ${isMobile ? 'space-y-4' : ''}`}>
+    <div className="p-2 sm:p-4 h-full overflow-y-auto">
+      <div className="space-y-4 sm:space-y-6 max-w-full">
         
         <UserInfoSection 
           userInfo={userInfo}
@@ -79,7 +88,6 @@ const ContentCreatorTab: React.FC<ContentCreatorTabProps> = ({ chartConfig }) =>
           generatedContent={generatedContent}
           setGeneratedContent={setGeneratedContent}
           isMobile={isMobile}
-          userInfo={userInfo}
         />
 
       </div>

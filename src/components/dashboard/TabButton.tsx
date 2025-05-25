@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 interface TabButtonProps {
   label: string;
@@ -17,8 +16,6 @@ const TabButton: React.FC<TabButtonProps> = ({
   onClick,
   isMobile = false
 }) => {
-  const { language } = useLanguage();
-  
   return (
     <button
       onClick={onClick}
@@ -29,7 +26,7 @@ const TabButton: React.FC<TabButtonProps> = ({
         ${isActive 
           ? 'text-primary border-b-2 border-primary font-medium' 
           : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'}
-        flex items-center ${language === 'ar' ? 'gap-2 flex-row-reverse' : 'gap-2'} transition-colors
+        flex items-center gap-2 transition-colors
       `}
     >
       {icon}

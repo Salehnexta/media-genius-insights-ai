@@ -3,29 +3,26 @@ import React from 'react';
 import { ChartContainer } from "@/components/ui/chart";
 import * as RechartsPrimitive from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useLanguage } from '@/contexts/LanguageContext';
 
 interface TrafficComparisonChartProps {
   chartConfig: any;
 }
 
+const competitorData = [
+  { name: 'Jan', "Your Brand": 400, "Competitor A": 240, "Competitor B": 320, "Competitor C": 180 },
+  { name: 'Feb', "Your Brand": 300, "Competitor A": 398, "Competitor B": 230, "Competitor C": 190 },
+  { name: 'Mar', "Your Brand": 200, "Competitor A": 480, "Competitor B": 270, "Competitor C": 220 },
+  { name: 'Apr', "Your Brand": 278, "Competitor A": 390, "Competitor B": 290, "Competitor C": 250 },
+  { name: 'May', "Your Brand": 189, "Competitor A": 480, "Competitor B": 310, "Competitor C": 230 },
+  { name: 'Jun', "Your Brand": 239, "Competitor A": 380, "Competitor B": 320, "Competitor C": 270 }
+];
+
 const TrafficComparisonChart: React.FC<TrafficComparisonChartProps> = ({ chartConfig }) => {
-  const { t } = useLanguage();
-
-  const competitorData = [
-    { name: t('month.jan'), [t('chart.your.brand')]: 400, [t('chart.competitor.a')]: 240, [t('chart.competitor.b')]: 320, [t('chart.competitor.c')]: 180 },
-    { name: t('month.feb'), [t('chart.your.brand')]: 300, [t('chart.competitor.a')]: 398, [t('chart.competitor.b')]: 230, [t('chart.competitor.c')]: 190 },
-    { name: t('month.mar'), [t('chart.your.brand')]: 200, [t('chart.competitor.a')]: 480, [t('chart.competitor.b')]: 270, [t('chart.competitor.c')]: 220 },
-    { name: t('month.apr'), [t('chart.your.brand')]: 278, [t('chart.competitor.a')]: 390, [t('chart.competitor.b')]: 290, [t('chart.competitor.c')]: 250 },
-    { name: t('month.may'), [t('chart.your.brand')]: 189, [t('chart.competitor.a')]: 480, [t('chart.competitor.b')]: 310, [t('chart.competitor.c')]: 230 },
-    { name: t('month.jun'), [t('chart.your.brand')]: 239, [t('chart.competitor.a')]: 380, [t('chart.competitor.b')]: 320, [t('chart.competitor.c')]: 270 }
-  ];
-
   return (
     <Card className="lg:col-span-2">
       <CardHeader className="pb-2">
         <CardTitle className="text-md font-medium flex items-center gap-2">
-          🚀 {t('chart.traffic.comparison')}
+          🚀 Traffic Growth Comparison
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -63,28 +60,28 @@ const TrafficComparisonChart: React.FC<TrafficComparisonChartProps> = ({ chartCo
             />
             <RechartsPrimitive.Area 
               type="monotone" 
-              dataKey={t('chart.your.brand')} 
+              dataKey="Your Brand" 
               stroke="#4285F4" 
               fill="url(#yourBrandGradient)"
               strokeWidth={3}
             />
             <RechartsPrimitive.Area 
               type="monotone" 
-              dataKey={t('chart.competitor.a')} 
+              dataKey="Competitor A" 
               stroke="#34A853" 
               fill="url(#competitorAGradient)"
               strokeWidth={2}
             />
             <RechartsPrimitive.Line 
               type="monotone" 
-              dataKey={t('chart.competitor.b')} 
+              dataKey="Competitor B" 
               stroke="#FBBC05"
               strokeWidth={2}
               strokeDasharray="5 5"
             />
             <RechartsPrimitive.Line 
               type="monotone" 
-              dataKey={t('chart.competitor.c')} 
+              dataKey="Competitor C" 
               stroke="#EA4335"
               strokeWidth={2}
               strokeDasharray="3 3"

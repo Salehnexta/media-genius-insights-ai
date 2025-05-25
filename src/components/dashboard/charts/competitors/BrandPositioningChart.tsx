@@ -3,20 +3,17 @@ import React from 'react';
 import { ChartContainer } from "@/components/ui/chart";
 import * as RechartsPrimitive from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useLanguage } from '@/contexts/LanguageContext';
 
 interface BrandPositioningChartProps {
   chartConfig: any;
 }
 
 const BrandPositioningChart: React.FC<BrandPositioningChartProps> = ({ chartConfig }) => {
-  const { t } = useLanguage();
-
   return (
     <Card className="w-full h-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-md font-medium flex items-center gap-2">
-          💎 {t('chart.brand.positioning')}
+          💎 Brand Positioning
         </CardTitle>
       </CardHeader>
       <CardContent className="flex justify-center items-center">
@@ -27,22 +24,22 @@ const BrandPositioningChart: React.FC<BrandPositioningChartProps> = ({ chartConf
               <RechartsPrimitive.XAxis 
                 type="number" 
                 dataKey="quality" 
-                name={t('chart.quality')}
+                name="Quality"
                 domain={[0, 10]}
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 12, fill: '#666' }}
-                label={{ value: t('chart.quality'), position: 'bottom', offset: 5 }}
+                label={{ value: 'Quality', position: 'bottom', offset: 5 }}
               />
               <RechartsPrimitive.YAxis 
                 type="number" 
                 dataKey="price" 
-                name={t('chart.price')}
+                name="Price"
                 domain={[0, 10]}
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 12, fill: '#666' }}
-                label={{ value: t('chart.price'), angle: -90, position: 'left', offset: 5 }}
+                label={{ value: 'Price', angle: -90, position: 'left', offset: 5 }}
               />
               <RechartsPrimitive.Tooltip 
                 cursor={{ strokeDasharray: '3 3' }}
@@ -54,7 +51,7 @@ const BrandPositioningChart: React.FC<BrandPositioningChartProps> = ({ chartConf
                 }}
               />
               <RechartsPrimitive.Scatter 
-                name={t('chart.your.brand')} 
+                name="Your Brand" 
                 data={[{ quality: 8.5, price: 7.2, z: 100 }]} 
                 fill="#4285F4" 
                 shape={(props) => (
@@ -69,7 +66,7 @@ const BrandPositioningChart: React.FC<BrandPositioningChartProps> = ({ chartConf
                 )}
               />
               <RechartsPrimitive.Scatter 
-                name={t('chart.competitor.a')} 
+                name="Competitor A" 
                 data={[{ quality: 7.8, price: 8.1, z: 80 }]} 
                 fill="#34A853" 
                 shape={(props) => (
@@ -84,7 +81,7 @@ const BrandPositioningChart: React.FC<BrandPositioningChartProps> = ({ chartConf
                 )}
               />
               <RechartsPrimitive.Scatter 
-                name={t('chart.competitor.b')} 
+                name="Competitor B" 
                 data={[{ quality: 6.9, price: 9.2, z: 60 }]} 
                 fill="#FBBC05" 
                 shape={(props) => (
@@ -99,7 +96,7 @@ const BrandPositioningChart: React.FC<BrandPositioningChartProps> = ({ chartConf
                 )}
               />
               <RechartsPrimitive.Scatter 
-                name={t('chart.competitor.c')} 
+                name="Competitor C" 
                 data={[{ quality: 6.2, price: 8.8, z: 40 }]} 
                 fill="#EA4335" 
                 shape={(props) => (

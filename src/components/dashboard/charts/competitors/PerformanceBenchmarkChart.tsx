@@ -3,28 +3,25 @@ import React from 'react';
 import { ChartContainer } from "@/components/ui/chart";
 import * as RechartsPrimitive from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useLanguage } from '@/contexts/LanguageContext';
 
 interface PerformanceBenchmarkChartProps {
   chartConfig: any;
 }
 
+const competitorPerformance = [
+  { metric: 'Market Share', yours: 42, competitorA: 28, competitorB: 19, competitorC: 11 },
+  { metric: 'Brand Awareness', yours: 65, competitorA: 58, competitorB: 45, competitorC: 32 },
+  { metric: 'Customer Satisfaction', yours: 8.2, competitorA: 7.8, competitorB: 7.1, competitorC: 6.9 },
+  { metric: 'Innovation Index', yours: 7.5, competitorA: 8.1, competitorB: 6.8, competitorC: 6.2 },
+  { metric: 'Price Competitiveness', yours: 6.8, competitorA: 7.2, competitorB: 8.5, competitorC: 7.9 }
+];
+
 const PerformanceBenchmarkChart: React.FC<PerformanceBenchmarkChartProps> = ({ chartConfig }) => {
-  const { t } = useLanguage();
-
-  const competitorPerformance = [
-    { metric: t('metric.market.share'), yours: 42, competitorA: 28, competitorB: 19, competitorC: 11 },
-    { metric: t('metric.brand.awareness'), yours: 65, competitorA: 58, competitorB: 45, competitorC: 32 },
-    { metric: t('metric.customer.satisfaction'), yours: 8.2, competitorA: 7.8, competitorB: 7.1, competitorC: 6.9 },
-    { metric: t('metric.innovation.index'), yours: 7.5, competitorA: 8.1, competitorB: 6.8, competitorC: 6.2 },
-    { metric: t('metric.price.competitiveness'), yours: 6.8, competitorA: 7.2, competitorB: 8.5, competitorC: 7.9 }
-  ];
-
   return (
     <Card className="lg:col-span-2">
       <CardHeader className="pb-2">
         <CardTitle className="text-md font-medium flex items-center gap-2">
-          📊 {t('chart.performance.benchmark')}
+          📊 Performance Benchmark Matrix
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -45,7 +42,7 @@ const PerformanceBenchmarkChart: React.FC<PerformanceBenchmarkChartProps> = ({ c
               domain={[0, 100]}
             />
             <RechartsPrimitive.Radar 
-              name={t('chart.your.brand')} 
+              name="Your Brand" 
               dataKey="yours" 
               stroke="#4285F4" 
               fill="#4285F4" 
@@ -53,7 +50,7 @@ const PerformanceBenchmarkChart: React.FC<PerformanceBenchmarkChartProps> = ({ c
               strokeWidth={3}
             />
             <RechartsPrimitive.Radar 
-              name={t('chart.competitor.a')} 
+              name="Competitor A" 
               dataKey="competitorA" 
               stroke="#34A853" 
               fill="#34A853" 
@@ -62,7 +59,7 @@ const PerformanceBenchmarkChart: React.FC<PerformanceBenchmarkChartProps> = ({ c
               strokeDasharray="5 5"
             />
             <RechartsPrimitive.Radar 
-              name={t('chart.competitor.b')} 
+              name="Competitor B" 
               dataKey="competitorB" 
               stroke="#FBBC05" 
               fill="#FBBC05" 
