@@ -18,9 +18,7 @@ import {
   Languages, 
   Palette, 
   HelpCircle, 
-  FileText,
-  Moon,
-  Sun
+  FileText
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -38,8 +36,15 @@ const UserMenu = () => {
   };
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate('/auth');
+    try {
+      await signOut();
+      // Force navigation to auth page
+      window.location.href = '/auth';
+    } catch (error) {
+      console.error('Error signing out:', error);
+      // Fallback navigation
+      navigate('/auth');
+    }
   };
 
   const handleProfileClick = () => {
@@ -68,7 +73,7 @@ const UserMenu = () => {
         <DropdownMenuLabel className="font-normal">
           <div className={`flex flex-col space-y-1 ${isArabic ? 'text-right' : ''}`}>
             <p className="text-sm font-medium leading-none">
-              {user.user_metadata?.full_name || isArabic ? 'المستخدم' : 'User'}
+              {user.user_metadata?.full_name || (isArabic ? 'المستخدم' : 'User')}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}

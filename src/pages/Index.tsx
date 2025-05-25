@@ -51,7 +51,7 @@ const Index: React.FC = () => {
   }
 
   return (
-    <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col`} dir={isArabic ? 'rtl' : 'ltr'}>
+    <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col desktop-layout`} dir={isArabic ? 'rtl' : 'ltr'}>
       <DashboardHeader />
       
       {/* Mobile Layout - Chat at bottom */}
@@ -62,7 +62,7 @@ const Index: React.FC = () => {
         </div>
 
         {/* Chat Section - Fixed at bottom on mobile */}
-        <div className="h-64 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+        <div className="h-64 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 mobile-chat-bottom">
           <ChatSection />
         </div>
       </div>
@@ -70,14 +70,14 @@ const Index: React.FC = () => {
       {/* Desktop/Tablet Layout - Chat always on left */}
       <div className="hidden md:flex flex-1 overflow-hidden">
         {/* Chat Section - Always on the left (not affected by RTL) */}
-        <div className="w-full md:w-2/5 lg:w-1/3 xl:w-3/10 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+        <div className="w-full md:w-2/5 lg:w-1/3 xl:w-3/10 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 desktop-chat-left chat-sidebar-container">
           <div className="h-full">
             <ChatSection />
           </div>
         </div>
 
         {/* Dashboard Section - Main content */}
-        <div className="flex-1 bg-white dark:bg-gray-900">
+        <div className="flex-1 bg-white dark:bg-gray-900 desktop-content-right">
           <div className="h-full overflow-y-auto">
             <MarketingDashboardTabs />
           </div>
