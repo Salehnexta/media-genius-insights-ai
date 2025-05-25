@@ -21,83 +21,20 @@ const AgentWorkspaceArea: React.FC<AgentWorkspaceAreaProps> = ({ selectedAgent, 
       return (
         <div className="h-full overflow-y-auto bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-950 dark:via-gray-900 dark:to-blue-950">
           <div className={`max-w-7xl mx-auto p-8 ${isArabic ? 'text-right' : ''}`} dir={isArabic ? 'rtl' : 'ltr'}>
-            {/* Hero Section */}
+            {/* Welcome Section */}
             <div className="text-center mb-16">
               <div className="w-24 h-24 mx-auto mb-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                 <Brain className="w-12 h-12 text-white" />
               </div>
               <h1 className={`text-4xl font-bold text-gray-900 dark:text-white mb-4 ${isArabic ? 'font-arabic leading-relaxed' : ''}`}>
-                {isArabic ? 'مرحباً بك في منصة التسويق الذكي' : 'Welcome to Smart Marketing Platform'}
+                {isArabic ? 'اختر وكيلاً ذكياً للبدء' : 'Select an AI Agent to Get Started'}
               </h1>
               <p className={`text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto ${isArabic ? 'leading-relaxed' : ''}`}>
                 {isArabic 
-                  ? 'اختر أحد الوكلاء الأذكياء من الشريط الجانبي لبدء رحلة التسويق الرقمي المتطورة'
-                  : 'Select one of our intelligent agents from the sidebar to begin your advanced digital marketing journey'
+                  ? 'اختر أحد الوكلاء الأذكياء من الشريط الجانبي لبدء العمل معهم'
+                  : 'Choose one of the intelligent agents from the sidebar to start working with them'
                 }
               </p>
-            </div>
-
-            {/* Features Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-              <Card className="text-center p-8 hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
-                <div className="w-16 h-16 mx-auto mb-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                  <Brain className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-                </div>
-                <h3 className={`text-xl font-semibold mb-4 text-gray-900 dark:text-white ${isArabic ? 'font-arabic' : ''}`}>
-                  {isArabic ? 'ذكاء اصطناعي متقدم' : 'Advanced AI Intelligence'}
-                </h3>
-                <p className={`text-gray-600 dark:text-gray-300 ${isArabic ? 'leading-relaxed' : ''}`}>
-                  {isArabic 
-                    ? 'تقنيات ذكية تحلل السوق وتوجه قراراتك التسويقية'
-                    : 'Smart technologies that analyze markets and guide your marketing decisions'
-                  }
-                </p>
-              </Card>
-
-              <Card className="text-center p-8 hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20">
-                <div className="w-16 h-16 mx-auto mb-6 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-                  <Target className="w-8 h-8 text-green-600 dark:text-green-400" />
-                </div>
-                <h3 className={`text-xl font-semibold mb-4 text-gray-900 dark:text-white ${isArabic ? 'font-arabic' : ''}`}>
-                  {isArabic ? 'استهداف دقيق' : 'Precise Targeting'}
-                </h3>
-                <p className={`text-gray-600 dark:text-gray-300 ${isArabic ? 'leading-relaxed' : ''}`}>
-                  {isArabic 
-                    ? 'استهدف جمهورك المثالي بدقة عالية لتحقيق أفضل النتائج'
-                    : 'Target your ideal audience with high precision for optimal results'
-                  }
-                </p>
-              </Card>
-
-              <Card className="text-center p-8 hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20">
-                <div className="w-16 h-16 mx-auto mb-6 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
-                  <BarChart3 className="w-8 h-8 text-purple-600 dark:text-purple-400" />
-                </div>
-                <h3 className={`text-xl font-semibold mb-4 text-gray-900 dark:text-white ${isArabic ? 'font-arabic' : ''}`}>
-                  {isArabic ? 'تحليلات شاملة' : 'Comprehensive Analytics'}
-                </h3>
-                <p className={`text-gray-600 dark:text-gray-300 ${isArabic ? 'leading-relaxed' : ''}`}>
-                  {isArabic 
-                    ? 'تقارير مفصلة وتحليلات متقدمة لقياس أداء حملاتك'
-                    : 'Detailed reports and advanced analytics to measure campaign performance'
-                  }
-                </p>
-              </Card>
-
-              <Card className="text-center p-8 hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20">
-                <div className="w-16 h-16 mx-auto mb-6 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center">
-                  <Zap className="w-8 h-8 text-orange-600 dark:text-orange-400" />
-                </div>
-                <h3 className={`text-xl font-semibold mb-4 text-gray-900 dark:text-white ${isArabic ? 'font-arabic' : ''}`}>
-                  {isArabic ? 'أتمتة ذكية' : 'Intelligent Automation'}
-                </h3>
-                <p className={`text-gray-600 dark:text-gray-300 ${isArabic ? 'leading-relaxed' : ''}`}>
-                  {isArabic 
-                    ? 'أتمت مهامك التسويقية ووفر الوقت والجهد'
-                    : 'Automate your marketing tasks and save time and effort'
-                  }
-                </p>
-              </Card>
             </div>
 
             {/* Dashboard Metrics Grid */}
@@ -159,10 +96,10 @@ const AgentWorkspaceArea: React.FC<AgentWorkspaceAreaProps> = ({ selectedAgent, 
               </Card>
             </div>
 
-            {/* Call to Action */}
+            {/* Getting Started Section */}
             <div className={`text-center bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-12 text-white ${isArabic ? 'font-arabic' : ''}`}>
               <h2 className={`text-3xl font-bold mb-4 ${isArabic ? 'leading-relaxed' : ''}`}>
-                {isArabic ? 'ابدأ رحلتك مع الذكاء الاصطناعي' : 'Start Your AI-Powered Journey'}
+                {isArabic ? 'ابدأ العمل مع الوكلاء الأذكياء' : 'Start Working with AI Agents'}
               </h2>
               <p className={`text-xl mb-8 opacity-90 ${isArabic ? 'leading-relaxed' : ''}`}>
                 {isArabic 

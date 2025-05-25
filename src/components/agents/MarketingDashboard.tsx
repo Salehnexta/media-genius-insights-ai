@@ -105,9 +105,9 @@ const MarketingDashboard: React.FC = () => {
   }, [selectedAgent, agents]);
 
   return (
-    <div className="flex h-[calc(100vh-4rem)]">
-      {/* Fixed Chat Sidebar - 35% */}
-      <div className="w-[35%] min-w-[400px] border-r bg-white dark:bg-gray-900">
+    <div className={`flex h-[calc(100vh-4rem)] ${isArabic ? 'flex-row-reverse' : ''}`} dir={isArabic ? 'rtl' : 'ltr'}>
+      {/* Chat Sidebar - Full left space */}
+      <div className="w-96 border-r bg-white dark:bg-gray-900 flex-shrink-0">
         <MarketingChatSidebar 
           agents={agents}
           selectedAgent={selectedAgent}
@@ -116,8 +116,8 @@ const MarketingDashboard: React.FC = () => {
         />
       </div>
 
-      {/* Dynamic Workspace Area - 65% */}
-      <div className="flex-1 bg-gray-50 dark:bg-gray-950">
+      {/* Dashboard Content - Right side */}
+      <div className="flex-1 bg-gray-50 dark:bg-gray-950 overflow-hidden">
         <AgentWorkspaceArea 
           selectedAgent={selectedAgent}
           isArabic={isArabic}

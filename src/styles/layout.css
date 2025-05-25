@@ -5,7 +5,7 @@
 }
 
 .chat-sidebar {
-  @apply w-[35%] min-w-[400px] border-r bg-white dark:bg-gray-900;
+  @apply w-96 flex-shrink-0 border-r bg-white dark:bg-gray-900;
 }
 
 .agent-workspace {
@@ -34,11 +34,11 @@
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .chat-sidebar {
-    @apply w-[40%] min-w-[350px];
+    @apply w-80;
   }
   
   .agent-workspace {
-    min-width: 60%;
+    min-width: calc(100% - 20rem);
   }
 }
 
