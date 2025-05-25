@@ -355,10 +355,10 @@ const Profile: React.FC = () => {
   }
 
   return (
-    <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
-      <div className="container mx-auto px-4 py-8">
+    <div className={`responsive-container min-h-screen bg-gray-50 dark:bg-gray-950 ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
+      <div className="container mx-auto mobile-padding tablet-padding desktop-padding">
         {/* Profile Header */}
-        <div className="mb-8">
+        <div className="mb-4 lg:mb-8">
           <ProfileHeader
             profile={profile}
             stats={stats}
@@ -369,7 +369,7 @@ const Profile: React.FC = () => {
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-8">
           {/* Sidebar */}
           <ProfileSidebar
             profile={profile}
@@ -386,11 +386,11 @@ const Profile: React.FC = () => {
           <div className="lg:col-span-3">
             <Card className="shadow-lg border-0 bg-white dark:bg-gray-900">
               <CardHeader className="border-b">
-                <CardTitle className={`text-2xl font-bold ${isArabic ? 'text-right font-arabic' : ''}`}>
+                <CardTitle className={`responsive-text-base lg:text-2xl font-bold ${isArabic ? 'text-right font-arabic' : ''}`}>
                   {menuItems.find(item => item.id === activeSection)?.label}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-8">
+              <CardContent className="mobile-padding tablet-padding desktop-padding">
                 {renderActiveSection()}
               </CardContent>
             </Card>
