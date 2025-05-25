@@ -22,8 +22,8 @@ const DashboardHeader: React.FC = () => {
     <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800" dir={isArabic ? 'rtl' : 'ltr'}>
       <div className="container mx-auto px-4">
         <div className={`flex justify-between items-center h-16`}>
-          {/* Logo - Always positioned based on language */}
-          <div className={`flex items-center gap-3 ${isArabic ? 'order-3' : 'order-1'}`}>
+          {/* Logo - Far right in Arabic, far left in English */}
+          <div className={`flex items-center gap-3 ${isArabic ? 'order-1' : 'order-1'}`}>
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <Brain className="text-white h-5 w-5" />
             </div>
@@ -32,11 +32,8 @@ const DashboardHeader: React.FC = () => {
             </span>
           </div>
 
-          {/* Center Space */}
-          <div className="order-2 flex-1"></div>
-
-          {/* Controls - Always positioned based on language */}
-          <div className={`flex items-center gap-4 ${isArabic ? 'order-1' : 'order-3'}`}>
+          {/* Controls - Far left in Arabic, far right in English */}
+          <div className={`flex items-center gap-4 ${isArabic ? 'order-3' : 'order-3'}`}>
             <LanguageToggle isArabic={isArabic} onToggle={toggleLanguage} />
             
             {/* Profile Button */}

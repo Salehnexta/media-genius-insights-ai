@@ -12,7 +12,7 @@ const AIMarketingManagerIntro: React.FC = () => {
     <div className={`space-y-4 ${isArabic ? 'rtl' : ''}`}>
       <Card className="border-blue-200 bg-blue-50 dark:bg-blue-900/20">
         <CardContent className="p-4">
-          <div className={`flex items-start gap-3 ${isArabic ? 'flex-row-reverse' : ''}`}>
+          <div className={`flex items-start gap-3 ${isArabic ? 'flex-row-reverse text-right' : ''}`}>
             <div className="p-2 bg-blue-500 text-white rounded-lg">
               <Brain className="h-5 w-5" />
             </div>
@@ -58,16 +58,16 @@ const AIMarketingManagerIntro: React.FC = () => {
             {isArabic ? 'كيف يمكنني مساعدتك اليوم؟' : 'How can I help you today?'}
           </h4>
           <div className="grid grid-cols-1 gap-2">
-            <button className={`p-2 text-left bg-gray-50 hover:bg-gray-100 rounded-lg text-sm transition-colors ${isArabic ? 'text-right' : ''}`}>
+            <button className={`p-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm transition-colors ${isArabic ? 'text-right' : 'text-left'}`}>
               {isArabic ? '📊 عرض تقرير الأداء الأسبوعي' : '📊 Show weekly performance report'}
             </button>
-            <button className={`p-2 text-left bg-gray-50 hover:bg-gray-100 rounded-lg text-sm transition-colors ${isArabic ? 'text-right' : ''}`}>
+            <button className={`p-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm transition-colors ${isArabic ? 'text-right' : 'text-left'}`}>
               {isArabic ? '🎯 تطوير استراتيجية تسويقية جديدة' : '🎯 Develop new marketing strategy'}
             </button>
-            <button className={`p-2 text-left bg-gray-50 hover:bg-gray-100 rounded-lg text-sm transition-colors ${isArabic ? 'text-right' : ''}`}>
+            <button className={`p-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm transition-colors ${isArabic ? 'text-right' : 'text-left'}`}>
               {isArabic ? '👥 تعيين مهام للفريق' : '👥 Assign tasks to team members'}
             </button>
-            <button className={`p-2 text-left bg-gray-50 hover:bg-gray-100 rounded-lg text-sm transition-colors ${isArabic ? 'text-right' : ''}`}>
+            <button className={`p-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm transition-colors ${isArabic ? 'text-right' : 'text-left'}`}>
               {isArabic ? '💡 اقتراح أفكار محتوى جديدة' : '💡 Suggest new content ideas'}
             </button>
           </div>
