@@ -42,15 +42,15 @@ const MarketingDashboardTabs: React.FC = () => {
   ];
 
   return (
-    <div className={`w-full h-full ${isArabic ? 'rtl' : ''}`}>
+    <div className={`w-full h-full dashboard-tabs`}>
       <Tabs defaultValue="marketing-manager" className="w-full h-full flex flex-col">
         <div className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-6 pt-4">
-          <TabsList className="grid w-full grid-cols-5 bg-gray-100 dark:bg-gray-800">
+          <TabsList className={`grid w-full grid-cols-5 bg-gray-100 dark:bg-gray-800 ${isArabic ? 'rtl' : ''}`}>
             {tabs.map((tab) => (
               <TabsTrigger 
                 key={tab.id} 
                 value={tab.id}
-                className={`flex items-center gap-2 text-xs ${isArabic ? 'flex-row-reverse' : ''}`}
+                className={`flex items-center gap-2 text-xs ${isArabic ? 'flex-row-reverse arabic-text' : ''}`}
               >
                 {tab.icon}
                 <span className="hidden lg:inline">{tab.label}</span>
@@ -60,23 +60,23 @@ const MarketingDashboardTabs: React.FC = () => {
         </div>
 
         <div className="flex-1 overflow-hidden">
-          <TabsContent value="marketing-manager" className="h-full m-0">
+          <TabsContent value="marketing-manager" className="h-full m-0 tab-content">
             <MarketingManagerTab />
           </TabsContent>
 
-          <TabsContent value="social-media" className="h-full m-0">
+          <TabsContent value="social-media" className="h-full m-0 tab-content">
             <SocialMediaTab />
           </TabsContent>
 
-          <TabsContent value="campaigns-performance" className="h-full m-0">
+          <TabsContent value="campaigns-performance" className="h-full m-0 tab-content">
             <CampaignsPerformanceTab />
           </TabsContent>
 
-          <TabsContent value="content-strategy" className="h-full m-0">
+          <TabsContent value="content-strategy" className="h-full m-0 tab-content">
             <ContentStrategyTab />
           </TabsContent>
 
-          <TabsContent value="seo-analytics" className="h-full m-0">
+          <TabsContent value="seo-analytics" className="h-full m-0 tab-content">
             <SEOAnalyticsTab />
           </TabsContent>
         </div>

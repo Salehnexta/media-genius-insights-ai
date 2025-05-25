@@ -57,27 +57,27 @@ const Index: React.FC = () => {
       {/* Mobile Layout - Stack vertically */}
       <div className="md:hidden flex-1 flex flex-col overflow-hidden">
         {/* Chat Section - Top on mobile */}
-        <div className="h-64 border-b border-gray-200 dark:border-gray-700" style={{ direction: isArabic ? 'rtl' : 'ltr' }}>
+        <div className="h-64 border-b border-gray-200 dark:border-gray-700">
           <ChatSection />
         </div>
 
         {/* Dashboard Section - Bottom on mobile */}
-        <div className="flex-1 bg-white dark:bg-gray-900 overflow-y-auto" style={{ direction: isArabic ? 'rtl' : 'ltr' }}>
+        <div className="flex-1 bg-white dark:bg-gray-900 overflow-y-auto">
           <MarketingDashboardTabs />
         </div>
       </div>
 
       {/* Desktop/Tablet Layout - Side by side */}
-      <div className="hidden md:flex flex-1 overflow-hidden" style={{ direction: 'ltr' }}>
-        {/* Chat Section - Left side on desktop (30%) */}
-        <div className="w-full md:w-2/5 lg:w-1/3 xl:w-3/10 border-r border-gray-200 dark:border-gray-700">
-          <div className="h-full" style={{ direction: isArabic ? 'rtl' : 'ltr' }}>
+      <div className="hidden md:flex flex-1 overflow-hidden">
+        {/* Chat Section - Positioned based on RTL/LTR */}
+        <div className={`w-full md:w-2/5 lg:w-1/3 xl:w-3/10 ${isArabic ? 'border-l' : 'border-r'} border-gray-200 dark:border-gray-700`}>
+          <div className="h-full">
             <ChatSection />
           </div>
         </div>
 
-        {/* Dashboard Section - Right side on desktop */}
-        <div className="flex-1 bg-white dark:bg-gray-900" style={{ direction: isArabic ? 'rtl' : 'ltr' }}>
+        {/* Dashboard Section - Main content */}
+        <div className="flex-1 bg-white dark:bg-gray-900">
           <div className="h-full overflow-y-auto">
             <MarketingDashboardTabs />
           </div>

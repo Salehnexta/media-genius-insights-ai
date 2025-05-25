@@ -236,3 +236,115 @@
 [dir="rtl"] .tab-trigger {
   text-align: right;
 }
+
+/* Dashboard-specific RTL fixes */
+[dir="rtl"] .dashboard-header {
+  direction: rtl;
+}
+
+[dir="rtl"] .dashboard-stats {
+  direction: rtl;
+}
+
+[dir="rtl"] .stat-card {
+  text-align: right;
+}
+
+[dir="rtl"] .stat-card .stat-icon {
+  order: 1;
+  margin-left: 0.75rem;
+  margin-right: 0;
+}
+
+[dir="rtl"] .stat-card .stat-content {
+  order: 2;
+  text-align: right;
+}
+
+/* Chat section RTL */
+[dir="rtl"] .chat-section {
+  direction: rtl;
+}
+
+[dir="rtl"] .chat-message {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] .chat-input {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Navigation RTL */
+[dir="rtl"] .nav-item {
+  direction: rtl;
+}
+
+[dir="rtl"] .nav-icon {
+  margin-left: 0.5rem;
+  margin-right: 0;
+}
+
+/* Card layouts RTL */
+[dir="rtl"] .card-header {
+  text-align: right;
+}
+
+[dir="rtl"] .card-content {
+  direction: rtl;
+}
+
+/* Charts RTL positioning */
+[dir="rtl"] .chart-container {
+  direction: ltr; /* Keep charts LTR for proper data visualization */
+}
+
+[dir="rtl"] .chart-legend {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Mobile responsive RTL */
+@media (max-width: 768px) {
+  [dir="rtl"] .mobile-nav {
+    right: 0;
+    left: auto;
+  }
+  
+  [dir="rtl"] .mobile-menu-item {
+    text-align: right;
+    direction: rtl;
+  }
+}
+
+/* Profile page RTL specific */
+[dir="rtl"] .profile-sidebar {
+  direction: rtl;
+}
+
+[dir="rtl"] .profile-nav-item {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] .profile-nav-icon {
+  margin-left: 0.75rem;
+  margin-right: 0;
+}
+
+/* Dashboard tabs RTL */
+[dir="rtl"] .dashboard-tabs {
+  direction: rtl;
+}
+
+[dir="rtl"] .tab-content {
+  direction: rtl;
+}
+
+/* Ensure proper RTL for Arabic text */
+[dir="rtl"] .arabic-text {
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  text-align: right;
+  direction: rtl;
+}
