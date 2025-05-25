@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useUserRoles } from '@/hooks/useUserRoles';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,9 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import BreadcrumbNavigation from '@/components/layout/BreadcrumbNavigation';
+import BackButton from '@/components/layout/BackButton';
+import RoleAssignment from '@/components/admin/RoleAssignment';
 import { Users, Shield, Search, Filter, UserCheck, UserX } from 'lucide-react';
 
 interface User {
@@ -25,6 +28,7 @@ interface User {
 const UserManagement: React.FC = () => {
   const { user } = useAuth();
   const { language } = useLanguage();
+  const { canManageUsers, isAdmin } = useUserRoles();
   const { toast } = useToast();
   const isArabic = language === 'ar';
   
@@ -111,9 +115,35 @@ const UserManagement: React.FC = () => {
     return matchesSearch && matchesStatus && matchesRole;
   });
 
+  // Check permissions
+  if (!canManageUsers()) {
+    return (
+      <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 p-8 ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
+        <div className="max-w-6xl mx-auto">
+          <BreadcrumbNavigation />
+          <BackButton showHome />
+          <Card>
+            <CardContent className="p-8 text-center">
+              <Shield className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <h2 className={`text-xl font-semibold mb-2 ${isArabic ? 'font-arabic' : ''}`}>
+                {isArabic ? 'غير مصرح' : 'Access Denied'}
+              </h2>
+              <p className={`text-gray-600 dark:text-gray-400 ${isArabic ? 'font-arabic' : ''}`}>
+                {isArabic ? 'ليس لديك صلاحية للوصول لهذه الصفحة' : 'You do not have permission to access this page'}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 p-8 ${isArabic ? 'rtl' : 'ltr'}`} dir={isArabic ? 'rtl' : 'ltr'}>
       <div className="max-w-6xl mx-auto space-y-8">
+        <BreadcrumbNavigation />
+        <BackButton showHome />
+        
         {/* Header */}
         <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
           <div className={`${isArabic ? 'text-right' : ''}`}>
@@ -240,46 +270,64 @@ const UserManagement: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-6">
               {filteredUsers.map((userData) => (
-                <div key={userData.id} className={`flex items-center justify-between p-4 border rounded-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
-                  <div className={`flex items-center gap-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
-                    <Avatar>
-                      <AvatarImage src={userData.avatar} />
-                      <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className={`${isArabic ? 'text-right' : ''}`}>
-                      <h3 className={`font-semibold ${isArabic ? 'font-arabic' : ''}`}>{userData.name}</h3>
-                      <p className={`text-gray-600 dark:text-gray-400 ${isArabic ? 'font-arabic' : ''}`}>{userData.email}</p>
-                      <p className={`text-sm text-gray-500 ${isArabic ? 'font-arabic' : ''}`}>
-                        {isArabic ? 'آخر دخول:' : 'Last login:'} {userData.lastLogin}
-                      </p>
+                <div key={userData.id} className="space-y-4">
+                  <div className={`flex items-center justify-between p-4 border rounded-lg ${isArabic ? 'flex-row-reverse' : ''}`}>
+                    <div className={`flex items-center gap-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                      <Avatar>
+                        <AvatarImage src={userData.avatar} />
+                        <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div className={`${isArabic ? 'text-right' : ''}`}>
+                        <h3 className={`font-semibold ${isArabic ? 'font-arabic' : ''}`}>{userData.name}</h3>
+                        <p className={`text-gray-600 dark:text-gray-400 ${isArabic ? 'font-arabic' : ''}`}>{userData.email}</p>
+                        <p className={`text-sm text-gray-500 ${isArabic ? 'font-arabic' : ''}`}>
+                          {isArabic ? 'آخر دخول:' : 'Last login:'} {userData.lastLogin}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className={`flex items-center gap-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                      <Select value={userData.role} onValueChange={(value) => handleRoleChange(userData.id, value as User['role'])}>
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="admin">{isArabic ? 'مدير' : 'Admin'}</SelectItem>
+                          <SelectItem value="manager">{isArabic ? 'مدير فرعي' : 'Manager'}</SelectItem>
+                          <SelectItem value="user">{isArabic ? 'مستخدم' : 'User'}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      
+                      <Select value={userData.status} onValueChange={(value) => handleStatusChange(userData.id, value as User['status'])}>
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="active">{isArabic ? 'نشط' : 'Active'}</SelectItem>
+                          <SelectItem value="inactive">{isArabic ? 'غير نشط' : 'Inactive'}</SelectItem>
+                          <SelectItem value="suspended">{isArabic ? 'موقوف' : 'Suspended'}</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                   
-                  <div className={`flex items-center gap-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
-                    <Select value={userData.role} onValueChange={(value) => handleRoleChange(userData.id, value as User['role'])}>
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="admin">{isArabic ? 'مدير' : 'Admin'}</SelectItem>
-                        <SelectItem value="manager">{isArabic ? 'مدير فرعي' : 'Manager'}</SelectItem>
-                        <SelectItem value="user">{isArabic ? 'مستخدم' : 'User'}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    
-                    <Select value={userData.status} onValueChange={(value) => handleStatusChange(userData.id, value as User['status'])}>
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">{isArabic ? 'نشط' : 'Active'}</SelectItem>
-                        <SelectItem value="inactive">{isArabic ? 'غير نشط' : 'Inactive'}</SelectItem>
-                        <SelectItem value="suspended">{isArabic ? 'موقوف' : 'Suspended'}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  {/* Role management for each user */}
+                  {isAdmin() && (
+                    <RoleAssignment
+                      targetUserId={userData.id}
+                      targetUserName={userData.name}
+                      currentRoles={[userData.role]} // Convert old role to new system
+                      onRoleChange={() => {
+                        // Refresh users data
+                        toast({
+                          title: isArabic ? "تم التحديث" : "Updated",
+                          description: isArabic ? "تم تحديث أدوار المستخدم" : "User roles updated"
+                        });
+                      }}
+                    />
+                  )}
                 </div>
               ))}
             </div>
