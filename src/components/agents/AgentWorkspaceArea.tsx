@@ -3,7 +3,7 @@ import React from 'react';
 import { Agent } from '../../pages/Agents';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, Users, DollarSign, Eye, MousePointer, Share2, Star, Percent } from 'lucide-react';
+import { TrendingUp, Users, DollarSign, Eye, MousePointer, Share2, Star, Percent, Brain, Target, BarChart3, Zap } from 'lucide-react';
 import MarketingManagerWorkspace from './workspaces/MarketingManagerWorkspace';
 import ContentSEOWorkspace from './workspaces/ContentSEOWorkspace';
 import SocialCreatorWorkspace from './workspaces/SocialCreatorWorkspace';
@@ -19,257 +19,160 @@ const AgentWorkspaceArea: React.FC<AgentWorkspaceAreaProps> = ({ selectedAgent, 
   const renderWorkspace = () => {
     if (!selectedAgent) {
       return (
-        <div className="h-full overflow-y-auto p-8">
-          <div className={`max-w-7xl mx-auto ${isArabic ? 'text-right' : ''}`} dir={isArabic ? 'rtl' : 'ltr'}>
-            {/* Welcome Section */}
-            <div className="mb-8">
-              <h1 className={`text-3xl font-bold text-gray-900 dark:text-white mb-2 ${isArabic ? 'font-arabic' : ''}`}>
-                {isArabic ? 'مرحباً بك في لوحة التحكم' : 'Welcome to Your Dashboard'}
+        <div className="h-full overflow-y-auto bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-950 dark:via-gray-900 dark:to-blue-950">
+          <div className={`max-w-7xl mx-auto p-8 ${isArabic ? 'text-right' : ''}`} dir={isArabic ? 'rtl' : 'ltr'}>
+            {/* Hero Section */}
+            <div className="text-center mb-16">
+              <div className="w-24 h-24 mx-auto mb-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                <Brain className="w-12 h-12 text-white" />
+              </div>
+              <h1 className={`text-4xl font-bold text-gray-900 dark:text-white mb-4 ${isArabic ? 'font-arabic leading-relaxed' : ''}`}>
+                {isArabic ? 'مرحباً بك في منصة التسويق الذكي' : 'Welcome to Smart Marketing Platform'}
               </h1>
-              <p className={`text-gray-600 dark:text-gray-300 ${isArabic ? 'leading-relaxed' : ''}`}>
-                {isArabic ? 'إليك نظرة شاملة على أداء منصتك التسويقية' : 'Here\'s a comprehensive overview of your marketing platform performance'}
+              <p className={`text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto ${isArabic ? 'leading-relaxed' : ''}`}>
+                {isArabic 
+                  ? 'اختر أحد الوكلاء الأذكياء من الشريط الجانبي لبدء رحلة التسويق الرقمي المتطورة'
+                  : 'Select one of our intelligent agents from the sidebar to begin your advanced digital marketing journey'
+                }
               </p>
             </div>
 
+            {/* Features Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+              <Card className="text-center p-8 hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
+                <div className="w-16 h-16 mx-auto mb-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                  <Brain className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className={`text-xl font-semibold mb-4 text-gray-900 dark:text-white ${isArabic ? 'font-arabic' : ''}`}>
+                  {isArabic ? 'ذكاء اصطناعي متقدم' : 'Advanced AI Intelligence'}
+                </h3>
+                <p className={`text-gray-600 dark:text-gray-300 ${isArabic ? 'leading-relaxed' : ''}`}>
+                  {isArabic 
+                    ? 'تقنيات ذكية تحلل السوق وتوجه قراراتك التسويقية'
+                    : 'Smart technologies that analyze markets and guide your marketing decisions'
+                  }
+                </p>
+              </Card>
+
+              <Card className="text-center p-8 hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20">
+                <div className="w-16 h-16 mx-auto mb-6 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                  <Target className="w-8 h-8 text-green-600 dark:text-green-400" />
+                </div>
+                <h3 className={`text-xl font-semibold mb-4 text-gray-900 dark:text-white ${isArabic ? 'font-arabic' : ''}`}>
+                  {isArabic ? 'استهداف دقيق' : 'Precise Targeting'}
+                </h3>
+                <p className={`text-gray-600 dark:text-gray-300 ${isArabic ? 'leading-relaxed' : ''}`}>
+                  {isArabic 
+                    ? 'استهدف جمهورك المثالي بدقة عالية لتحقيق أفضل النتائج'
+                    : 'Target your ideal audience with high precision for optimal results'
+                  }
+                </p>
+              </Card>
+
+              <Card className="text-center p-8 hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20">
+                <div className="w-16 h-16 mx-auto mb-6 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                  <BarChart3 className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+                </div>
+                <h3 className={`text-xl font-semibold mb-4 text-gray-900 dark:text-white ${isArabic ? 'font-arabic' : ''}`}>
+                  {isArabic ? 'تحليلات شاملة' : 'Comprehensive Analytics'}
+                </h3>
+                <p className={`text-gray-600 dark:text-gray-300 ${isArabic ? 'leading-relaxed' : ''}`}>
+                  {isArabic 
+                    ? 'تقارير مفصلة وتحليلات متقدمة لقياس أداء حملاتك'
+                    : 'Detailed reports and advanced analytics to measure campaign performance'
+                  }
+                </p>
+              </Card>
+
+              <Card className="text-center p-8 hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20">
+                <div className="w-16 h-16 mx-auto mb-6 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center">
+                  <Zap className="w-8 h-8 text-orange-600 dark:text-orange-400" />
+                </div>
+                <h3 className={`text-xl font-semibold mb-4 text-gray-900 dark:text-white ${isArabic ? 'font-arabic' : ''}`}>
+                  {isArabic ? 'أتمتة ذكية' : 'Intelligent Automation'}
+                </h3>
+                <p className={`text-gray-600 dark:text-gray-300 ${isArabic ? 'leading-relaxed' : ''}`}>
+                  {isArabic 
+                    ? 'أتمت مهامك التسويقية ووفر الوقت والجهد'
+                    : 'Automate your marketing tasks and save time and effort'
+                  }
+                </p>
+              </Card>
+            </div>
+
             {/* Dashboard Metrics Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
               {/* Total Users */}
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
+              <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+                <CardContent className="p-6">
                   <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
-                    <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                      <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <div className={isArabic ? 'text-right' : ''}>
+                      <p className="text-sm opacity-90">{isArabic ? 'إجمالي المستخدمين' : 'Total Users'}</p>
+                      <p className="text-3xl font-bold">24,567</p>
+                      <p className="text-sm opacity-75">+12% {isArabic ? 'هذا الشهر' : 'this month'}</p>
                     </div>
-                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
-                      +12%
-                    </Badge>
+                    <Users className="h-10 w-10 opacity-75" />
                   </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <h3 className={`font-semibold text-sm mb-2 ${isArabic ? 'text-right' : ''}`}>
-                    {isArabic ? 'إجمالي المستخدمين' : 'Total Users'}
-                  </h3>
-                  <div className={`text-2xl font-bold mb-1 ${isArabic ? 'text-right metric-numbers' : ''}`}>
-                    24,567
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    {isArabic ? '+12% هذا الشهر' : '+12% this month'}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {isArabic ? 'زيادة مستمرة في قاعدة المستخدمين' : 'Steady growth in user base'}
-                  </p>
                 </CardContent>
               </Card>
 
               {/* Conversion Rate */}
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
+              <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-green-500 to-green-600 text-white">
+                <CardContent className="p-6">
                   <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
-                    <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
-                      <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    <div className={isArabic ? 'text-right' : ''}>
+                      <p className="text-sm opacity-90">{isArabic ? 'معدل التحويل' : 'Conversion Rate'}</p>
+                      <p className="text-3xl font-bold">3.24%</p>
+                      <p className="text-sm opacity-75">+0.4% {isArabic ? 'من الأسبوع الماضي' : 'from last week'}</p>
                     </div>
-                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
-                      +0.4%
-                    </Badge>
+                    <TrendingUp className="h-10 w-10 opacity-75" />
                   </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <h3 className={`font-semibold text-sm mb-2 ${isArabic ? 'text-right' : ''}`}>
-                    {isArabic ? 'معدل التحويل' : 'Conversion Rate'}
-                  </h3>
-                  <div className={`text-2xl font-bold mb-1 ${isArabic ? 'text-right metric-numbers' : ''}`}>
-                    3.24%
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    {isArabic ? '+0.4% من الأسبوع الماضي' : '+0.4% from last week'}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {isArabic ? 'تحسن ملحوظ في معدل التحويل' : 'Notable improvement in conversion'}
-                  </p>
                 </CardContent>
               </Card>
 
               {/* Monthly Revenue */}
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
+              <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+                <CardContent className="p-6">
                   <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
-                    <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
-                      <DollarSign className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                    <div className={isArabic ? 'text-right' : ''}>
+                      <p className="text-sm opacity-90">{isArabic ? 'الإيرادات الشهرية' : 'Monthly Revenue'}</p>
+                      <p className="text-3xl font-bold">$123K</p>
+                      <p className="text-sm opacity-75">+8.2% {isArabic ? 'شهرياً' : 'monthly'}</p>
                     </div>
-                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
-                      +8.2%
-                    </Badge>
+                    <DollarSign className="h-10 w-10 opacity-75" />
                   </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <h3 className={`font-semibold text-sm mb-2 ${isArabic ? 'text-right' : ''}`}>
-                    {isArabic ? 'الإيرادات الشهرية' : 'Monthly Revenue'}
-                  </h3>
-                  <div className={`text-2xl font-bold mb-1 ${isArabic ? 'text-right metric-numbers' : ''}`}>
-                    {isArabic ? '١٢٣,٤٥٦ ر.س' : '$123,456'}
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    {isArabic ? '+8.2% شهرياً' : '+8.2% monthly'}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {isArabic ? 'نمو مستدام في الإيرادات' : 'Sustainable revenue growth'}
-                  </p>
-                </CardContent>
-              </Card>
-
-              {/* Page Views */}
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
-                    <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/30">
-                      <Eye className="h-5 w-5 text-orange-600 dark:text-orange-400" />
-                    </div>
-                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
-                      +15%
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <h3 className={`font-semibold text-sm mb-2 ${isArabic ? 'text-right' : ''}`}>
-                    {isArabic ? 'مشاهدات الصفحة' : 'Page Views'}
-                  </h3>
-                  <div className={`text-2xl font-bold mb-1 ${isArabic ? 'text-right metric-numbers' : ''}`}>
-                    {isArabic ? '٨٩٧,٦٥٤' : '897,654'}
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    {isArabic ? '+15% اليوم' : '+15% today'}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {isArabic ? 'زيادة في حركة الزوار' : 'Increased visitor traffic'}
-                  </p>
-                </CardContent>
-              </Card>
-
-              {/* Click Rate */}
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
-                    <div className="p-2 rounded-lg bg-pink-100 dark:bg-pink-900/30">
-                      <MousePointer className="h-5 w-5 text-pink-600 dark:text-pink-400" />
-                    </div>
-                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
-                      +2.1%
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <h3 className={`font-semibold text-sm mb-2 ${isArabic ? 'text-right' : ''}`}>
-                    {isArabic ? 'معدل النقر' : 'Click Rate'}
-                  </h3>
-                  <div className={`text-2xl font-bold mb-1 ${isArabic ? 'text-right metric-numbers' : ''}`}>
-                    5.67%
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    {isArabic ? '+2.1% هذا الأسبوع' : '+2.1% this week'}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {isArabic ? 'تفاعل أفضل مع المحتوى' : 'Better content engagement'}
-                  </p>
-                </CardContent>
-              </Card>
-
-              {/* Social Shares */}
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
-                    <div className="p-2 rounded-lg bg-indigo-100 dark:bg-indigo-900/30">
-                      <Share2 className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-                    </div>
-                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
-                      +22%
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <h3 className={`font-semibold text-sm mb-2 ${isArabic ? 'text-right' : ''}`}>
-                    {isArabic ? 'المشاركات الاجتماعية' : 'Social Shares'}
-                  </h3>
-                  <div className={`text-2xl font-bold mb-1 ${isArabic ? 'text-right metric-numbers' : ''}`}>
-                    {isArabic ? '٤٥,٢٣١' : '45,231'}
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    {isArabic ? '+22% هذا الشهر' : '+22% this month'}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {isArabic ? 'نمو قوي في التفاعل الاجتماعي' : 'Strong social engagement growth'}
-                  </p>
                 </CardContent>
               </Card>
 
               {/* Performance Score */}
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
+              <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-orange-500 to-orange-600 text-white">
+                <CardContent className="p-6">
                   <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
-                    <div className="p-2 rounded-lg bg-yellow-100 dark:bg-yellow-900/30">
-                      <Star className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+                    <div className={isArabic ? 'text-right' : ''}>
+                      <p className="text-sm opacity-90">{isArabic ? 'تقييم الأداء' : 'Performance Score'}</p>
+                      <p className="text-3xl font-bold">92/100</p>
+                      <p className="text-sm opacity-75">+5 {isArabic ? 'نقاط' : 'points'}</p>
                     </div>
-                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
-                      +5
-                    </Badge>
+                    <Star className="h-10 w-10 opacity-75" />
                   </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <h3 className={`font-semibold text-sm mb-2 ${isArabic ? 'text-right' : ''}`}>
-                    {isArabic ? 'تقييم الأداء' : 'Performance Score'}
-                  </h3>
-                  <div className={`text-2xl font-bold mb-1 ${isArabic ? 'text-right metric-numbers' : ''}`}>
-                    {isArabic ? '٩٢/١٠٠' : '92/100'}
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    {isArabic ? '+5 نقاط' : '+5 points'}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {isArabic ? 'أداء ممتاز عبر جميع المقاييس' : 'Excellent performance across metrics'}
-                  </p>
-                </CardContent>
-              </Card>
-
-              {/* Retention Rate */}
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className={`flex items-center justify-between ${isArabic ? 'flex-row-reverse' : ''}`}>
-                    <div className="p-2 rounded-lg bg-teal-100 dark:bg-teal-900/30">
-                      <Percent className="h-5 w-5 text-teal-600 dark:text-teal-400" />
-                    </div>
-                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
-                      +3.2%
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <h3 className={`font-semibold text-sm mb-2 ${isArabic ? 'text-right' : ''}`}>
-                    {isArabic ? 'معدل الاحتفاظ' : 'Retention Rate'}
-                  </h3>
-                  <div className={`text-2xl font-bold mb-1 ${isArabic ? 'text-right metric-numbers' : ''}`}>
-                    89.3%
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    {isArabic ? '+3.2% شهرياً' : '+3.2% monthly'}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {isArabic ? 'احتفاظ ممتاز بالعملاء' : 'Excellent customer retention'}
-                  </p>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Agent Selection Prompt */}
-            <div className={`text-center max-w-md mx-auto ${isArabic ? 'text-right' : ''}`}>
-              <div className="text-6xl mb-4">🤖</div>
-              <h3 className={`text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2 ${isArabic ? 'text-right' : ''}`}>
-                {isArabic ? 'اختر وكيلاً للبدء' : 'Select an Agent to Start'}
-              </h3>
-              <p className={`text-gray-500 ${isArabic ? 'text-right leading-relaxed' : ''}`}>
+            {/* Call to Action */}
+            <div className={`text-center bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-12 text-white ${isArabic ? 'font-arabic' : ''}`}>
+              <h2 className={`text-3xl font-bold mb-4 ${isArabic ? 'leading-relaxed' : ''}`}>
+                {isArabic ? 'ابدأ رحلتك مع الذكاء الاصطناعي' : 'Start Your AI-Powered Journey'}
+              </h2>
+              <p className={`text-xl mb-8 opacity-90 ${isArabic ? 'leading-relaxed' : ''}`}>
                 {isArabic 
-                  ? 'اختر وكيلاً من الشريط الجانبي الأيسر لعرض مساحة العمل المخصصة والتفاعل معه.'
-                  : 'Choose an agent from the left sidebar to view their specialized workspace and interact with them.'
+                  ? 'اختر وكيلاً ذكياً من الشريط الجانبي لتجربة مساحة العمل المخصصة'
+                  : 'Choose an intelligent agent from the sidebar to experience their specialized workspace'
                 }
               </p>
+              <div className="flex items-center justify-center">
+                <div className="text-6xl mb-4">🤖</div>
+              </div>
             </div>
           </div>
         </div>
