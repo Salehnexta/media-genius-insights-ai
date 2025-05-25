@@ -1,0 +1,131 @@
+
+/* RTL Layout Styles - Flexbox, Grid, and Positioning */
+
+/* RTL Flexbox - Enhanced */
+[dir="rtl"] .flex {
+  direction: rtl;
+}
+
+[dir="rtl"] .flex-row-reverse,
+.rtl .flex-row-reverse {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .justify-start,
+.rtl .justify-start {
+  justify-content: flex-end;
+}
+
+[dir="rtl"] .justify-end,
+.rtl .justify-end {
+  justify-content: flex-start;
+}
+
+[dir="rtl"] .justify-between,
+.rtl .justify-between {
+  justify-content: space-between;
+}
+
+/* RTL Grid Layout - Enhanced */
+[dir="rtl"] .grid,
+.rtl .grid {
+  direction: rtl;
+}
+
+[dir="rtl"] .grid-flow-col-reverse,
+.rtl .grid-flow-col-reverse {
+  grid-auto-flow: column reverse;
+}
+
+/* RTL Positioning - Enhanced */
+[dir="rtl"] .left-2,
+.rtl .left-2 {
+  left: auto;
+  right: 0.5rem;
+}
+
+[dir="rtl"] .right-2,
+.rtl .right-2 {
+  right: auto;
+  left: 0.5rem;
+}
+
+[dir="rtl"] .left-4,
+.rtl .left-4 {
+  left: auto;
+  right: 1rem;
+}
+
+[dir="rtl"] .right-4,
+.rtl .right-4 {
+  right: auto;
+  left: 1rem;
+}
+
+/* RTL Order utilities */
+[dir="rtl"] .order-first,
+.rtl .order-first {
+  order: 9999;
+}
+
+[dir="rtl"] .order-last,
+.rtl .order-last {
+  order: -9999;
+}
+
+/* RTL Borders - Enhanced */
+[dir="rtl"] .border-r,
+.rtl .border-r {
+  border-right: 0;
+  border-left: 1px solid;
+}
+
+[dir="rtl"] .border-l,
+.rtl .border-l {
+  border-left: 0;
+  border-right: 1px solid;
+}
+
+/* FORCED CHAT SIDEBAR POSITIONING - ALWAYS LEFT */
+.chat-sidebar-container {
+  order: -1 !important; /* Force to be first */
+}
+
+/* Desktop layout fixes - FORCE chat to stay left */
+@media (min-width: 769px) {
+  .desktop-layout {
+    flex-direction: row !important;
+  }
+  
+  .desktop-chat-left {
+    order: 1 !important;
+    flex-shrink: 0 !important;
+  }
+  
+  .desktop-content-right {
+    order: 2 !important;
+    flex: 1 !important;
+  }
+  
+  /* Override ALL RTL layout for desktop to keep chat on left */
+  [dir="rtl"] .desktop-layout {
+    flex-direction: row !important;
+  }
+  
+  [dir="rtl"] .desktop-chat-left {
+    order: 1 !important;
+  }
+  
+  [dir="rtl"] .desktop-content-right {
+    order: 2 !important;
+  }
+  
+  /* Force specific order values */
+  [dir="rtl"] .hidden.md\\:flex .order-1 {
+    order: 1 !important;
+  }
+  
+  [dir="rtl"] .hidden.md\\:flex .order-2 {
+    order: 2 !important;
+  }
+}

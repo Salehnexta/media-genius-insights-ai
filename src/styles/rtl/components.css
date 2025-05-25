@@ -1,0 +1,134 @@
+
+/* RTL Component Styles - Specific component RTL adaptations */
+
+/* RTL Dropdown positioning - Enhanced */
+[dir="rtl"] [data-radix-popper-content-wrapper],
+.rtl [data-radix-popper-content-wrapper] {
+  direction: rtl;
+}
+
+[dir="rtl"] .dropdown-content,
+.rtl .dropdown-content {
+  right: 0;
+  left: auto;
+}
+
+/* RTL Button groups */
+[dir="rtl"] .btn-group {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .btn-group .btn:first-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+
+[dir="rtl"] .btn-group .btn:last-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 0.375rem;
+  border-bottom-left-radius: 0.375rem;
+}
+
+/* RTL Tab Navigation */
+[dir="rtl"] .tabs-list {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .tab-trigger {
+  text-align: right;
+}
+
+/* Dashboard-specific RTL fixes */
+[dir="rtl"] .dashboard-header {
+  direction: rtl;
+}
+
+[dir="rtl"] .dashboard-stats {
+  direction: rtl;
+}
+
+[dir="rtl"] .stat-card {
+  text-align: right;
+}
+
+[dir="rtl"] .stat-card .stat-icon {
+  order: 1;
+  margin-left: 0.75rem;
+  margin-right: 0;
+}
+
+[dir="rtl"] .stat-card .stat-content {
+  order: 2;
+  text-align: right;
+}
+
+/* Chat section RTL */
+[dir="rtl"] .chat-section {
+  direction: rtl;
+}
+
+[dir="rtl"] .chat-message {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] .chat-input {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Navigation RTL */
+[dir="rtl"] .nav-item {
+  direction: rtl;
+}
+
+[dir="rtl"] .nav-icon {
+  margin-left: 0.5rem;
+  margin-right: 0;
+}
+
+/* Card layouts RTL */
+[dir="rtl"] .card-header {
+  text-align: right;
+}
+
+[dir="rtl"] .card-content {
+  direction: rtl;
+}
+
+/* Charts RTL positioning */
+[dir="rtl"] .chart-container {
+  direction: ltr; /* Keep charts LTR for proper data visualization */
+}
+
+[dir="rtl"] .chart-legend {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Profile page RTL specific */
+[dir="rtl"] .profile-sidebar {
+  direction: rtl;
+}
+
+[dir="rtl"] .profile-nav-item {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] .profile-nav-icon {
+  margin-left: 0.75rem;
+  margin-right: 0;
+}
+
+/* Dashboard tabs RTL */
+[dir="rtl"] .dashboard-tabs {
+  direction: rtl;
+}
+
+[dir="rtl"] .tab-content {
+  direction: rtl;
+}

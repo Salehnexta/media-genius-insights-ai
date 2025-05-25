@@ -1,0 +1,48 @@
+
+/* RTL Base Styles - Core direction and text alignment */
+
+/* Enhanced RTL Support */
+[dir="rtl"], .rtl {
+  direction: rtl;
+}
+
+[dir="ltr"], .ltr {
+  direction: ltr;
+}
+
+/* RTL Text Alignment - Enhanced */
+[dir="rtl"] .text-left,
+.rtl .text-left {
+  text-align: right;
+}
+
+[dir="rtl"] .text-right,
+.rtl .text-right {
+  text-align: left;
+}
+
+[dir="rtl"] .text-center,
+.rtl .text-center {
+  text-align: center;
+}
+
+/* RTL Form elements - Enhanced */
+[dir="rtl"] input,
+[dir="rtl"] textarea,
+[dir="rtl"] select {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] input::placeholder,
+[dir="rtl"] textarea::placeholder {
+  text-align: right;
+  direction: rtl;
+}
+
+/* Ensure proper RTL for Arabic text */
+[dir="rtl"] .arabic-text {
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  text-align: right;
+  direction: rtl;
+}
