@@ -146,7 +146,7 @@ const Profile: React.FC = () => {
     renewalDate: ''
   });
 
-  // Menu items for sidebar navigation with proper icon imports
+  // Menu items for sidebar navigation with proper icon types
   const menuItems = [
     {
       id: 'profile',
