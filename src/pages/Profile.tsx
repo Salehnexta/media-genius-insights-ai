@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -58,6 +59,26 @@ interface Settings {
   dashboardLayout: string;
 }
 
+interface Stats {
+  profileCompletion: number;
+  totalLogins: number;
+  lastActivity: string;
+  accountAge: number;
+}
+
+interface Subscription {
+  plan: string;
+  status: string;
+  renewalDate: string;
+}
+
+interface SocialLinks {
+  twitter: string;
+  linkedin: string;
+  instagram: string;
+  facebook: string;
+}
+
 const Profile: React.FC = () => {
   const { user, signOut } = useAuth();
   const { language, toggleLanguage } = useLanguage();
@@ -68,6 +89,62 @@ const Profile: React.FC = () => {
   const [activeSection, setActiveSection] = useState('profile');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  // Profile state
+  const [profile, setProfile] = useState<ProfileData>({
+    id: '',
+    full_name: '',
+    username: '',
+    avatar_url: '',
+    bio: '',
+    phone: '',
+    location: '',
+    company_name: '',
+    job_title: '',
+    website: '',
+    timezone: 'UTC',
+    language_preference: 'en',
+    status: 'active',
+    email: '',
+    created_at: '',
+    last_login: ''
+  });
+
+  // Stats state
+  const [stats, setStats] = useState<Stats>({
+    profileCompletion: 0,
+    totalLogins: 0,
+    lastActivity: '',
+    accountAge: 0
+  });
+
+  // Settings state
+  const [settings, setSettings] = useState<Settings>({
+    emailNotifications: true,
+    pushNotifications: true,
+    marketingEmails: false,
+    twoFactorAuth: false,
+    profileVisibility: 'public',
+    dataSharing: false,
+    theme: 'system',
+    fontSize: 'medium',
+    dashboardLayout: 'default'
+  });
+
+  // Social links state
+  const [socialLinks, setSocialLinks] = useState<SocialLinks>({
+    twitter: '',
+    linkedin: '',
+    instagram: '',
+    facebook: ''
+  });
+
+  // Subscription state
+  const [subscription, setSubscription] = useState<Subscription>({
+    plan: 'free',
+    status: 'active',
+    renewalDate: ''
+  });
 
   // Menu items for sidebar navigation with proper icon imports
   const menuItems = [
