@@ -4,8 +4,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
+import ChatSection from '@/components/dashboard/ChatSection';
 import { Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getChartConfig, getOverviewData, getSentimentData, getShareOfVoiceData } from '@/components/dashboard/ChartConfig';
+import PerformanceTrendsChart from '@/components/dashboard/charts/PerformanceTrendsChart';
+import SentimentAnalysisChart from '@/components/dashboard/charts/SentimentAnalysisChart';
+import ShareOfVoiceChart from '@/components/dashboard/charts/ShareOfVoiceChart';
+import MediaMentionsStats from '@/components/dashboard/charts/MediaMentionsStats';
 
 const Index: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
@@ -13,6 +19,11 @@ const Index: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const isArabic = language === 'ar';
+
+  const chartConfig = getChartConfig();
+  const overviewData = getOverviewData();
+  const sentimentData = getSentimentData();
+  const shareOfVoiceData = getShareOfVoiceData();
 
   useEffect(() => {
     console.log('Auth loading:', authLoading);
@@ -54,7 +65,7 @@ const Index: React.FC = () => {
       <DashboardHeader />
       
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           {/* Welcome Section */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
@@ -110,22 +121,37 @@ const Index: React.FC = () => {
             </Card>
           </div>
 
-          {/* Main Content */}
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {isArabic ? 'لوحة التحكم الرئيسية' : 'Main Dashboard'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 dark:text-gray-300">
-                {isArabic 
-                  ? 'مرحباً بك في منصة التسويق الذكي. يمكنك من هنا إدارة حسابك والوصول إلى جميع الخدمات المتاحة.'
-                  : 'Welcome to the AI Marketing Platform. From here you can manage your account and access all available services.'
-                }
-              </p>
-            </CardContent>
-          </Card>
+          {/* Main Content Grid */}
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Charts Section */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Performance Trends and Sentiment Analysis */}
+              <div className="grid lg:grid-cols-2 gap-6">
+                <PerformanceTrendsChart 
+                  data={overviewData} 
+                  chartConfig={chartConfig} 
+                />
+                <SentimentAnalysisChart 
+                  data={sentimentData} 
+                  chartConfig={chartConfig} 
+                />
+              </div>
+
+              {/* Share of Voice and Media Mentions */}
+              <div className="grid lg:grid-cols-2 gap-6">
+                <ShareOfVoiceChart 
+                  data={shareOfVoiceData} 
+                  chartConfig={chartConfig} 
+                />
+                <MediaMentionsStats />
+              </div>
+            </div>
+
+            {/* Chat Section */}
+            <div className="lg:col-span-1">
+              <ChatSection />
+            </div>
+          </div>
         </div>
       </main>
     </div>
