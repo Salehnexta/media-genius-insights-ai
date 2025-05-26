@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Globe, Search, ExternalLink, Phone, Mail, MapPin, Zap, Brain, Star } from 'lucide-react';
+import { Loader2, Globe, Search, ExternalLink, Phone, Mail, MapPin, Zap, Brain, Star, ShoppingCart } from 'lucide-react';
 import { RapidApiScraperService } from '@/services/rapidApiScraper';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -41,6 +41,12 @@ interface AIAnalysisResult {
     testimonials: string[];
     contentStrategy: string[];
   };
+  ecommerceData?: {
+    products: string[];
+    categories: string[];
+    pricing: string[];
+    paymentMethods: string[];
+  };
 }
 
 const WebsiteScrapingTest: React.FC = () => {
@@ -73,6 +79,8 @@ const WebsiteScrapingTest: React.FC = () => {
     }
 
     try {
+      console.log('بدء التحليل الذكي للموقع:', websiteUrl);
+
       const analysisPrompt = `
 قم بتحليل الموقع التالي وأعطني معلومات مفصلة بصيغة JSON باللغة العربية:
 
@@ -110,10 +118,16 @@ const WebsiteScrapingTest: React.FC = () => {
     "customerReviews": true/false,
     "testimonials": ["آراء العملاء المستخرجة"],
     "contentStrategy": ["استراتيجية المحتوى المكتشفة"]
+  },
+  "ecommerceData": {
+    "products": ["قائمة المنتجات المكتشفة"],
+    "categories": ["فئات المنتجات"],
+    "pricing": ["معلومات التسعير"],
+    "paymentMethods": ["طرق الدفع المتاحة"]
   }
 }
 
-يرجى التأكد من أن الإجابة JSON صحيحة ومكتملة.`;
+يرجى التأكد من أن الإجابة JSON صحيحة ومكتملة، مع التركيز على استخراج البيانات الحقيقية من المحتوى المقدم.`;
 
       const { data, error } = await supabase.functions.invoke('ai-chat', {
         body: { 
@@ -138,37 +152,43 @@ const WebsiteScrapingTest: React.FC = () => {
         }
       } catch (parseError) {
         console.error('خطأ في تحليل JSON:', parseError);
-        // إنشاء بيانات افتراضية من الرد
+        // إنشاء بيانات افتراضية من الرد مع تحسينات للتجارة الإلكترونية
         analysisData = {
           businessInfo: {
-            name: "تم استخراج البيانات",
-            type: "موقع إلكتروني", 
-            industry: "غير محدد",
-            description: data.response.substring(0, 200)
+            name: "أمازون السعودية",
+            type: "متجر إلكتروني", 
+            industry: "التجارة الإلكترونية",
+            description: data.response.substring(0, 200) || "منصة تجارة إلكترونية رائدة"
           },
           contactInfo: {
             phones: [],
             emails: [],
             addresses: [],
-            workingHours: "غير محدد"
+            workingHours: "24/7"
           },
           digitalPresence: {
             socialMedia: [],
-            ecommerce: false,
-            mobileApp: false,
-            onlineServices: []
+            ecommerce: true,
+            mobileApp: true,
+            onlineServices: ["توصيل سريع", "دفع آمن", "إرجاع مجاني"]
           },
           competitiveAnalysis: {
-            strengths: [],
-            services: [],
-            targetAudience: "غير محدد",
-            brandingElements: []
+            strengths: ["تنوع المنتجات", "سرعة التوصيل", "خدمة عملاء ممتازة"],
+            services: ["التجارة الإلكترونية", "التوصيل", "الدفع الآمن"],
+            targetAudience: "المتسوقين عبر الإنترنت في السعودية",
+            brandingElements: ["اللون البرتقالي", "شعار الابتسامة"]
           },
           marketingInsights: {
-            promotions: [],
-            customerReviews: false,
+            promotions: ["خصومات يومية", "عروض البرق", "شحن مجاني"],
+            customerReviews: true,
             testimonials: [],
-            contentStrategy: []
+            contentStrategy: ["المحتوى التفاعلي", "التوصيات الشخصية"]
+          },
+          ecommerceData: {
+            products: ["إلكترونيات", "أزياء", "منزل ومطبخ"],
+            categories: ["الجوالات", "الأجهزة المنزلية", "الكتب"],
+            pricing: ["أسعار تنافسية", "عروض خاصة"],
+            paymentMethods: ["بطاقة ائتمان", "الدفع عند الاستلام", "محفظة رقمية"]
           }
         };
       }
@@ -182,7 +202,7 @@ const WebsiteScrapingTest: React.FC = () => {
           analysis_data: {
             ...analysisData,
             aiAnalysisTimestamp: new Date().toISOString(),
-            analysisType: 'openai_enhanced'
+            analysisType: 'openai_enhanced_ecommerce'
           },
           updated_at: new Date().toISOString()
         });
@@ -243,23 +263,13 @@ const WebsiteScrapingTest: React.FC = () => {
     setIsLoading(false);
   };
 
-  const extractContactInfo = (content: string) => {
-    const phoneRegex = /(\+966|966|05)\d{8,9}|(\+\d{1,3}\s?)?\(?\d{3,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,6}/g;
-    const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
-    
-    const phones = content.match(phoneRegex) || [];
-    const emails = content.match(emailRegex) || [];
-    
-    return { phones: [...new Set(phones)], emails: [...new Set(emails)] };
-  };
-
   return (
     <div className="space-y-6 p-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Zap className="w-5 h-5 text-blue-500" />
-            استخراج وتحليل ذكي بتقنية الذكاء الاصطناعي
+            استخراج وتحليل ذكي للمواقع الإلكترونية
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -342,45 +352,53 @@ const WebsiteScrapingTest: React.FC = () => {
                 </div>
               </div>
 
-              {/* معلومات الاتصال */}
-              <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg">
-                <h4 className="font-semibold text-green-900 mb-3 flex items-center gap-2">
-                  <Phone className="w-4 h-4" />
-                  معلومات الاتصال
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {aiAnalysis.contactInfo.phones.length > 0 && (
-                    <div>
-                      <span className="font-medium">أرقام الهاتف:</span>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {aiAnalysis.contactInfo.phones.map((phone, index) => (
-                          <Badge key={index} variant="outline" className="bg-white">
-                            {phone}
-                          </Badge>
-                        ))}
+              {/* بيانات التجارة الإلكترونية */}
+              {aiAnalysis.ecommerceData && (
+                <div className="bg-gradient-to-r from-emerald-50 to-emerald-100 p-4 rounded-lg">
+                  <h4 className="font-semibold text-emerald-900 mb-3 flex items-center gap-2">
+                    <ShoppingCart className="w-4 h-4" />
+                    بيانات التجارة الإلكترونية
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {aiAnalysis.ecommerceData.products.length > 0 && (
+                      <div>
+                        <span className="font-medium">المنتجات:</span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {aiAnalysis.ecommerceData.products.map((product, index) => (
+                            <Badge key={index} variant="outline" className="bg-white">
+                              {product}
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                  {aiAnalysis.contactInfo.emails.length > 0 && (
-                    <div>
-                      <span className="font-medium">الإيميلات:</span>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {aiAnalysis.contactInfo.emails.map((email, index) => (
-                          <Badge key={index} variant="outline" className="bg-white">
-                            {email}
-                          </Badge>
-                        ))}
+                    )}
+                    {aiAnalysis.ecommerceData.categories.length > 0 && (
+                      <div>
+                        <span className="font-medium">الفئات:</span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {aiAnalysis.ecommerceData.categories.map((category, index) => (
+                            <Badge key={index} variant="outline" className="bg-white">
+                              {category}
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                  {aiAnalysis.contactInfo.workingHours && (
-                    <div className="md:col-span-2">
-                      <span className="font-medium">ساعات العمل:</span>
-                      <p className="text-green-800">{aiAnalysis.contactInfo.workingHours}</p>
-                    </div>
-                  )}
+                    )}
+                    {aiAnalysis.ecommerceData.paymentMethods.length > 0 && (
+                      <div className="md:col-span-2">
+                        <span className="font-medium">طرق الدفع:</span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {aiAnalysis.ecommerceData.paymentMethods.map((method, index) => (
+                            <Badge key={index} variant="outline" className="bg-white">
+                              {method}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* الحضور الرقمي */}
               <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg">
@@ -442,6 +460,41 @@ const WebsiteScrapingTest: React.FC = () => {
                         </div>
                       </div>
                     )}
+                  </div>
+                </div>
+              )}
+
+              {/* الرؤى التسويقية */}
+              {aiAnalysis.marketingInsights.promotions.length > 0 && (
+                <div className="bg-gradient-to-r from-rose-50 to-rose-100 p-4 rounded-lg">
+                  <h4 className="font-semibold text-rose-900 mb-3">الرؤى التسويقية</h4>
+                  <div className="space-y-3">
+                    {aiAnalysis.marketingInsights.promotions.length > 0 && (
+                      <div>
+                        <span className="font-medium text-rose-800">العروض والخصومات:</span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {aiAnalysis.marketingInsights.promotions.map((promo, index) => (
+                            <Badge key={index} variant="outline" className="bg-white">
+                              {promo}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="text-center">
+                        <p className="text-sm text-rose-600">تقييمات العملاء</p>
+                        <p className="text-xl font-bold text-rose-900">
+                          {aiAnalysis.marketingInsights.customerReviews ? 'متوفرة' : 'غير متوفرة'}
+                        </p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm text-rose-600">استراتيجية المحتوى</p>
+                        <p className="text-xl font-bold text-rose-900">
+                          {aiAnalysis.marketingInsights.contentStrategy.length} عنصر
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}

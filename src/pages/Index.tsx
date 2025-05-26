@@ -7,7 +7,8 @@ import DataStatusChecker from "@/components/debug/DataStatusChecker";
 
 const Index = () => {
   const { user, loading } = useAuth();
-  const { isArabic } = useLanguage();
+  const { language } = useLanguage();
+  const isArabic = language === 'ar';
 
   if (loading) {
     return (
@@ -49,7 +50,13 @@ const Index = () => {
           <DataStatusChecker />
         </div>
         
-        <DashboardLayoutWrapper />
+        <DashboardLayoutWrapper>
+          <div className="p-4">
+            <p className="text-center text-gray-600">
+              {isArabic ? "مرحباً بك في لوحة التحكم" : "Welcome to your dashboard"}
+            </p>
+          </div>
+        </DashboardLayoutWrapper>
       </div>
     </div>
   );
