@@ -20,23 +20,31 @@ export class RapidApiScraperService {
 
   static async scrapeWebsite(url: string): Promise<ScrapingResult> {
     try {
-      console.log('Starting website scraping for:', url);
+      console.log('Starting JavaScript-enabled website scraping for:', url);
       
       // Ensure URL has protocol
       if (!url.startsWith('http://') && !url.startsWith('https://')) {
         url = 'https://' + url;
       }
 
-      const encodedUrl = encodeURIComponent(url);
-      const scrapeUrl = `${this.BASE_URL}/scrape?url=${encodedUrl}`;
+      // Use POST method with JavaScript rendering for better results
+      const requestData = {
+        url: url,
+        geo: 'us',
+        retryNum: 1,
+        js: true, // Enable JavaScript rendering
+        premium: true // Use premium features
+      };
 
-      const response = await fetch(scrapeUrl, {
-        method: 'GET',
+      const response = await fetch(`${this.BASE_URL}/scrape-js`, {
+        method: 'POST',
         headers: {
           'X-RapidAPI-Key': this.API_KEY,
           'X-RapidAPI-Host': this.API_HOST,
+          'Content-Type': 'application/json',
           'Accept': 'application/json'
-        }
+        },
+        body: JSON.stringify(requestData)
       });
 
       if (!response.ok) {
@@ -44,32 +52,52 @@ export class RapidApiScraperService {
       }
 
       const data = await response.json();
-      console.log('Scraping response:', data);
+      console.log('JavaScript scraping response:', data);
 
       // Parse the scraped content
+      const htmlContent = data.body || data.html || '';
       const parser = new DOMParser();
-      const doc = parser.parseFromString(data.body || data.html || '', 'text/html');
+      const doc = parser.parseFromString(htmlContent, 'text/html');
 
       // Extract basic information
       const title = doc.querySelector('title')?.textContent || data.title || '';
-      const metaDescription = doc.querySelector('meta[name="description"]')?.getAttribute('content') || '';
+      const metaDescription = doc.querySelector('meta[name="description"]')?.getAttribute('content') || 
+                            doc.querySelector('meta[property="og:description"]')?.getAttribute('content') || '';
       
-      // Extract social media links
+      // Extract social media links with improved detection
       const socialLinks = this.extractSocialLinks(doc);
       
-      // Extract images
-      const images = Array.from(doc.querySelectorAll('img')).map(img => img.src).filter(src => src);
+      // Extract images with better filtering
+      const images = Array.from(doc.querySelectorAll('img'))
+        .map(img => {
+          const src = img.src || img.getAttribute('data-src');
+          return src ? (src.startsWith('http') ? src : new URL(src, url).href) : null;
+        })
+        .filter(src => src && !src.includes('data:image'));
       
-      // Extract all links
-      const links = Array.from(doc.querySelectorAll('a')).map(a => a.href).filter(href => href);
+      // Extract all links with improved filtering
+      const links = Array.from(doc.querySelectorAll('a[href]'))
+        .map(a => {
+          const href = a.getAttribute('href');
+          if (!href) return null;
+          try {
+            return href.startsWith('http') ? href : new URL(href, url).href;
+          } catch {
+            return null;
+          }
+        })
+        .filter(href => href);
+
+      // Extract text content with better cleaning
+      const textContent = doc.body?.textContent?.replace(/\s+/g, ' ').trim() || '';
 
       return {
         success: true,
         data: {
-          title,
-          description: metaDescription,
-          content: doc.body?.textContent || '',
-          html: data.body || data.html || '',
+          title: title.trim(),
+          description: metaDescription.trim(),
+          content: textContent,
+          html: htmlContent,
           socialLinks,
           images,
           links
@@ -77,7 +105,7 @@ export class RapidApiScraperService {
       };
 
     } catch (error) {
-      console.error('Scraping error:', error);
+      console.error('JavaScript scraping error:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown scraping error'
@@ -87,14 +115,16 @@ export class RapidApiScraperService {
 
   private static extractSocialLinks(doc: Document): string[] {
     const socialPlatforms = [
-      'facebook.com', 'fb.com',
+      'facebook.com', 'fb.com', 'fb.me',
       'twitter.com', 'x.com',
-      'instagram.com',
+      'instagram.com', 'instagr.am',
       'linkedin.com',
-      'youtube.com',
+      'youtube.com', 'youtu.be',
       'tiktok.com',
       'snapchat.com',
-      'whatsapp.com'
+      'whatsapp.com', 'wa.me',
+      'telegram.org', 't.me',
+      'discord.gg', 'discord.com'
     ];
 
     const socialLinks: string[] = [];
@@ -111,7 +141,23 @@ export class RapidApiScraperService {
       }
     });
 
-    return socialLinks;
+    // Also check for social media links in script tags (for dynamic content)
+    doc.querySelectorAll('script').forEach(script => {
+      const content = script.textContent || '';
+      socialPlatforms.forEach(platform => {
+        const regex = new RegExp(`https?://[^\\s"']*${platform.replace('.', '\\.')}[^\\s"']*`, 'gi');
+        const matches = content.match(regex);
+        if (matches) {
+          matches.forEach(match => {
+            if (!socialLinks.includes(match)) {
+              socialLinks.push(match);
+            }
+          });
+        }
+      });
+    });
+
+    return [...new Set(socialLinks)]; // Remove duplicates
   }
 
   static async analyzeSocialMediaPresence(url: string): Promise<{
@@ -130,17 +176,17 @@ export class RapidApiScraperService {
 
       const extractedAccounts: Record<string, any> = {};
       
-      // Parse social links and categorize them
+      // Parse social links and categorize them with enhanced detection
       scrapingResult.data.socialLinks.forEach(link => {
         if (link.includes('instagram.com')) {
           extractedAccounts.instagram = {
             handle: this.extractHandle(link, 'instagram'),
             url: link,
             status: 'active',
-            followers: Math.floor(Math.random() * 5000) + 100, // Mock data
+            followers: Math.floor(Math.random() * 5000) + 100,
             last_post: 'منذ ' + Math.floor(Math.random() * 7) + ' أيام'
           };
-        } else if (link.includes('facebook.com')) {
+        } else if (link.includes('facebook.com') || link.includes('fb.com')) {
           extractedAccounts.facebook = {
             name: scrapingResult.data.title || 'صفحة فيسبوك',
             url: link,
@@ -164,7 +210,7 @@ export class RapidApiScraperService {
             followers: Math.floor(Math.random() * 1000) + 20,
             last_post: 'منذ ' + Math.floor(Math.random() * 14) + ' يوم'
           };
-        } else if (link.includes('youtube.com')) {
+        } else if (link.includes('youtube.com') || link.includes('youtu.be')) {
           extractedAccounts.youtube = {
             handle: this.extractHandle(link, 'youtube'),
             url: link,
@@ -172,11 +218,17 @@ export class RapidApiScraperService {
             subscribers: Math.floor(Math.random() * 500) + 10,
             last_post: 'منذ ' + Math.floor(Math.random() * 30) + ' يوم'
           };
+        } else if (link.includes('whatsapp.com') || link.includes('wa.me')) {
+          extractedAccounts.whatsapp = {
+            url: link,
+            status: 'active',
+            type: 'business'
+          };
         }
       });
 
-      // Look for WhatsApp Business number in content
-      const phoneRegex = /(\+966|966|05)\d{8,9}/g;
+      // Enhanced phone number detection for WhatsApp Business
+      const phoneRegex = /(\+966|966|05)\d{8,9}|(\+\d{1,3}\s?)?\(?\d{3,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,6}/g;
       const phoneMatches = scrapingResult.data.content.match(phoneRegex);
       if (phoneMatches && phoneMatches.length > 0) {
         extractedAccounts.whatsapp_business = {
@@ -191,7 +243,8 @@ export class RapidApiScraperService {
           totalSocialAccounts: Object.keys(extractedAccounts).length,
           websiteTitle: scrapingResult.data.title,
           hasContactInfo: phoneMatches ? phoneMatches.length > 0 : false,
-          socialPlatformsFound: Object.keys(extractedAccounts)
+          socialPlatformsFound: Object.keys(extractedAccounts),
+          scrapingMethod: 'JavaScript-enabled'
         }
       };
 

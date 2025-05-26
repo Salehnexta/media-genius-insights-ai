@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Globe, Search, ExternalLink, Phone, Mail, MapPin } from 'lucide-react';
+import { Loader2, Globe, Search, ExternalLink, Phone, Mail, MapPin, Zap } from 'lucide-react';
 import { RapidApiScraperService } from '@/services/rapidApiScraper';
 
 const WebsiteScrapingTest: React.FC = () => {
@@ -30,9 +29,9 @@ const WebsiteScrapingTest: React.FC = () => {
     setSocialAnalysis(null);
     
     try {
-      console.log('بدء اختبار الـ scraping للموقع:', url);
+      console.log('بدء اختبار الـ JavaScript scraping للموقع:', url);
       
-      // اختبار الـ scraping الأساسي
+      // اختبار الـ scraping المحسن
       const basicResult = await RapidApiScraperService.scrapeWebsite(url);
       setScrapingResult(basicResult);
       
@@ -63,8 +62,8 @@ const WebsiteScrapingTest: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Globe className="w-5 h-5" />
-            استخراج معلومات موقع NBT Digital
+            <Zap className="w-5 h-5 text-blue-500" />
+            استخراج معلومات محسّن بتقنية JavaScript
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -85,14 +84,18 @@ const WebsiteScrapingTest: React.FC = () => {
               ) : (
                 <Search className="w-4 h-4" />
               )}
-              تحليل
+              تحليل محسّن
             </Button>
           </div>
           
           {isLoading && (
             <div className="text-center py-4">
-              <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
-              <p>جاري تحليل موقع NBT Digital...</p>
+              <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2 text-blue-500" />
+              <p>جاري التحليل المحسّن للموقع باستخدام JavaScript...</p>
+              <Badge variant="outline" className="mt-2">
+                <Zap className="w-3 h-3 mr-1" />
+                تقنية JavaScript متقدمة
+              </Badge>
             </div>
           )}
         </CardContent>
@@ -102,20 +105,29 @@ const WebsiteScrapingTest: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              معلومات الموقع الأساسية
+              معلومات الموقع المستخرجة
               <Badge variant={scrapingResult.success ? "default" : "destructive"}>
-                {scrapingResult.success ? "تم الاستخراج" : "فشل"}
+                {scrapingResult.success ? "تم الاستخراج بنجاح" : "فشل"}
               </Badge>
+              {scrapingResult.success && (
+                <Badge variant="outline" className="bg-blue-50">
+                  <Zap className="w-3 h-3 mr-1" />
+                  JavaScript
+                </Badge>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent>
             {scrapingResult.success ? (
               <div className="space-y-6">
-                {/* معلومات أساسية */}
+                {/* معلومات أساسية محسّنة */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-3">
                     <div>
-                      <h4 className="font-semibold text-lg mb-2">عنوان الموقع</h4>
+                      <h4 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                        <Globe className="w-4 h-4" />
+                        عنوان الموقع
+                      </h4>
                       <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">
                         {scrapingResult.data?.title || 'غير متوفر'}
                       </p>
@@ -129,7 +141,7 @@ const WebsiteScrapingTest: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* معلومات الاتصال */}
+                  {/* معلومات الاتصال المحسّنة */}
                   <div className="space-y-3">
                     <h4 className="font-semibold text-lg mb-2">معلومات الاتصال</h4>
                     {(() => {
@@ -142,11 +154,13 @@ const WebsiteScrapingTest: React.FC = () => {
                                 <Phone className="w-4 h-4 text-green-600" />
                                 <span className="font-medium text-green-800">أرقام الهاتف</span>
                               </div>
-                              {contactInfo.phones.map((phone, index) => (
-                                <Badge key={index} variant="outline" className="mr-2 mb-1">
-                                  {phone}
-                                </Badge>
-                              ))}
+                              <div className="flex flex-wrap gap-2">
+                                {contactInfo.phones.map((phone, index) => (
+                                  <Badge key={index} variant="outline" className="bg-white">
+                                    {phone}
+                                  </Badge>
+                                ))}
+                              </div>
                             </div>
                           )}
                           
@@ -156,12 +170,18 @@ const WebsiteScrapingTest: React.FC = () => {
                                 <Mail className="w-4 h-4 text-blue-600" />
                                 <span className="font-medium text-blue-800">البريد الإلكتروني</span>
                               </div>
-                              {contactInfo.emails.map((email, index) => (
-                                <Badge key={index} variant="outline" className="mr-2 mb-1">
-                                  {email}
-                                </Badge>
-                              ))}
+                              <div className="flex flex-wrap gap-2">
+                                {contactInfo.emails.map((email, index) => (
+                                  <Badge key={index} variant="outline" className="bg-white">
+                                    {email}
+                                  </Badge>
+                                ))}
+                              </div>
                             </div>
+                          )}
+                          
+                          {contactInfo.phones.length === 0 && contactInfo.emails.length === 0 && (
+                            <p className="text-gray-500 text-center py-4">لم يتم العثور على معلومات اتصال واضحة</p>
                           )}
                         </div>
                       );
@@ -169,18 +189,18 @@ const WebsiteScrapingTest: React.FC = () => {
                   </div>
                 </div>
 
-                {/* روابط السوشال ميديا */}
+                {/* روابط السوشال ميديا المحسّنة */}
                 <div>
                   <h4 className="font-semibold text-lg mb-3">حسابات التواصل الاجتماعي</h4>
                   <div className="bg-purple-50 p-4 rounded-lg">
                     {scrapingResult.data?.socialLinks?.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {scrapingResult.data.socialLinks.map((link: string, index: number) => (
-                          <div key={index} className="flex items-center gap-2 p-2 bg-white rounded border">
+                          <div key={index} className="flex items-center gap-2 p-3 bg-white rounded border shadow-sm">
                             <ExternalLink className="w-4 h-4 text-purple-600" />
                             <a href={link} target="_blank" rel="noopener noreferrer" 
-                               className="text-purple-700 hover:text-purple-900 text-sm truncate flex-1">
-                              {link}
+                               className="text-purple-700 hover:text-purple-900 text-sm truncate flex-1 font-medium">
+                              {link.replace('https://', '').replace('http://', '')}
                             </a>
                           </div>
                         ))}
@@ -191,23 +211,29 @@ const WebsiteScrapingTest: React.FC = () => {
                   </div>
                 </div>
 
-                {/* إحصائيات الموقع */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-gray-50 p-4 rounded-lg text-center">
-                    <h5 className="font-medium text-gray-600">إجمالي الروابط</h5>
-                    <p className="text-2xl font-bold text-gray-900">
+                {/* إحصائيات الموقع المحسّنة */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg text-center">
+                    <h5 className="font-medium text-blue-600">الروابط</h5>
+                    <p className="text-2xl font-bold text-blue-900">
                       {scrapingResult.data?.links?.length || 0}
                     </p>
                   </div>
-                  <div className="bg-gray-50 p-4 rounded-lg text-center">
-                    <h5 className="font-medium text-gray-600">الصور</h5>
-                    <p className="text-2xl font-bold text-gray-900">
+                  <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg text-center">
+                    <h5 className="font-medium text-green-600">الصور</h5>
+                    <p className="text-2xl font-bold text-green-900">
                       {scrapingResult.data?.images?.length || 0}
                     </p>
                   </div>
-                  <div className="bg-gray-50 p-4 rounded-lg text-center">
-                    <h5 className="font-medium text-gray-600">حجم المحتوى</h5>
-                    <p className="text-2xl font-bold text-gray-900">
+                  <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg text-center">
+                    <h5 className="font-medium text-purple-600">سوشال ميديا</h5>
+                    <p className="text-2xl font-bold text-purple-900">
+                      {scrapingResult.data?.socialLinks?.length || 0}
+                    </p>
+                  </div>
+                  <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-4 rounded-lg text-center">
+                    <h5 className="font-medium text-orange-600">حجم المحتوى</h5>
+                    <p className="text-2xl font-bold text-orange-900">
                       {scrapingResult.data?.content ? `${Math.round(scrapingResult.data.content.length / 1000)}K` : '0K'}
                     </p>
                   </div>
@@ -215,7 +241,7 @@ const WebsiteScrapingTest: React.FC = () => {
               </div>
             ) : (
               <div className="text-center py-8">
-                <p className="text-red-600">خطأ: {scrapingResult.error}</p>
+                <p className="text-red-600 font-medium">خطأ: {scrapingResult.error}</p>
                 <p className="text-gray-500 mt-2">تأكد من صحة الرابط وأن الموقع متاح</p>
               </div>
             )}
@@ -226,7 +252,13 @@ const WebsiteScrapingTest: React.FC = () => {
       {socialAnalysis && (
         <Card>
           <CardHeader>
-            <CardTitle>تحليل الحضور الرقمي</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Badge variant="outline" className="bg-yellow-50">
+                <Zap className="w-3 h-3 mr-1" />
+                تحليل محسّن
+              </Badge>
+              تحليل الحضور الرقمي
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
