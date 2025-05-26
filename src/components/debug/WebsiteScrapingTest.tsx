@@ -1,19 +1,60 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Globe, Search, ExternalLink, Phone, Mail, MapPin, Zap } from 'lucide-react';
+import { Loader2, Globe, Search, ExternalLink, Phone, Mail, MapPin, Zap, Brain, Star } from 'lucide-react';
 import { RapidApiScraperService } from '@/services/rapidApiScraper';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
+
+interface AIAnalysisResult {
+  businessInfo: {
+    name: string;
+    type: string;
+    industry: string;
+    description: string;
+  };
+  contactInfo: {
+    phones: string[];
+    emails: string[];
+    addresses: string[];
+    workingHours: string;
+  };
+  digitalPresence: {
+    socialMedia: string[];
+    ecommerce: boolean;
+    mobileApp: boolean;
+    onlineServices: string[];
+  };
+  competitiveAnalysis: {
+    strengths: string[];
+    services: string[];
+    targetAudience: string;
+    brandingElements: string[];
+  };
+  marketingInsights: {
+    promotions: string[];
+    customerReviews: boolean;
+    testimonials: string[];
+    contentStrategy: string[];
+  };
+}
 
 const WebsiteScrapingTest: React.FC = () => {
-  const [url, setUrl] = useState('https://nbtdigital.com/');
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [url, setUrl] = useState('https://www.amazon.sa/');
   const [isLoading, setIsLoading] = useState(false);
+  const [isAnalyzingWithAI, setIsAnalyzingWithAI] = useState(false);
   const [scrapingResult, setScrapingResult] = useState<any>(null);
   const [socialAnalysis, setSocialAnalysis] = useState<any>(null);
+  const [aiAnalysis, setAiAnalysis] = useState<AIAnalysisResult | null>(null);
   const [autoStarted, setAutoStarted] = useState(false);
 
-  // Auto-start scraping for nbtdigital.com
+  // Auto-start scraping for amazon.sa
   useEffect(() => {
     if (!autoStarted) {
       setAutoStarted(true);
@@ -21,26 +62,181 @@ const WebsiteScrapingTest: React.FC = () => {
     }
   }, []);
 
+  const analyzeWithOpenAI = async (scrapedContent: string, websiteUrl: string) => {
+    if (!user) {
+      toast({
+        title: "خطأ في المصادقة",
+        description: "يرجى تسجيل الدخول أولاً",
+        variant: "destructive"
+      });
+      return null;
+    }
+
+    try {
+      const analysisPrompt = `
+قم بتحليل الموقع التالي وأعطني معلومات مفصلة بصيغة JSON باللغة العربية:
+
+الموقع: ${websiteUrl}
+المحتوى المستخرج: ${scrapedContent.substring(0, 4000)}
+
+أريد التحليل في الشكل التالي بدقة:
+{
+  "businessInfo": {
+    "name": "اسم الشركة أو الموقع",
+    "type": "نوع العمل (متجر إلكتروني، شركة خدمات، إلخ)",
+    "industry": "القطاع (تجارة إلكترونية، تقنية، إلخ)",
+    "description": "وصف مختصر للعمل"
+  },
+  "contactInfo": {
+    "phones": ["قائمة أرقام الهاتف المستخرجة"],
+    "emails": ["قائمة الإيميلات المستخرجة"],
+    "addresses": ["قائمة العناوين المستخرجة"],
+    "workingHours": "ساعات العمل إن وجدت"
+  },
+  "digitalPresence": {
+    "socialMedia": ["قائمة حسابات السوشال ميديا المكتشفة"],
+    "ecommerce": true/false,
+    "mobileApp": true/false,
+    "onlineServices": ["قائمة الخدمات الرقمية المتاحة"]
+  },
+  "competitiveAnalysis": {
+    "strengths": ["نقاط القوة المكتشفة"],
+    "services": ["قائمة الخدمات أو المنتجات"],
+    "targetAudience": "الجمهور المستهدف",
+    "brandingElements": ["عناصر الهوية التجارية"]
+  },
+  "marketingInsights": {
+    "promotions": ["العروض والخصومات المكتشفة"],
+    "customerReviews": true/false,
+    "testimonials": ["آراء العملاء المستخرجة"],
+    "contentStrategy": ["استراتيجية المحتوى المكتشفة"]
+  }
+}
+
+يرجى التأكد من أن الإجابة JSON صحيحة ومكتملة.`;
+
+      const { data, error } = await supabase.functions.invoke('ai-chat', {
+        body: { 
+          message: analysisPrompt,
+          language: 'ar'
+        }
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // محاولة تحليل الـ JSON
+      let analysisData;
+      try {
+        // البحث عن JSON في الرد
+        const jsonMatch = data.response.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          analysisData = JSON.parse(jsonMatch[0]);
+        } else {
+          throw new Error('لم يتم العثور على JSON صحيح في الرد');
+        }
+      } catch (parseError) {
+        console.error('خطأ في تحليل JSON:', parseError);
+        // إنشاء بيانات افتراضية من الرد
+        analysisData = {
+          businessInfo: {
+            name: "تم استخراج البيانات",
+            type: "موقع إلكتروني", 
+            industry: "غير محدد",
+            description: data.response.substring(0, 200)
+          },
+          contactInfo: {
+            phones: [],
+            emails: [],
+            addresses: [],
+            workingHours: "غير محدد"
+          },
+          digitalPresence: {
+            socialMedia: [],
+            ecommerce: false,
+            mobileApp: false,
+            onlineServices: []
+          },
+          competitiveAnalysis: {
+            strengths: [],
+            services: [],
+            targetAudience: "غير محدد",
+            brandingElements: []
+          },
+          marketingInsights: {
+            promotions: [],
+            customerReviews: false,
+            testimonials: [],
+            contentStrategy: []
+          }
+        };
+      }
+
+      // حفظ التحليل في قاعدة البيانات
+      const { error: saveError } = await supabase
+        .from('website_analysis')
+        .upsert({
+          user_id: user.id,
+          website_url: websiteUrl,
+          analysis_data: {
+            ...analysisData,
+            aiAnalysisTimestamp: new Date().toISOString(),
+            analysisType: 'openai_enhanced'
+          },
+          updated_at: new Date().toISOString()
+        });
+
+      if (saveError) {
+        console.error('خطأ في حفظ التحليل:', saveError);
+      }
+
+      return analysisData;
+    } catch (error) {
+      console.error('خطأ في تحليل OpenAI:', error);
+      toast({
+        title: "خطأ في التحليل الذكي",
+        description: "حدث خطأ أثناء تحليل البيانات بواسطة الذكاء الاصطناعي",
+        variant: "destructive"
+      });
+      return null;
+    }
+  };
+
   const handleScrape = async () => {
     if (!url.trim()) return;
     
     setIsLoading(true);
     setScrapingResult(null);
     setSocialAnalysis(null);
+    setAiAnalysis(null);
     
     try {
-      console.log('بدء اختبار الـ JavaScript scraping للموقع:', url);
+      console.log('بدء استخراج البيانات للموقع:', url);
       
-      // اختبار الـ scraping المحسن
+      // المرحلة 1: استخراج البيانات الأساسية
       const basicResult = await RapidApiScraperService.scrapeWebsite(url);
       setScrapingResult(basicResult);
       
-      // اختبار تحليل حسابات السوشال ميديا
+      // المرحلة 2: تحليل السوشال ميديا
       const socialResult = await RapidApiScraperService.analyzeSocialMediaPresence(url);
       setSocialAnalysis(socialResult);
       
+      // المرحلة 3: التحليل الذكي بواسطة OpenAI
+      if (basicResult.success && basicResult.data) {
+        setIsAnalyzingWithAI(true);
+        const aiResult = await analyzeWithOpenAI(basicResult.data.content, url);
+        setAiAnalysis(aiResult);
+        setIsAnalyzingWithAI(false);
+        
+        toast({
+          title: "تم الاستخراج بنجاح!",
+          description: "تم استخراج وتحليل البيانات بواسطة الذكاء الاصطناعي",
+        });
+      }
+      
     } catch (error) {
-      console.error('خطأ في الاختبار:', error);
+      console.error('خطأ في الاستخراج:', error);
       setScrapingResult({ success: false, error: error.message });
     }
     
@@ -63,7 +259,7 @@ const WebsiteScrapingTest: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Zap className="w-5 h-5 text-blue-500" />
-            استخراج معلومات محسّن بتقنية JavaScript
+            استخراج وتحليل ذكي بتقنية الذكاء الاصطناعي
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -84,134 +280,190 @@ const WebsiteScrapingTest: React.FC = () => {
               ) : (
                 <Search className="w-4 h-4" />
               )}
-              تحليل محسّن
+              تحليل ذكي
             </Button>
           </div>
           
-          {isLoading && (
+          {(isLoading || isAnalyzingWithAI) && (
             <div className="text-center py-4">
               <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2 text-blue-500" />
-              <p>جاري التحليل المحسّن للموقع باستخدام JavaScript...</p>
+              <p>
+                {isAnalyzingWithAI 
+                  ? "جاري التحليل الذكي بواسطة OpenAI..." 
+                  : "جاري استخراج البيانات..."}
+              </p>
               <Badge variant="outline" className="mt-2">
-                <Zap className="w-3 h-3 mr-1" />
-                تقنية JavaScript متقدمة
+                <Brain className="w-3 h-3 mr-1" />
+                ذكاء اصطناعي متقدم
               </Badge>
             </div>
           )}
         </CardContent>
       </Card>
 
+      {/* التحليل الذكي بواسطة OpenAI */}
+      {aiAnalysis && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Brain className="w-5 h-5 text-purple-500" />
+              التحليل الذكي بواسطة OpenAI
+              <Badge variant="default" className="bg-purple-100 text-purple-800">
+                <Star className="w-3 h-3 mr-1" />
+                محسّن بالذكاء الاصطناعي
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {/* معلومات العمل */}
+              <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg">
+                <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                  <Globe className="w-4 h-4" />
+                  معلومات العمل
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <span className="font-medium">اسم العمل:</span>
+                    <p className="text-blue-800">{aiAnalysis.businessInfo.name}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium">نوع العمل:</span>
+                    <p className="text-blue-800">{aiAnalysis.businessInfo.type}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium">القطاع:</span>
+                    <p className="text-blue-800">{aiAnalysis.businessInfo.industry}</p>
+                  </div>
+                  <div className="md:col-span-2">
+                    <span className="font-medium">الوصف:</span>
+                    <p className="text-blue-800">{aiAnalysis.businessInfo.description}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* معلومات الاتصال */}
+              <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg">
+                <h4 className="font-semibold text-green-900 mb-3 flex items-center gap-2">
+                  <Phone className="w-4 h-4" />
+                  معلومات الاتصال
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {aiAnalysis.contactInfo.phones.length > 0 && (
+                    <div>
+                      <span className="font-medium">أرقام الهاتف:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {aiAnalysis.contactInfo.phones.map((phone, index) => (
+                          <Badge key={index} variant="outline" className="bg-white">
+                            {phone}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {aiAnalysis.contactInfo.emails.length > 0 && (
+                    <div>
+                      <span className="font-medium">الإيميلات:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {aiAnalysis.contactInfo.emails.map((email, index) => (
+                          <Badge key={index} variant="outline" className="bg-white">
+                            {email}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {aiAnalysis.contactInfo.workingHours && (
+                    <div className="md:col-span-2">
+                      <span className="font-medium">ساعات العمل:</span>
+                      <p className="text-green-800">{aiAnalysis.contactInfo.workingHours}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* الحضور الرقمي */}
+              <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg">
+                <h4 className="font-semibold text-purple-900 mb-3">الحضور الرقمي</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="text-center">
+                    <p className="text-sm text-purple-600">متجر إلكتروني</p>
+                    <p className="text-xl font-bold text-purple-900">
+                      {aiAnalysis.digitalPresence.ecommerce ? 'نعم' : 'لا'}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm text-purple-600">تطبيق جوال</p>
+                    <p className="text-xl font-bold text-purple-900">
+                      {aiAnalysis.digitalPresence.mobileApp ? 'نعم' : 'لا'}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm text-purple-600">سوشال ميديا</p>
+                    <p className="text-xl font-bold text-purple-900">
+                      {aiAnalysis.digitalPresence.socialMedia.length}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm text-purple-600">خدمات رقمية</p>
+                    <p className="text-xl font-bold text-purple-900">
+                      {aiAnalysis.digitalPresence.onlineServices.length}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* التحليل التنافسي */}
+              {aiAnalysis.competitiveAnalysis.strengths.length > 0 && (
+                <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-4 rounded-lg">
+                  <h4 className="font-semibold text-orange-900 mb-3">التحليل التنافسي</h4>
+                  <div className="space-y-3">
+                    {aiAnalysis.competitiveAnalysis.strengths.length > 0 && (
+                      <div>
+                        <span className="font-medium text-orange-800">نقاط القوة:</span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {aiAnalysis.competitiveAnalysis.strengths.map((strength, index) => (
+                            <Badge key={index} variant="outline" className="bg-white">
+                              {strength}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {aiAnalysis.competitiveAnalysis.services.length > 0 && (
+                      <div>
+                        <span className="font-medium text-orange-800">الخدمات:</span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {aiAnalysis.competitiveAnalysis.services.map((service, index) => (
+                            <Badge key={index} variant="outline" className="bg-white">
+                              {service}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* النتائج الأساسية */}
       {scrapingResult && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              معلومات الموقع المستخرجة
+              البيانات المستخرجة الأساسية
               <Badge variant={scrapingResult.success ? "default" : "destructive"}>
                 {scrapingResult.success ? "تم الاستخراج بنجاح" : "فشل"}
               </Badge>
-              {scrapingResult.success && (
-                <Badge variant="outline" className="bg-blue-50">
-                  <Zap className="w-3 h-3 mr-1" />
-                  JavaScript
-                </Badge>
-              )}
             </CardTitle>
           </CardHeader>
           <CardContent>
             {scrapingResult.success ? (
-              <div className="space-y-6">
-                {/* معلومات أساسية محسّنة */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-3">
-                    <div>
-                      <h4 className="font-semibold text-lg mb-2 flex items-center gap-2">
-                        <Globe className="w-4 h-4" />
-                        عنوان الموقع
-                      </h4>
-                      <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">
-                        {scrapingResult.data?.title || 'غير متوفر'}
-                      </p>
-                    </div>
-                    
-                    <div>
-                      <h4 className="font-semibold text-lg mb-2">الوصف</h4>
-                      <p className="text-gray-700 bg-gray-50 p-3 rounded-lg text-sm">
-                        {scrapingResult.data?.description || 'غير متوفر'}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* معلومات الاتصال المحسّنة */}
-                  <div className="space-y-3">
-                    <h4 className="font-semibold text-lg mb-2">معلومات الاتصال</h4>
-                    {(() => {
-                      const contactInfo = extractContactInfo(scrapingResult.data?.content || '');
-                      return (
-                        <div className="space-y-3">
-                          {contactInfo.phones.length > 0 && (
-                            <div className="bg-green-50 p-3 rounded-lg">
-                              <div className="flex items-center gap-2 mb-2">
-                                <Phone className="w-4 h-4 text-green-600" />
-                                <span className="font-medium text-green-800">أرقام الهاتف</span>
-                              </div>
-                              <div className="flex flex-wrap gap-2">
-                                {contactInfo.phones.map((phone, index) => (
-                                  <Badge key={index} variant="outline" className="bg-white">
-                                    {phone}
-                                  </Badge>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                          
-                          {contactInfo.emails.length > 0 && (
-                            <div className="bg-blue-50 p-3 rounded-lg">
-                              <div className="flex items-center gap-2 mb-2">
-                                <Mail className="w-4 h-4 text-blue-600" />
-                                <span className="font-medium text-blue-800">البريد الإلكتروني</span>
-                              </div>
-                              <div className="flex flex-wrap gap-2">
-                                {contactInfo.emails.map((email, index) => (
-                                  <Badge key={index} variant="outline" className="bg-white">
-                                    {email}
-                                  </Badge>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                          
-                          {contactInfo.phones.length === 0 && contactInfo.emails.length === 0 && (
-                            <p className="text-gray-500 text-center py-4">لم يتم العثور على معلومات اتصال واضحة</p>
-                          )}
-                        </div>
-                      );
-                    })()}
-                  </div>
-                </div>
-
-                {/* روابط السوشال ميديا المحسّنة */}
-                <div>
-                  <h4 className="font-semibold text-lg mb-3">حسابات التواصل الاجتماعي</h4>
-                  <div className="bg-purple-50 p-4 rounded-lg">
-                    {scrapingResult.data?.socialLinks?.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {scrapingResult.data.socialLinks.map((link: string, index: number) => (
-                          <div key={index} className="flex items-center gap-2 p-3 bg-white rounded border shadow-sm">
-                            <ExternalLink className="w-4 h-4 text-purple-600" />
-                            <a href={link} target="_blank" rel="noopener noreferrer" 
-                               className="text-purple-700 hover:text-purple-900 text-sm truncate flex-1 font-medium">
-                              {link.replace('https://', '').replace('http://', '')}
-                            </a>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-gray-500 text-center py-4">لم يتم العثور على روابط تواصل اجتماعي</p>
-                    )}
-                  </div>
-                </div>
-
-                {/* إحصائيات الموقع المحسّنة */}
+              <div className="space-y-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg text-center">
                     <h5 className="font-medium text-blue-600">الروابط</h5>
@@ -242,83 +494,8 @@ const WebsiteScrapingTest: React.FC = () => {
             ) : (
               <div className="text-center py-8">
                 <p className="text-red-600 font-medium">خطأ: {scrapingResult.error}</p>
-                <p className="text-gray-500 mt-2">تأكد من صحة الرابط وأن الموقع متاح</p>
               </div>
             )}
-          </CardContent>
-        </Card>
-      )}
-
-      {socialAnalysis && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-yellow-50">
-                <Zap className="w-3 h-3 mr-1" />
-                تحليل محسّن
-              </Badge>
-              تحليل الحضور الرقمي
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center p-3 bg-blue-50 rounded-lg">
-                  <p className="text-sm text-blue-600">المنصات المكتشفة</p>
-                  <p className="text-xl font-bold text-blue-900">
-                    {socialAnalysis.analysis?.totalSocialAccounts || 0}
-                  </p>
-                </div>
-                <div className="text-center p-3 bg-green-50 rounded-lg">
-                  <p className="text-sm text-green-600">معلومات الاتصال</p>
-                  <p className="text-xl font-bold text-green-900">
-                    {socialAnalysis.analysis?.hasContactInfo ? 'متوفر' : 'غير متوفر'}
-                  </p>
-                </div>
-                <div className="text-center p-3 bg-purple-50 rounded-lg">
-                  <p className="text-sm text-purple-600">نوع الموقع</p>
-                  <p className="text-xl font-bold text-purple-900">تجاري</p>
-                </div>
-                <div className="text-center p-3 bg-orange-50 rounded-lg">
-                  <p className="text-sm text-orange-600">الحالة</p>
-                  <p className="text-xl font-bold text-orange-900">نشط</p>
-                </div>
-              </div>
-              
-              {Object.keys(socialAnalysis.extractedAccounts || {}).length > 0 && (
-                <div>
-                  <h4 className="font-semibold mb-3">الحسابات المستخرجة:</h4>
-                  <div className="space-y-3">
-                    {Object.entries(socialAnalysis.extractedAccounts).map(([platform, account]: [string, any]) => (
-                      <div key={platform} className="border rounded-lg p-4 bg-white">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-medium capitalize mb-1">{platform.replace('_', ' ')}</div>
-                            <div className="text-sm text-gray-600">
-                              {account.handle || account.name || account.phone}
-                              {account.followers && ` - ${account.followers} متابع`}
-                              {account.likes && ` - ${account.likes} إعجاب`}
-                            </div>
-                            {account.last_post && (
-                              <div className="text-xs text-gray-500 mt-1">
-                                آخر نشر: {account.last_post}
-                              </div>
-                            )}
-                          </div>
-                          {account.url && (
-                            <Button variant="outline" size="sm" asChild>
-                              <a href={account.url} target="_blank" rel="noopener noreferrer">
-                                <ExternalLink className="w-4 h-4" />
-                              </a>
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
           </CardContent>
         </Card>
       )}
