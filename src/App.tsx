@@ -26,6 +26,8 @@ import UserManagement from "./pages/UserManagement";
 import HelpCenter from "./pages/HelpCenter";
 import Billing from "./pages/Billing";
 import Onboarding from "./pages/Onboarding";
+import ScrapingTest from "./pages/ScrapingTest";
+import OpenAITest from "./pages/OpenAITest";
 
 const queryClient = new QueryClient();
 
@@ -137,6 +139,10 @@ const App = () => (
               
               {/* الشروط */}
               <Route path="/terms" element={<Terms />} />
+              
+              {/* صفحات الاختبار */}
+              <Route path="/scraping-test" element={<ScrapingTest />} />
+              <Route path="/openai-test" element={<OpenAITest />} />
               
               {/* 404 */}
               <Route path="*" element={<NotFound />} />
