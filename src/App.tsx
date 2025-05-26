@@ -25,6 +25,7 @@ import TeamManagement from "./pages/TeamManagement";
 import UserManagement from "./pages/UserManagement";
 import HelpCenter from "./pages/HelpCenter";
 import Billing from "./pages/Billing";
+import Onboarding from "./pages/Onboarding";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,16 @@ const App = () => (
               <Route path="/auth-ar" element={<AuthAr />} />
               <Route path="/register-ar" element={<RegisterAr />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
+              
+              {/* Onboarding Wizard */}
+              <Route
+                path="/onboarding"
+                element={
+                  <ProtectedRoute>
+                    <Onboarding />
+                  </ProtectedRoute>
+                }
+              />
               
               {/* Dashboard */}
               <Route

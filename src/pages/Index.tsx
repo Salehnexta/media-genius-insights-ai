@@ -7,12 +7,15 @@ import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import ChatSection from '@/components/dashboard/ChatSection';
 import MarketingDashboardTabs from '@/components/dashboard/MarketingDashboardTabs';
 import { Loader2 } from 'lucide-react';
+import { useOnboardingData } from '@/hooks/useOnboardingData';
 
 const Index: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
   const { language } = useLanguage();
+  const { getOnboardingData } = useOnboardingData();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [checkingOnboarding, setCheckingOnboarding] = useState(true);
   const isArabic = language === 'ar';
 
   useEffect(() => {
@@ -25,20 +28,47 @@ const Index: React.FC = () => {
       return;
     }
 
-    if (!authLoading) {
-      setLoading(false);
+    if (!authLoading && user) {
+      checkOnboardingStatus();
     }
   }, [user, authLoading, navigate]);
 
-  // Show loading while checking authentication
-  if (authLoading || loading) {
+  const checkOnboardingStatus = async () => {
+    if (!user) return;
+    
+    setCheckingOnboarding(true);
+    try {
+      const onboardingData = await getOnboardingData();
+      console.log('Onboarding data:', onboardingData);
+      
+      // If user hasn't completed onboarding, redirect to wizard
+      if (!onboardingData || !onboardingData.completed) {
+        console.log('Onboarding not completed, redirecting to wizard');
+        navigate('/onboarding');
+        return;
+      }
+      
+      setLoading(false);
+    } catch (error) {
+      console.error('Error checking onboarding status:', error);
+      setLoading(false);
+    } finally {
+      setCheckingOnboarding(false);
+    }
+  };
+
+  // Show loading while checking authentication or onboarding
+  if (authLoading || loading || checkingOnboarding) {
     console.log('Showing loading state');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
           <p className="text-gray-600 dark:text-gray-300">
-            {isArabic ? 'جاري تحميل لوحة التحكم...' : 'Loading dashboard...'}
+            {checkingOnboarding 
+              ? (isArabic ? 'جاري التحقق من الإعداد...' : 'Checking setup status...')
+              : (isArabic ? 'جاري تحميل لوحة التحكم...' : 'Loading dashboard...')
+            }
           </p>
         </div>
       </div>
