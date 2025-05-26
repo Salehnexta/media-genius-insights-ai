@@ -2,17 +2,17 @@
 import { useOnboardingData } from '@/hooks/useOnboardingData';
 import { useOnboardingNavigation } from './onboarding/useOnboardingNavigation';
 import { useOnboardingAutoSave } from './onboarding/useOnboardingAutoSave';
-import { useLoadingState } from './useLoadingState';
+import { useAsyncOperation } from './useAsyncOperation';
 import { useCallback } from 'react';
 
 export const useOnboardingWizard = (isArabic: boolean) => {
   const { data, updateData, saveData, loading: dataLoading, saving } = useOnboardingData();
-  const { executeAsync, ...loadingState } = useLoadingState();
+  const { execute: executeAsync, loading: operationLoading, error: operationError, reset } = useAsyncOperation();
   
   const {
     currentStep,
     isNavigating,
-    error,
+    error: navigationError,
     setError,
     handleNext: navigationHandleNext,
     handlePrevious,
@@ -42,26 +42,26 @@ export const useOnboardingWizard = (isArabic: boolean) => {
     });
   }, [handlePrevious, executeAsync]);
 
-  // Combined loading state - Fixed: use loadingState.loading instead of loading
-  const isLoading = dataLoading || loadingState.loading || isNavigating;
-  const isSaving = saving || loadingState.loading;
+  // Combined loading and error states
+  const isLoading = dataLoading || operationLoading || isNavigating;
+  const isSaving = saving || operationLoading;
+  const combinedError = navigationError || operationError;
 
   return {
     currentStep,
     isNavigating,
-    error: error || loadingState.error,
+    error: combinedError,
     data,
     updateData,
     loading: isLoading,
     saving: isSaving,
-    success: loadingState.success,
     handleNext,
     handlePrevious: handlePreviousEnhanced,
     handleStepClick: handleStepClickEnhanced,
     setError: (error: string | null) => {
       setError(error);
-      loadingState.setError(error);
+      if (!error) reset();
     },
-    reset: loadingState.reset
+    reset
   };
 };

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import ErrorBoundary from '@/components/ui/error-boundary';
 
@@ -8,7 +8,7 @@ interface DashboardLayoutWrapperProps {
   showErrorBoundary?: boolean;
 }
 
-const DashboardLayoutWrapper: React.FC<DashboardLayoutWrapperProps> = ({ 
+const DashboardLayoutWrapper: React.FC<DashboardLayoutWrapperProps> = memo(({ 
   children, 
   showErrorBoundary = true 
 }) => {
@@ -17,7 +17,7 @@ const DashboardLayoutWrapper: React.FC<DashboardLayoutWrapperProps> = ({
 
   const content = (
     <div 
-      className={`min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col ${isArabic ? 'rtl arabic-text' : 'ltr'}`} 
+      className={`min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col transition-all duration-200 ${isArabic ? 'rtl arabic-text' : 'ltr'}`} 
       dir={isArabic ? 'rtl' : 'ltr'}
       lang={language}
     >
@@ -34,6 +34,8 @@ const DashboardLayoutWrapper: React.FC<DashboardLayoutWrapperProps> = ({
   }
 
   return content;
-};
+});
+
+DashboardLayoutWrapper.displayName = 'DashboardLayoutWrapper';
 
 export default DashboardLayoutWrapper;
