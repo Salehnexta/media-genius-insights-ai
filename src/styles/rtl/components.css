@@ -109,6 +109,28 @@
   text-align: right;
 }
 
+/* Enhanced table RTL support */
+[dir="rtl"] .table-container {
+  direction: rtl;
+}
+
+[dir="rtl"] table {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] th {
+  text-align: right;
+  padding-right: 1rem;
+  padding-left: 0.5rem;
+}
+
+[dir="rtl"] td {
+  text-align: right;
+  padding-right: 1rem;
+  padding-left: 0.5rem;
+}
+
 /* Profile page RTL specific */
 [dir="rtl"] .profile-sidebar {
   direction: rtl;
@@ -131,4 +153,53 @@
 
 [dir="rtl"] .tab-content {
   direction: rtl;
+}
+
+/* Enhanced Arabic typography */
+[dir="rtl"] .arabic-heading {
+  font-family: 'Cairo', 'Amiri', sans-serif;
+  font-weight: 600;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+}
+
+[dir="rtl"] .arabic-body {
+  font-family: 'Cairo', 'Noto Sans Arabic', sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+}
+
+/* Better spacing for Arabic content */
+[dir="rtl"] .arabic-content {
+  word-spacing: 0.1em;
+  line-height: 1.8;
+}
+
+/* Improved form field RTL */
+[dir="rtl"] .form-field {
+  text-align: right;
+}
+
+[dir="rtl"] .form-label {
+  text-align: right;
+  margin-bottom: 0.5rem;
+}
+
+[dir="rtl"] .form-input {
+  text-align: right;
+  direction: rtl;
+}
+
+/* Better icon positioning for RTL */
+[dir="rtl"] .icon-left {
+  order: 2;
+  margin-left: 0.5rem;
+  margin-right: 0;
+}
+
+[dir="rtl"] .icon-right {
+  order: 1;
+  margin-right: 0.5rem;
+  margin-left: 0;
 }

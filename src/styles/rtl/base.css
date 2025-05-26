@@ -40,9 +40,48 @@
   direction: rtl;
 }
 
-/* Ensure proper RTL for Arabic text */
-[dir="rtl"] .arabic-text {
-  font-family: 'Cairo', 'Tajawal', sans-serif;
+/* Enhanced Arabic text support */
+[dir="rtl"] .arabic-text,
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4,
+[dir="rtl"] h5,
+[dir="rtl"] h6,
+[dir="rtl"] p,
+[dir="rtl"] span,
+[dir="rtl"] div {
+  font-family: 'Cairo', 'Tajawal', 'Amiri', 'Noto Sans Arabic', sans-serif;
   text-align: right;
   direction: rtl;
+  line-height: 1.7;
+  font-weight: 500;
+}
+
+/* Better readability for Arabic text */
+[dir="rtl"] .arabic-text {
+  letter-spacing: 0.02em;
+  word-spacing: 0.1em;
+}
+
+/* RTL Table support */
+[dir="rtl"] table {
+  direction: rtl;
+}
+
+[dir="rtl"] th,
+[dir="rtl"] td {
+  text-align: right;
+}
+
+[dir="rtl"] th:first-child,
+[dir="rtl"] td:first-child {
+  padding-right: 1rem;
+  padding-left: 0.5rem;
+}
+
+[dir="rtl"] th:last-child,
+[dir="rtl"] td:last-child {
+  padding-left: 1rem;
+  padding-right: 0.5rem;
 }
