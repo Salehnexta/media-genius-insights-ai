@@ -34,7 +34,7 @@ export const useOnboardingAutoSave = (
     // Only auto-save if we have meaningful data and component is mounted
     if (!data || !isMountedRef.current || saving) return;
     
-    const hasData = data.skillLevel || data.business_name || data.website || 
+    const hasData = data.skillLevel || data.businessName || data.website || 
                    (data.socialAccounts && Object.keys(data.socialAccounts).length > 0) ||
                    (data.competitors && data.competitors.length > 0) ||
                    (data.goals && data.goals.length > 0);

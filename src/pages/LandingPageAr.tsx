@@ -34,10 +34,10 @@ const LandingPageArContent: React.FC = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">M</span>
+                <span className="text-white font-bold text-sm">MG</span>
               </div>
               <span className="font-bold text-xl text-gray-900 font-arabic">
-                Morvo.ai
+                فريق التسويق الذكي
               </span>
             </div>
             
@@ -84,7 +84,7 @@ const LandingPageArContent: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 font-arabic">
-              لماذا تختار Morvo.ai؟
+              لماذا تختار فريق التسويق الذكي؟
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto font-arabic">
               نقدم لك حلول تسويقية متكاملة بتقنية الذكاء الاصطناعي لضمان نمو أعمالك
@@ -161,9 +161,9 @@ const LandingPageArContent: React.FC = () => {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">M</span>
+                  <span className="text-white font-bold text-sm">MG</span>
                 </div>
-                <span className="font-bold text-xl font-arabic">Morvo.ai</span>
+                <span className="font-bold text-xl font-arabic">فريق التسويق الذكي</span>
               </div>
               <p className="text-gray-400 font-arabic">
                 نساعدك على النمو بذكاء باستخدام أحدث تقنيات الذكاء الاصطناعي
@@ -191,7 +191,7 @@ const LandingPageArContent: React.FC = () => {
             <div>
               <h4 className="font-semibold mb-4 font-arabic">تواصل معنا</h4>
               <ul className="space-y-2 text-gray-400">
-                <li className="font-arabic">البريد الإلكتروني: info@morvo.ai</li>
+                <li className="font-arabic">البريد الإلكتروني: info@example.com</li>
                 <li className="font-arabic">الهاتف: +966 50 123 4567</li>
               </ul>
             </div>
@@ -199,7 +199,7 @@ const LandingPageArContent: React.FC = () => {
           
           <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
             <p className="font-arabic">
-              © 2024 Morvo.ai. جميع الحقوق محفوظة.
+              © 2024 فريق التسويق الذكي. جميع الحقوق محفوظة.
             </p>
           </div>
         </div>

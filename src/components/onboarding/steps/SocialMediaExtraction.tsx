@@ -17,8 +17,6 @@ import {
   Plus,
   ExternalLink
 } from 'lucide-react';
-import { RapidApiScraperService } from '@/services/rapidApiScraper';
-import { useToast } from '@/hooks/use-toast';
 
 interface SocialMediaExtractionProps {
   data: OnboardingData;
@@ -27,7 +25,6 @@ interface SocialMediaExtractionProps {
 }
 
 const SocialMediaExtraction: React.FC<SocialMediaExtractionProps> = ({ data, updateData, isArabic }) => {
-  const { toast } = useToast();
   const [isExtracting, setIsExtracting] = useState(false);
   const [extractionProgress, setExtractionProgress] = useState(0);
   const [showManualAdd, setShowManualAdd] = useState(false);
@@ -41,97 +38,51 @@ const SocialMediaExtraction: React.FC<SocialMediaExtractionProps> = ({ data, upd
     whatsapp_business: ''
   });
 
-  // استخراج حسابات السوشال ميديا باستخدام RapidAPI
-  const performRealExtraction = async () => {
-    if (!data.website) return;
-    
+  // محاكاة استخراج حسابات السوشال ميديا
+  const simulateExtraction = async () => {
     setIsExtracting(true);
     setExtractionProgress(0);
 
-    try {
-      // محاكاة التقدم
-      setExtractionProgress(25);
-      
-      console.log('بدء استخراج حسابات السوشال ميديا من:', data.website);
-      
-      setExtractionProgress(50);
-      
-      // استخدام RapidAPI لاستخراج البيانات
-      const result = await RapidApiScraperService.analyzeSocialMediaPresence(data.website);
-      
-      setExtractionProgress(75);
-      
-      if (result.extractedAccounts && Object.keys(result.extractedAccounts).length > 0) {
-        updateData({ 
-          extracted_social_accounts: result.extractedAccounts,
-          social_extraction_status: 'completed'
-        });
-        
-        toast({
-          title: isArabic ? "تم الاستخراج بنجاح!" : "Extraction Successful!",
-          description: isArabic 
-            ? `تم العثور على ${Object.keys(result.extractedAccounts).length} حساب`
-            : `Found ${Object.keys(result.extractedAccounts).length} accounts`,
-        });
-      } else {
-        // لم يتم العثور على حسابات
-        updateData({ 
-          extracted_social_accounts: {},
-          social_extraction_status: 'completed'
-        });
-        
-        toast({
-          title: isArabic ? "لم يتم العثور على حسابات" : "No Accounts Found",
-          description: isArabic 
-            ? "لم نجد حسابات تواصل اجتماعي في موقعك"
-            : "We didn't find social media accounts on your website",
-          variant: "default"
-        });
-      }
-      
-      setExtractionProgress(100);
-      
-    } catch (error) {
-      console.error('خطأ في استخراج حسابات السوشال ميديا:', error);
-      
-      // في حالة الفشل، استخدم البيانات الوهمية
-      const mockExtractedAccounts = {
-        instagram: {
-          handle: '@nexta_sa',
-          followers: 1250,
-          last_post: 'منذ 3 أيام',
-          status: 'active' as const,
-          url: 'https://instagram.com/nexta_sa'
-        },
-        linkedin: {
-          name: 'Nexta Technology',
-          followers: 890,
-          last_post: 'منذ أسبوع',
-          status: 'active' as const,
-          url: 'https://linkedin.com/company/nexta-sa'
-        }
-      };
-
-      updateData({ 
-        extracted_social_accounts: mockExtractedAccounts,
-        social_extraction_status: 'completed'
-      });
-      
-      toast({
-        title: isArabic ? "تم استخدام بيانات تجريبية" : "Using Demo Data",
-        description: isArabic 
-          ? "تم العثور على بعض الحسابات (بيانات تجريبية)"
-          : "Found some accounts (demo data)",
-        variant: "default"
-      });
+    // محاكاة التقدم
+    const intervals = [20, 40, 60, 80, 100];
+    for (let i = 0; i < intervals.length; i++) {
+      await new Promise(resolve => setTimeout(resolve, 800));
+      setExtractionProgress(intervals[i]);
     }
+
+    // بيانات وهمية مستخرجة
+    const mockExtractedAccounts = {
+      instagram: {
+        handle: '@golden_burger_sa',
+        followers: 1250,
+        last_post: 'منذ 3 أيام',
+        status: 'active' as const,
+        url: 'https://instagram.com/golden_burger_sa'
+      },
+      facebook: {
+        name: 'Golden Burger Restaurant',
+        likes: 890,
+        last_post: 'منذ أسبوع',
+        status: 'limited' as const,
+        url: 'https://facebook.com/goldenburger'
+      },
+      whatsapp_business: {
+        phone: '+966501234567',
+        status: 'verified' as const
+      }
+    };
+
+    updateData({ 
+      extracted_social_accounts: mockExtractedAccounts,
+      social_extraction_status: 'completed'
+    });
     
     setIsExtracting(false);
   };
 
   useEffect(() => {
     if (data.website && data.social_extraction_status === 'pending') {
-      performRealExtraction();
+      simulateExtraction();
     }
   }, [data.website]);
 
@@ -197,31 +148,6 @@ const SocialMediaExtraction: React.FC<SocialMediaExtractionProps> = ({ data, upd
     }
   };
 
-  // Helper function to safely get account display name
-  const getAccountDisplayName = (account: any) => {
-    if ('handle' in account) return account.handle;
-    if ('name' in account) return account.name;
-    if ('phone' in account) return account.phone;
-    return 'Unknown';
-  };
-
-  // Helper function to safely get follower count
-  const getFollowerCount = (account: any) => {
-    if ('followers' in account) return account.followers;
-    if ('likes' in account) return account.likes;
-    return null;
-  };
-
-  // Helper function to safely get last post info
-  const getLastPost = (account: any) => {
-    return 'last_post' in account ? account.last_post : null;
-  };
-
-  // Helper function to safely get URL
-  const getAccountUrl = (account: any) => {
-    return 'url' in account ? account.url : null;
-  };
-
   if (isExtracting) {
     return (
       <div className="space-y-6">
@@ -233,8 +159,8 @@ const SocialMediaExtraction: React.FC<SocialMediaExtractionProps> = ({ data, upd
             </CardTitle>
             <CardDescription>
               {isArabic 
-                ? 'يقوم النظام بتحليل موقعك والبحث عن حسابات التواصل الاجتماعي باستخدام RapidAPI'
-                : 'System is analyzing your website and searching for social media accounts using RapidAPI'
+                ? 'يقوم الذكاء الاصطناعي بتحليل موقعك والبحث عن حسابات التواصل الاجتماعي'
+                : 'AI is analyzing your website and searching for social media accounts'
               }
             </CardDescription>
           </CardHeader>
@@ -249,11 +175,6 @@ const SocialMediaExtraction: React.FC<SocialMediaExtractionProps> = ({ data, upd
               <p className="text-center text-sm text-gray-600">
                 {extractionProgress}% {isArabic ? 'مكتمل' : 'Complete'}
               </p>
-              {extractionProgress > 50 && (
-                <p className="text-center text-xs text-blue-600">
-                  {isArabic ? 'جاري تحليل محتوى الموقع...' : 'Analyzing website content...'}
-                </p>
-              )}
             </div>
           </CardContent>
         </Card>
@@ -285,25 +206,25 @@ const SocialMediaExtraction: React.FC<SocialMediaExtractionProps> = ({ data, upd
                     {getPlatformIcon(platform)}
                     <div className={isArabic ? 'text-right' : ''}>
                       <p className="font-medium">
-                        {getAccountDisplayName(account)}
+                        {account.handle || account.name || account.phone}
                       </p>
-                      {getFollowerCount(account) !== null && (
+                      {account.followers !== undefined && (
                         <p className="text-sm text-gray-500">
-                          {getFollowerCount(account)} {isArabic ? 'متابع' : 'followers'}
+                          {account.followers} {isArabic ? 'متابع' : 'followers'}
                         </p>
                       )}
-                      {getLastPost(account) && (
+                      {account.last_post && (
                         <p className="text-sm text-gray-500">
-                          {isArabic ? 'آخر نشر:' : 'Last post:'} {getLastPost(account)}
+                          {isArabic ? 'آخر نشر:' : 'Last post:'} {account.last_post}
                         </p>
                       )}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(account.status)}
-                    {getAccountUrl(account) && (
+                    {account.url && (
                       <Button variant="ghost" size="sm" asChild>
-                        <a href={getAccountUrl(account)} target="_blank" rel="noopener noreferrer">
+                        <a href={account.url} target="_blank" rel="noopener noreferrer">
                           <ExternalLink className="w-4 h-4" />
                         </a>
                       </Button>

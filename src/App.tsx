@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,8 +26,6 @@ import UserManagement from "./pages/UserManagement";
 import HelpCenter from "./pages/HelpCenter";
 import Billing from "./pages/Billing";
 import Onboarding from "./pages/Onboarding";
-import ScrapingTest from "./pages/ScrapingTest";
-import OpenAITest from "./pages/OpenAITest";
 
 const queryClient = new QueryClient();
 
@@ -39,10 +38,17 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              {/* الصفحة الرئيسية - الآن تعرض المحتوى العربي */}
-              <Route path="/" element={<LandingPageAr />} />
+              {/* الصفحة الرئيسية - توجيه للوحة التحكم أو الهبوط */}
+              <Route 
+                path="/" 
+                element={
+                  <ProtectedRoute>
+                    <Index />
+                  </ProtectedRoute>
+                } 
+              />
               
-              {/* لوحة التحكم */}
+              {/* لوحة التحكم - نفس المسار للراحة */}
               <Route
                 path="/dashboard"
                 element={
@@ -52,8 +58,9 @@ const App = () => (
                 }
               />
               
-              {/* صفحة الهبوط الإنجليزية */}
+              {/* صفحات الهبوط */}
               <Route path="/landing" element={<LandingPage />} />
+              <Route path="/landing-ar" element={<LandingPageAr />} />
               
               {/* صفحات المصادقة */}
               <Route path="/auth" element={<Auth />} />
@@ -130,10 +137,6 @@ const App = () => (
               
               {/* الشروط */}
               <Route path="/terms" element={<Terms />} />
-              
-              {/* صفحات الاختبار */}
-              <Route path="/scraping-test" element={<ScrapingTest />} />
-              <Route path="/openai-test" element={<OpenAITest />} />
               
               {/* 404 */}
               <Route path="*" element={<NotFound />} />
