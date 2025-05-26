@@ -1,40 +1,45 @@
 
-import SkillAssessment from '../steps/SkillAssessment';
-import BusinessInfo from '../steps/BusinessInfo';
-import WebsiteAnalysis from '../steps/WebsiteAnalysis';
-import SocialMediaSetup from '../steps/SocialMediaSetup';
-import CompetitorAnalysis from '../steps/CompetitorAnalysis';
-import StrategySetup from '../steps/StrategySetup';
+import BasicClientInfo from '../steps/BasicClientInfo';
+import SocialMediaExtraction from '../steps/SocialMediaExtraction';
+import AIRecommendations from '../steps/AIRecommendations';
 
 export const getOnboardingSteps = (isArabic: boolean) => [
   {
-    id: 'skills',
-    title: isArabic ? 'تقييم المهارات' : 'Skill Assessment',
-    component: SkillAssessment
+    id: 'basic_info',
+    title: isArabic ? 'المعلومات الأساسية' : 'Basic Information',
+    description: isArabic ? 'معلوماتك الأساسية لبدء التحليل' : 'Your basic information to start analysis',
+    component: BasicClientInfo,
+    validation: (data: any) => {
+      return !!(
+        data.client_name?.trim() &&
+        data.client_email?.trim() &&
+        data.client_phone?.trim() &&
+        data.business_name?.trim() &&
+        data.monthly_budget > 0
+      );
+    }
   },
   {
-    id: 'business',
-    title: isArabic ? 'معلومات العمل' : 'Business Information',
-    component: BusinessInfo
+    id: 'social_extraction',
+    title: isArabic ? 'حسابات التواصل الاجتماعي' : 'Social Media Accounts',
+    description: isArabic ? 'استخراج وتأكيد حسابات التواصل' : 'Extract and confirm social accounts',
+    component: SocialMediaExtraction,
+    validation: (data: any) => {
+      return data.social_extraction_status === 'completed';
+    }
   },
   {
-    id: 'website',
-    title: isArabic ? 'تحليل الموقع' : 'Website Analysis',
-    component: WebsiteAnalysis
-  },
-  {
-    id: 'social',
-    title: isArabic ? 'وسائل التواصل' : 'Social Media',
-    component: SocialMediaSetup
-  },
-  {
-    id: 'competitors',
-    title: isArabic ? 'تحليل المنافسين' : 'Competitor Analysis',
-    component: CompetitorAnalysis
-  },
-  {
-    id: 'strategy',
-    title: isArabic ? 'إعداد الاستراتيجية' : 'Strategy Setup',
-    component: StrategySetup
+    id: 'ai_recommendations',
+    title: isArabic ? 'التوصيات الذكية' : 'AI Recommendations',
+    description: isArabic ? 'مراجعة وتأكيد اقتراحات الذكاء الاصطناعي' : 'Review and confirm AI suggestions',
+    component: AIRecommendations,
+    validation: (data: any) => {
+      const confirmations = data.user_confirmations || {};
+      return !!(
+        confirmations.industry_confirmed &&
+        confirmations.target_audience_confirmed &&
+        confirmations.goals_confirmed
+      );
+    }
   }
 ];

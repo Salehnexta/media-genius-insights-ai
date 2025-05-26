@@ -28,7 +28,7 @@ export const useOnboardingNavigation = (isArabic: boolean) => {
     
     try {
       if (currentStep < totalSteps - 1) {
-        // حفظ البيانات الحالية قبل الانتقال للخطوة التالية
+        // Save current data before moving to next step
         const saved = await saveFunction();
         if (!saved) {
           throw new Error(isArabic ? 'فشل في حفظ البيانات' : 'Failed to save data');
@@ -37,11 +37,11 @@ export const useOnboardingNavigation = (isArabic: boolean) => {
         setCurrentStep(prev => prev + 1);
         setIsNavigating(false);
       } else {
-        // هذه هي الخطوة الأخيرة - إكمال الـ onboarding
+        // This is the final step - complete onboarding
         console.log('=== COMPLETING ONBOARDING ===');
         console.log('Current data before completion:', data);
         
-        // تمييز الـ onboarding كمكتمل مع طوابع زمنية
+        // Mark onboarding as completed with timestamps
         const completedData = { 
           ...data, 
           completed: true,
@@ -49,10 +49,10 @@ export const useOnboardingNavigation = (isArabic: boolean) => {
         };
         console.log('Data with completion status:', completedData);
         
-        // تحديث الحالة المحلية أولاً
+        // Update local state first
         updateData(completedData);
         
-        // حفظ البيانات المكتملة
+        // Save completed data
         console.log('=== SAVING COMPLETED DATA ===');
         const finalSaved = await saveFunction();
         console.log('Final save result:', finalSaved);
@@ -60,13 +60,13 @@ export const useOnboardingNavigation = (isArabic: boolean) => {
         if (finalSaved) {
           console.log('✅ Onboarding completed successfully, navigating to dashboard');
           
-          // عرض رسالة نجاح
+          // Show success message
           toast({
             title: isArabic ? 'تم الانتهاء!' : 'Completed!',
-            description: isArabic ? 'تم إكمال الإعداد بنجاح. جاري توجيهك إلى لوحة التحكم...' : 'Setup completed successfully. Redirecting to dashboard...',
+            description: isArabic ? 'تم إكمال الإعداد بنجاح. مرحباً بك في مورفو!' : 'Setup completed successfully. Welcome to Morpho!',
           });
           
-          // التوجيه المباشر للوحة التحكم مع استبدال التاريخ
+          // Direct navigation to dashboard
           setTimeout(() => {
             console.log('🚀 Redirecting to dashboard...');
             navigate('/', { replace: true });

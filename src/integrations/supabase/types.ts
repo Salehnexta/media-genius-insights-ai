@@ -313,6 +313,59 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_extraction_progress: {
+        Row: {
+          ai_confidence_score: number | null
+          created_at: string | null
+          error_message: string | null
+          extracted_data: Json | null
+          extraction_type: string
+          id: string
+          onboarding_session_id: string | null
+          progress_percentage: number | null
+          status: string | null
+          updated_at: string | null
+          user_confirmed: boolean | null
+          user_id: string
+        }
+        Insert: {
+          ai_confidence_score?: number | null
+          created_at?: string | null
+          error_message?: string | null
+          extracted_data?: Json | null
+          extraction_type: string
+          id?: string
+          onboarding_session_id?: string | null
+          progress_percentage?: number | null
+          status?: string | null
+          updated_at?: string | null
+          user_confirmed?: boolean | null
+          user_id: string
+        }
+        Update: {
+          ai_confidence_score?: number | null
+          created_at?: string | null
+          error_message?: string | null
+          extracted_data?: Json | null
+          extraction_type?: string
+          id?: string
+          onboarding_session_id?: string | null
+          progress_percentage?: number | null
+          status?: string | null
+          updated_at?: string | null
+          user_confirmed?: boolean | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_extraction_progress_onboarding_session_id_fkey"
+            columns: ["onboarding_session_id"]
+            isOneToOne: false
+            referencedRelation: "onboarding_data"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_insights: {
         Row: {
           actionable: boolean
@@ -354,6 +407,53 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      ai_suggestions: {
+        Row: {
+          confidence_score: number | null
+          created_at: string | null
+          id: string
+          onboarding_session_id: string | null
+          suggestion_data: Json
+          suggestion_type: string
+          updated_at: string | null
+          user_id: string
+          user_modifications: Json | null
+          user_response: string | null
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string | null
+          id?: string
+          onboarding_session_id?: string | null
+          suggestion_data: Json
+          suggestion_type: string
+          updated_at?: string | null
+          user_id: string
+          user_modifications?: Json | null
+          user_response?: string | null
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string | null
+          id?: string
+          onboarding_session_id?: string | null
+          suggestion_data?: Json
+          suggestion_type?: string
+          updated_at?: string | null
+          user_id?: string
+          user_modifications?: Json | null
+          user_response?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_suggestions_onboarding_session_id_fkey"
+            columns: ["onboarding_session_id"]
+            isOneToOne: false
+            referencedRelation: "onboarding_data"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ai_usage_logs: {
         Row: {
@@ -701,64 +801,124 @@ export type Database = {
       }
       onboarding_data: {
         Row: {
+          ai_discovered_competitors: Json | null
+          ai_extraction_status: string | null
+          ai_suggested_business_type: string | null
+          ai_suggested_channels: Json | null
+          ai_suggested_content_types: Json | null
+          ai_suggested_industry: string | null
+          ai_suggested_marketing_goals: Json | null
+          ai_suggested_posting_times: Json | null
+          ai_suggested_target_age_range: string | null
+          ai_suggested_target_gender: string | null
+          ai_suggested_target_interests: Json | null
+          ai_suggested_target_location: string | null
           automation_level: string | null
           budget: string | null
           business_name: string | null
+          client_email: string | null
+          client_name: string | null
+          client_phone: string | null
           competitors: string[] | null
           completed_at: string | null
           content_approval_required: boolean | null
           created_at: string | null
           crisis_alert_threshold: string | null
           experience: string | null
+          extracted_social_accounts: Json | null
           goals: string[] | null
           id: string
           industry: string | null
+          monthly_budget: number | null
           preferred_agents: Json | null
           skill_level: string | null
           social_accounts: Json | null
+          social_extraction_status: string | null
           updated_at: string | null
+          user_confirmations: Json | null
           user_id: string
           website: string | null
+          website_analysis_data: Json | null
         }
         Insert: {
+          ai_discovered_competitors?: Json | null
+          ai_extraction_status?: string | null
+          ai_suggested_business_type?: string | null
+          ai_suggested_channels?: Json | null
+          ai_suggested_content_types?: Json | null
+          ai_suggested_industry?: string | null
+          ai_suggested_marketing_goals?: Json | null
+          ai_suggested_posting_times?: Json | null
+          ai_suggested_target_age_range?: string | null
+          ai_suggested_target_gender?: string | null
+          ai_suggested_target_interests?: Json | null
+          ai_suggested_target_location?: string | null
           automation_level?: string | null
           budget?: string | null
           business_name?: string | null
+          client_email?: string | null
+          client_name?: string | null
+          client_phone?: string | null
           competitors?: string[] | null
           completed_at?: string | null
           content_approval_required?: boolean | null
           created_at?: string | null
           crisis_alert_threshold?: string | null
           experience?: string | null
+          extracted_social_accounts?: Json | null
           goals?: string[] | null
           id?: string
           industry?: string | null
+          monthly_budget?: number | null
           preferred_agents?: Json | null
           skill_level?: string | null
           social_accounts?: Json | null
+          social_extraction_status?: string | null
           updated_at?: string | null
+          user_confirmations?: Json | null
           user_id: string
           website?: string | null
+          website_analysis_data?: Json | null
         }
         Update: {
+          ai_discovered_competitors?: Json | null
+          ai_extraction_status?: string | null
+          ai_suggested_business_type?: string | null
+          ai_suggested_channels?: Json | null
+          ai_suggested_content_types?: Json | null
+          ai_suggested_industry?: string | null
+          ai_suggested_marketing_goals?: Json | null
+          ai_suggested_posting_times?: Json | null
+          ai_suggested_target_age_range?: string | null
+          ai_suggested_target_gender?: string | null
+          ai_suggested_target_interests?: Json | null
+          ai_suggested_target_location?: string | null
           automation_level?: string | null
           budget?: string | null
           business_name?: string | null
+          client_email?: string | null
+          client_name?: string | null
+          client_phone?: string | null
           competitors?: string[] | null
           completed_at?: string | null
           content_approval_required?: boolean | null
           created_at?: string | null
           crisis_alert_threshold?: string | null
           experience?: string | null
+          extracted_social_accounts?: Json | null
           goals?: string[] | null
           id?: string
           industry?: string | null
+          monthly_budget?: number | null
           preferred_agents?: Json | null
           skill_level?: string | null
           social_accounts?: Json | null
+          social_extraction_status?: string | null
           updated_at?: string | null
+          user_confirmations?: Json | null
           user_id?: string
           website?: string | null
+          website_analysis_data?: Json | null
         }
         Relationships: []
       }
