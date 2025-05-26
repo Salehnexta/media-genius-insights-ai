@@ -40,7 +40,6 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
   const { language } = useLanguage();
   const isArabic = language === 'ar';
 
-  // Safely get the subscription plan name
   const subscriptionPlanName = subscription?.subscription_plans?.name || subscription?.plan || 'free';
 
   return (

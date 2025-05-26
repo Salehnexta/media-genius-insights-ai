@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -87,9 +86,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
   return (
     <Card className="relative overflow-hidden shadow-lg border-0 bg-white dark:bg-gray-900">
-      {/* Enhanced Cover Photo with Geometric Pattern */}
+      {/* Cover Photo */}
       <div className="relative h-56 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 overflow-hidden">
-        {/* Geometric Pattern Overlay */}
         <div className="absolute inset-0 opacity-20">
           <svg width="100%" height="100%" className="h-full w-full">
             <defs>
@@ -102,19 +100,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </svg>
         </div>
         
-        {/* Cover Photo */}
-        {profile.cover_photo_url && (
-          <img 
-            src={profile.cover_photo_url} 
-            alt="Cover" 
-            className="absolute inset-0 w-full h-full object-cover mix-blend-overlay"
-          />
-        )}
-        
-        {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
         
-        {/* Camera Button - RTL Positioned */}
         <Button
           variant="ghost"
           size="sm"
@@ -196,7 +183,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               </p>
             )}
 
-            {/* Enhanced Profile Completion */}
+            {/* Profile Completion */}
             <div className="mb-6">
               <div className={`flex items-center justify-between mb-3 ${isArabic ? 'flex-row-reverse' : ''}`}>
                 <div className={`flex items-center gap-2 ${isArabic ? 'flex-row-reverse' : ''}`}>
@@ -230,7 +217,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               </div>
             </div>
 
-            {/* Enhanced Action Buttons */}
+            {/* Action Buttons */}
             <div className={`flex gap-4 ${isArabic ? 'flex-row-reverse justify-end' : ''}`}>
               {isEditing ? (
                 <>
