@@ -129,19 +129,19 @@ const Index: React.FC = () => {
         </div>
       </div>
 
-      {/* Desktop/Tablet Layout */}
-      <div className="hidden md:flex flex-1 overflow-hidden desktop-layout">
-        <div className={`w-full md:w-2/5 lg:w-1/3 xl:w-3/10 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 desktop-chat-left ${
-          isArabic ? 'border-l' : 'border-r'
+      {/* Desktop/Tablet Layout - Chat on the RIGHT */}
+      <div className="hidden md:flex flex-1 overflow-hidden">
+        {/* Main Content - Left Side */}
+        <div className="flex-1 bg-white dark:bg-gray-900 overflow-y-auto">
+          <MarketingDashboardTabs />
+        </div>
+
+        {/* Chat Section - Right Side */}
+        <div className={`w-full md:w-2/5 lg:w-1/3 xl:w-3/10 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 ${
+          isArabic ? 'border-r' : 'border-l'
         }`}>
           <div className="h-full">
             <ChatSection />
-          </div>
-        </div>
-
-        <div className="flex-1 bg-white dark:bg-gray-900 desktop-content-right">
-          <div className="h-full overflow-y-auto">
-            <MarketingDashboardTabs />
           </div>
         </div>
       </div>

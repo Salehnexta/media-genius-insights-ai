@@ -179,16 +179,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
     : messages;
 
   return (
-    <div className={`flex flex-col h-full border rounded-lg shadow-sm bg-white dark:bg-gray-900 ${isMobile ? 'border-0 shadow-none rounded-none' : ''} ${isArabic ? 'rtl' : ''}`}>
+    <div className={`flex flex-col h-full bg-white dark:bg-gray-900 ${isMobile ? '' : 'border rounded-lg shadow-sm'} ${isArabic ? 'rtl' : ''}`}>
       {/* Show intro only when chat is empty and expanded */}
       {showIntro && (!isMobile || isExpanded) && messages.length <= 1 && (
-        <div className="p-4 border-b">
+        <div className="p-4 border-b flex-shrink-0">
           <AIMarketingManagerIntro />
         </div>
       )}
 
-      {/* Messages Area */}
-      <div className={`flex-1 p-4 ${isMobile ? 'px-3' : ''} overflow-y-auto space-y-4`}>
+      {/* Messages Area - Scrollable */}
+      <div className={`flex-1 p-4 ${isMobile ? 'px-3' : ''} overflow-y-auto space-y-4 min-h-0`}>
         {displayMessages.map(message => (
           <div 
             key={message.id} 
@@ -261,8 +261,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
         )}
       </div>
       
-      {/* Input Area */}
-      <div className="p-3 border-t">
+      {/* Input Area - Fixed at bottom */}
+      <div className="p-3 border-t bg-white dark:bg-gray-900 flex-shrink-0">
         <div className={`flex ${isArabic ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
           <Input
             placeholder={isArabic ? 'تحدث مع مدير التسويق الذكي...' : 'Chat with your AI Marketing Manager...'}

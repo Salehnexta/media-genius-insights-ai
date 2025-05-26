@@ -24,6 +24,35 @@
   text-align: right;
 }
 
+/* Fixed Chat Input Area */
+.chat-input-fixed {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  background: white;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dark .chat-input-fixed {
+  background: #111827;
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Chat container with proper height */
+.chat-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  max-height: 100vh;
+}
+
+.chat-messages-area {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding-bottom: 1rem;
+}
+
 /* RTL Cards and Statistics */
 [dir="rtl"] .stat-card {
   text-align: right;
