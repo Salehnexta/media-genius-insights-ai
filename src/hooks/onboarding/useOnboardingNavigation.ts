@@ -41,12 +41,11 @@ export const useOnboardingNavigation = (isArabic: boolean) => {
         console.log('=== COMPLETING ONBOARDING ===');
         console.log('Current data before completion:', data);
         
-        // تمييز الـ onboarding كمكتمل - هذا هو الإصلاح الحرج
+        // تمييز الـ onboarding كمكتمل مع طوابع زمنية
         const completedData = { 
           ...data, 
           completed: true,
-          // أيضاً تحديد وقت الإكمال للاستخدام الفوري
-          completedAt: new Date().toISOString()
+          completed_at: new Date().toISOString()
         };
         console.log('Data with completion status:', completedData);
         
@@ -59,7 +58,7 @@ export const useOnboardingNavigation = (isArabic: boolean) => {
         console.log('Final save result:', finalSaved);
         
         if (finalSaved) {
-          console.log('Onboarding completed successfully, navigating to dashboard');
+          console.log('✅ Onboarding completed successfully, navigating to dashboard');
           
           // عرض رسالة نجاح
           toast({
@@ -67,17 +66,10 @@ export const useOnboardingNavigation = (isArabic: boolean) => {
             description: isArabic ? 'تم إكمال الإعداد بنجاح. جاري توجيهك إلى لوحة التحكم...' : 'Setup completed successfully. Redirecting to dashboard...',
           });
           
-          // فترة انتظار قصيرة لضمان معالجة الحفظ
+          // التوجيه المباشر للوحة التحكم مع استبدال التاريخ
           setTimeout(() => {
-            console.log('=== REDIRECTING TO DASHBOARD ===');
-            // التوجيه للوحة التحكم مباشرة
-            navigate('/dashboard', { replace: true });
-            
-            // تحديث إضافي للصفحة لضمان تحميل البيانات الصحيحة
-            setTimeout(() => {
-              console.log('Performing page refresh to ensure latest data...');
-              window.location.href = '/dashboard';
-            }, 500);
+            console.log('🚀 Redirecting to dashboard...');
+            navigate('/', { replace: true });
           }, 1500);
         } else {
           throw new Error(isArabic ? 'فشل في إكمال الإعداد' : 'Failed to complete onboarding');

@@ -46,14 +46,26 @@ const Index: React.FC = () => {
       const onboardingData = await getOnboardingData();
       console.log('Onboarding data received:', onboardingData);
       
-      // التحقق من حالة الإكمال بطرق متعددة للتأكد
+      // التحقق الشامل من حالة الإكمال
       const isCompleted = onboardingData && (
-        onboardingData.completed_at !== null || 
+        // التحقق من العلامة المباشرة للإكمال
         onboardingData.completed === true ||
-        (onboardingData.business_name && onboardingData.industry)
+        onboardingData.completed_at !== null ||
+        // التحقق من وجود البيانات الأساسية المطلوبة
+        (onboardingData.business_name && 
+         onboardingData.industry && 
+         onboardingData.skill_level &&
+         onboardingData.experience)
       );
       
-      console.log('Onboarding completion status:', isCompleted);
+      console.log('=== ONBOARDING STATUS DETAILS ===');
+      console.log('Completed flag:', onboardingData?.completed);
+      console.log('Completed at:', onboardingData?.completed_at);
+      console.log('Business name:', onboardingData?.business_name);
+      console.log('Industry:', onboardingData?.industry);
+      console.log('Skill level:', onboardingData?.skill_level);
+      console.log('Experience:', onboardingData?.experience);
+      console.log('Final completion status:', isCompleted);
       
       if (!isCompleted) {
         console.log('Onboarding not completed, redirecting to wizard');
@@ -61,11 +73,12 @@ const Index: React.FC = () => {
         return;
       }
       
-      console.log('Onboarding completed, showing dashboard');
+      console.log('✅ Onboarding completed - showing dashboard');
       setLoading(false);
     } catch (error) {
       console.error('Error checking onboarding status:', error);
-      // في حالة الخطأ، نوجه للـ onboarding للتأكد
+      // في حالة الخطأ في استرجاع البيانات، نوجه للـ onboarding
+      console.log('Error occurred, redirecting to onboarding for safety');
       navigate('/onboarding');
     } finally {
       setCheckingOnboarding(false);
@@ -82,7 +95,7 @@ const Index: React.FC = () => {
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
             <p className="text-gray-600 dark:text-gray-300">
               {checkingOnboarding 
-                ? (isArabic ? 'جاري التحقق من حالة الإعداد...' : 'Checking setup status...')
+                ? (isArabic ? 'جاري التحقق من حالة الحساب...' : 'Checking account status...')
                 : authLoading
                 ? (isArabic ? 'جاري التحقق من الهوية...' : 'Checking authentication...')
                 : (isArabic ? 'جاري تحميل لوحة التحكم...' : 'Loading dashboard...')
@@ -98,6 +111,8 @@ const Index: React.FC = () => {
     console.log('No user after loading, this should not happen');
     return null;
   }
+
+  console.log('🎉 Rendering dashboard for completed user');
 
   return (
     <DashboardLayoutWrapper>
