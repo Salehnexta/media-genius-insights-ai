@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -148,6 +147,34 @@ const SocialMediaExtraction: React.FC<SocialMediaExtractionProps> = ({ data, upd
     }
   };
 
+  const getAccountDisplayName = (account: any) => {
+    if ('handle' in account) return account.handle;
+    if ('name' in account) return account.name;
+    if ('phone' in account) return account.phone;
+    return 'Unknown';
+  };
+
+  const getAccountMetrics = (account: any) => {
+    if ('followers' in account && account.followers !== undefined) {
+      return `${account.followers} ${isArabic ? 'متابع' : 'followers'}`;
+    }
+    if ('likes' in account && account.likes !== undefined) {
+      return `${account.likes} ${isArabic ? 'إعجاب' : 'likes'}`;
+    }
+    return null;
+  };
+
+  const getLastPost = (account: any) => {
+    if ('last_post' in account && account.last_post) {
+      return `${isArabic ? 'آخر نشر:' : 'Last post:'} ${account.last_post}`;
+    }
+    return null;
+  };
+
+  const getAccountUrl = (account: any) => {
+    return 'url' in account ? account.url : undefined;
+  };
+
   if (isExtracting) {
     return (
       <div className="space-y-6">
@@ -206,25 +233,25 @@ const SocialMediaExtraction: React.FC<SocialMediaExtractionProps> = ({ data, upd
                     {getPlatformIcon(platform)}
                     <div className={isArabic ? 'text-right' : ''}>
                       <p className="font-medium">
-                        {account.handle || account.name || account.phone}
+                        {getAccountDisplayName(account)}
                       </p>
-                      {account.followers !== undefined && (
+                      {getAccountMetrics(account) && (
                         <p className="text-sm text-gray-500">
-                          {account.followers} {isArabic ? 'متابع' : 'followers'}
+                          {getAccountMetrics(account)}
                         </p>
                       )}
-                      {account.last_post && (
+                      {getLastPost(account) && (
                         <p className="text-sm text-gray-500">
-                          {isArabic ? 'آخر نشر:' : 'Last post:'} {account.last_post}
+                          {getLastPost(account)}
                         </p>
                       )}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(account.status)}
-                    {account.url && (
+                    {getAccountUrl(account) && (
                       <Button variant="ghost" size="sm" asChild>
-                        <a href={account.url} target="_blank" rel="noopener noreferrer">
+                        <a href={getAccountUrl(account)} target="_blank" rel="noopener noreferrer">
                           <ExternalLink className="w-4 h-4" />
                         </a>
                       </Button>

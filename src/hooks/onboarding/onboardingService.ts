@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { transformSupabaseToLocal, transformLocalToSupabase } from './transformers';
 import { OnboardingData } from './types';
@@ -179,7 +178,7 @@ export const saveUserPreferences = async (userId: string, data: OnboardingData) 
     personalization_data: {
       onboardingCompleted: data.completed,
       completedAt: data.completed ? new Date().toISOString() : null,
-      businessName: data.businessName
+      businessName: data.business_name // Fixed: use business_name instead of businessName
     },
     updated_at: new Date().toISOString()
   };
