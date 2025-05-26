@@ -148,6 +148,31 @@ const SocialMediaExtraction: React.FC<SocialMediaExtractionProps> = ({ data, upd
     }
   };
 
+  // Helper function to safely get account display name
+  const getAccountDisplayName = (account: any) => {
+    if ('handle' in account) return account.handle;
+    if ('name' in account) return account.name;
+    if ('phone' in account) return account.phone;
+    return 'Unknown';
+  };
+
+  // Helper function to safely get follower count
+  const getFollowerCount = (account: any) => {
+    if ('followers' in account) return account.followers;
+    if ('likes' in account) return account.likes;
+    return null;
+  };
+
+  // Helper function to safely get last post info
+  const getLastPost = (account: any) => {
+    return 'last_post' in account ? account.last_post : null;
+  };
+
+  // Helper function to safely get URL
+  const getAccountUrl = (account: any) => {
+    return 'url' in account ? account.url : null;
+  };
+
   if (isExtracting) {
     return (
       <div className="space-y-6">
@@ -206,25 +231,25 @@ const SocialMediaExtraction: React.FC<SocialMediaExtractionProps> = ({ data, upd
                     {getPlatformIcon(platform)}
                     <div className={isArabic ? 'text-right' : ''}>
                       <p className="font-medium">
-                        {account.handle || account.name || account.phone}
+                        {getAccountDisplayName(account)}
                       </p>
-                      {account.followers !== undefined && (
+                      {getFollowerCount(account) !== null && (
                         <p className="text-sm text-gray-500">
-                          {account.followers} {isArabic ? 'متابع' : 'followers'}
+                          {getFollowerCount(account)} {isArabic ? 'متابع' : 'followers'}
                         </p>
                       )}
-                      {account.last_post && (
+                      {getLastPost(account) && (
                         <p className="text-sm text-gray-500">
-                          {isArabic ? 'آخر نشر:' : 'Last post:'} {account.last_post}
+                          {isArabic ? 'آخر نشر:' : 'Last post:'} {getLastPost(account)}
                         </p>
                       )}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(account.status)}
-                    {account.url && (
+                    {getAccountUrl(account) && (
                       <Button variant="ghost" size="sm" asChild>
-                        <a href={account.url} target="_blank" rel="noopener noreferrer">
+                        <a href={getAccountUrl(account)} target="_blank" rel="noopener noreferrer">
                           <ExternalLink className="w-4 h-4" />
                         </a>
                       </Button>

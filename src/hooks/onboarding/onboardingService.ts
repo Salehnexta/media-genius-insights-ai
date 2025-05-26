@@ -179,7 +179,7 @@ export const saveUserPreferences = async (userId: string, data: OnboardingData) 
     personalization_data: {
       onboardingCompleted: data.completed,
       completedAt: data.completed ? new Date().toISOString() : null,
-      businessName: data.businessName
+      businessName: data.business_name
     },
     updated_at: new Date().toISOString()
   };
