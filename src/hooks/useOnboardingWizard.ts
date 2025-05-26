@@ -42,8 +42,8 @@ export const useOnboardingWizard = (isArabic: boolean) => {
     });
   }, [handlePrevious, executeAsync]);
 
-  // Combined loading state
-  const isLoading = dataLoading || loading || isNavigating;
+  // Combined loading state - Fixed: use loadingState.loading instead of loading
+  const isLoading = dataLoading || loadingState.loading || isNavigating;
   const isSaving = saving || loadingState.loading;
 
   return {
