@@ -4,6 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Loader2 } from "lucide-react";
 import DashboardLayoutWrapper from "@/components/dashboard/DashboardLayoutWrapper";
 import DataStatusChecker from "@/components/debug/DataStatusChecker";
+import { WebScraperCard } from "@/components/scraper/WebScraperCard";
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -49,13 +50,14 @@ const Index = () => {
         <div className="mb-8">
           <DataStatusChecker />
         </div>
+
+        {/* مكون استرداد المواقع الجديد */}
+        <div className="mb-8">
+          <WebScraperCard />
+        </div>
         
         <DashboardLayoutWrapper>
-          <div className="p-4">
-            <p className="text-center text-gray-600">
-              {isArabic ? "مرحباً بك في لوحة التحكم" : "Welcome to your dashboard"}
-            </p>
-          </div>
+          <div></div>
         </DashboardLayoutWrapper>
       </div>
     </div>
