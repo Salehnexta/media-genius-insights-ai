@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -40,17 +39,10 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              {/* الصفحة الرئيسية - توجيه للوحة التحكم أو الهبوط */}
-              <Route 
-                path="/" 
-                element={
-                  <ProtectedRoute>
-                    <Index />
-                  </ProtectedRoute>
-                } 
-              />
+              {/* الصفحة الرئيسية - الآن تعرض المحتوى العربي */}
+              <Route path="/" element={<LandingPageAr />} />
               
-              {/* لوحة التحكم - نفس المسار للراحة */}
+              {/* لوحة التحكم */}
               <Route
                 path="/dashboard"
                 element={
@@ -60,9 +52,8 @@ const App = () => (
                 }
               />
               
-              {/* صفحات الهبوط */}
+              {/* صفحة الهبوط الإنجليزية */}
               <Route path="/landing" element={<LandingPage />} />
-              <Route path="/landing-ar" element={<LandingPageAr />} />
               
               {/* صفحات المصادقة */}
               <Route path="/auth" element={<Auth />} />

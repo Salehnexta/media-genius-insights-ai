@@ -24,7 +24,7 @@ const Index = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">
-            {isArabic ? "مرحباً بك في مورفو" : "Welcome to Morpho"}
+            {isArabic ? "مرحباً بك في Morvo.ai" : "Welcome to Morvo.ai"}
           </h1>
           <p className="text-gray-600">
             {isArabic ? "يرجى تسجيل الدخول للمتابعة" : "Please sign in to continue"}
@@ -39,7 +39,7 @@ const Index = () => {
       <div className="container mx-auto py-8">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-center mb-2">
-            {isArabic ? "مرحباً بك في مورفو" : "Welcome to Morpho"}
+            {isArabic ? "مرحباً بك في Morvo.ai" : "Welcome to Morvo.ai"}
           </h1>
           <p className="text-center text-gray-600">
             {isArabic ? "منصة الذكاء الاصطناعي للتسويق الرقمي" : "AI-Powered Digital Marketing Platform"}
