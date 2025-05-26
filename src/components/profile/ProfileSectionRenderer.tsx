@@ -9,6 +9,7 @@ import LanguageSection from './LanguageSection';
 import InterfaceCustomizationSection from './InterfaceCustomizationSection';
 import HelpSupportSection from './HelpSupportSection';
 import TermsConditionsSection from './TermsConditionsSection';
+import ProfileDashboardSection from './ProfileDashboardSection';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -48,6 +49,12 @@ const ProfileSectionRenderer: React.FC = () => {
           onSave={handleProfileSave}
           onSocialLinksChange={setSocialLinks}
           loading={saving}
+        />
+      );
+    case 'dashboard':
+      return (
+        <ProfileDashboardSection
+          isArabic={isArabic}
         />
       );
     case 'account-settings':

@@ -1,6 +1,15 @@
 
 import React from 'react';
-import { User, Settings, Shield, Languages, Palette, HelpCircle, FileText } from 'lucide-react';
+import { 
+  User, 
+  Settings, 
+  Shield, 
+  Languages, 
+  Palette, 
+  HelpCircle, 
+  FileText,
+  BarChart3
+} from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ProfileNavigationProps {
@@ -20,6 +29,11 @@ const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
       id: 'profile',
       label: isArabic ? 'الملف الشخصي' : 'Profile',
       icon: User
+    },
+    {
+      id: 'dashboard',
+      label: isArabic ? 'لوحة التحكم' : 'Dashboard',
+      icon: BarChart3
     },
     {
       id: 'account-settings',
