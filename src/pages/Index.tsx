@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import ChatSection from '@/components/dashboard/ChatSection';
 import MarketingDashboardTabs from '@/components/dashboard/MarketingDashboardTabs';
+import DashboardLayoutWrapper from '@/components/dashboard/DashboardLayoutWrapper';
 import { Loader2 } from 'lucide-react';
 import { useOnboardingData } from '@/hooks/useOnboardingData';
 
@@ -61,17 +62,19 @@ const Index: React.FC = () => {
   if (authLoading || loading || checkingOnboarding) {
     console.log('Showing loading state');
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-gray-600 dark:text-gray-300">
-            {checkingOnboarding 
-              ? (isArabic ? 'جاري التحقق من الإعداد...' : 'Checking setup status...')
-              : (isArabic ? 'جاري تحميل لوحة التحكم...' : 'Loading dashboard...')
-            }
-          </p>
+      <DashboardLayoutWrapper>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className={`text-center ${isArabic ? 'arabic-text' : ''}`}>
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+            <p className="text-gray-600 dark:text-gray-300">
+              {checkingOnboarding 
+                ? (isArabic ? 'جاري التحقق من الإعداد...' : 'Checking setup status...')
+                : (isArabic ? 'جاري تحميل لوحة التحكم...' : 'Loading dashboard...')
+              }
+            </p>
+          </div>
         </div>
-      </div>
+      </DashboardLayoutWrapper>
     );
   }
 
@@ -81,7 +84,7 @@ const Index: React.FC = () => {
   }
 
   return (
-    <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col`} dir={isArabic ? 'rtl' : 'ltr'}>
+    <DashboardLayoutWrapper>
       <DashboardHeader />
       
       {/* Mobile Layout - Chat at bottom */}
@@ -97,23 +100,25 @@ const Index: React.FC = () => {
         </div>
       </div>
 
-      {/* Desktop/Tablet Layout - Chat ALWAYS on left */}
-      <div className="hidden md:flex flex-1 overflow-hidden">
-        {/* Chat Section - Always on the left (forced positioning) */}
-        <div className="w-full md:w-2/5 lg:w-1/3 xl:w-3/10 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 order-1">
+      {/* Desktop/Tablet Layout */}
+      <div className="hidden md:flex flex-1 overflow-hidden desktop-layout">
+        {/* Chat Section - Consistent positioning */}
+        <div className={`w-full md:w-2/5 lg:w-1/3 xl:w-3/10 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 desktop-chat-left ${
+          isArabic ? 'border-l' : 'border-r'
+        }`}>
           <div className="h-full">
             <ChatSection />
           </div>
         </div>
 
         {/* Dashboard Section - Main content */}
-        <div className="flex-1 bg-white dark:bg-gray-900 order-2">
+        <div className="flex-1 bg-white dark:bg-gray-900 desktop-content-right">
           <div className="h-full overflow-y-auto">
             <MarketingDashboardTabs />
           </div>
         </div>
       </div>
-    </div>
+    </DashboardLayoutWrapper>
   );
 };
 

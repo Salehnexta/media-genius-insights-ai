@@ -62,17 +62,6 @@
   left: 1rem;
 }
 
-/* RTL Order utilities */
-[dir="rtl"] .order-first,
-.rtl .order-first {
-  order: 9999;
-}
-
-[dir="rtl"] .order-last,
-.rtl .order-last {
-  order: -9999;
-}
-
 /* RTL Borders - Enhanced */
 [dir="rtl"] .border-r,
 .rtl .border-r {
@@ -86,46 +75,45 @@
   border-right: 1px solid;
 }
 
-/* FORCED CHAT SIDEBAR POSITIONING - ALWAYS LEFT */
-.chat-sidebar-container {
-  order: -1 !important; /* Force to be first */
-}
-
-/* Desktop layout fixes - FORCE chat to stay left */
+/* Desktop layout - CONSISTENT positioning regardless of language */
 @media (min-width: 769px) {
   .desktop-layout {
-    flex-direction: row !important;
+    flex-direction: row;
   }
   
   .desktop-chat-left {
-    order: 1 !important;
-    flex-shrink: 0 !important;
+    order: 1;
+    flex-shrink: 0;
   }
   
   .desktop-content-right {
-    order: 2 !important;
-    flex: 1 !important;
+    order: 2;
+    flex: 1;
   }
   
-  /* Override ALL RTL layout for desktop to keep chat on left */
+  /* Force consistent order for all layouts */
   [dir="rtl"] .desktop-layout {
-    flex-direction: row !important;
+    flex-direction: row;
   }
   
   [dir="rtl"] .desktop-chat-left {
-    order: 1 !important;
+    order: 1;
   }
   
   [dir="rtl"] .desktop-content-right {
-    order: 2 !important;
+    order: 2;
+  }
+}
+
+/* Mobile specific RTL adjustments */
+@media (max-width: 768px) {
+  [dir="rtl"] .mobile-nav {
+    right: 0;
+    left: auto;
   }
   
-  /* Force specific order values */
-  [dir="rtl"] .hidden.md\\:flex .order-1 {
-    order: 1 !important;
-  }
-  
-  [dir="rtl"] .hidden.md\\:flex .order-2 {
-    order: 2 !important;
+  [dir="rtl"] .mobile-menu-item {
+    text-align: right;
+    direction: rtl;
   }
 }

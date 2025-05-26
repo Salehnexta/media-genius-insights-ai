@@ -42,10 +42,10 @@ const MarketingDashboardTabs: React.FC = () => {
   ];
 
   return (
-    <div className={`w-full h-full dashboard-tabs`}>
+    <div className={`w-full h-full dashboard-tabs ${isArabic ? 'rtl arabic-text' : ''}`} dir={isArabic ? 'rtl' : 'ltr'}>
       <Tabs defaultValue="marketing-manager" className="w-full h-full flex flex-col">
         <div className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-6 pt-4">
-          <TabsList className={`grid w-full grid-cols-5 bg-gray-100 dark:bg-gray-800 ${isArabic ? 'rtl' : ''}`}>
+          <TabsList className={`grid w-full grid-cols-5 bg-gray-100 dark:bg-gray-800`}>
             {tabs.map((tab) => (
               <TabsTrigger 
                 key={tab.id} 
