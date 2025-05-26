@@ -1,10 +1,15 @@
-
 import React, { useEffect } from 'react';
 import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import LandingHero from '@/components/landing/LandingHero';
+import TestimonialsSection from '@/components/landing/TestimonialsSection';
+import IntegrationsSection from '@/components/landing/IntegrationsSection';
+import FAQSection from '@/components/landing/FAQSection';
+import DemoRequestForm from '@/components/landing/DemoRequestForm';
+import NewsletterSection from '@/components/landing/NewsletterSection';
+import PricingOverviewSection from '@/components/landing/PricingOverviewSection';
 import { ArrowLeft } from 'lucide-react';
 
 const LandingPageArContent: React.FC = () => {
@@ -124,6 +129,24 @@ const LandingPageArContent: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Integrations Section */}
+      <IntegrationsSection isArabic={true} />
+
+      {/* Pricing Overview Section */}
+      <PricingOverviewSection isArabic={true} />
+
+      {/* Testimonials Section */}
+      <TestimonialsSection isArabic={true} />
+
+      {/* Demo Request Section */}
+      <DemoRequestForm isArabic={true} />
+
+      {/* FAQ Section */}
+      <FAQSection isArabic={true} />
+
+      {/* Newsletter Section */}
+      <NewsletterSection isArabic={true} />
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">

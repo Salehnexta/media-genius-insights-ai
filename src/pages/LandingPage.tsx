@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
@@ -7,6 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Brain, Target, TrendingUp, Users, Globe, Zap, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 import LanguageToggle from '@/components/layout/LanguageToggle';
+import TestimonialsSection from '@/components/landing/TestimonialsSection';
+import IntegrationsSection from '@/components/landing/IntegrationsSection';
+import FAQSection from '@/components/landing/FAQSection';
+import DemoRequestForm from '@/components/landing/DemoRequestForm';
+import NewsletterSection from '@/components/landing/NewsletterSection';
+import PricingOverviewSection from '@/components/landing/PricingOverviewSection';
 
 const LandingPage: React.FC = () => {
   const { language, toggleLanguage } = useLanguage();
@@ -141,6 +146,24 @@ const LandingPage: React.FC = () => {
           ))}
         </div>
       </section>
+
+      {/* Integrations Section */}
+      <IntegrationsSection isArabic={isArabic} />
+
+      {/* Pricing Overview Section */}
+      <PricingOverviewSection isArabic={isArabic} />
+
+      {/* Testimonials Section */}
+      <TestimonialsSection isArabic={isArabic} />
+
+      {/* Demo Request Section */}
+      <DemoRequestForm isArabic={isArabic} />
+
+      {/* FAQ Section */}
+      <FAQSection isArabic={isArabic} />
+
+      {/* Newsletter Section */}
+      <NewsletterSection isArabic={isArabic} />
 
       {/* CTA Section */}
       <section className="container mx-auto px-4 py-16">
