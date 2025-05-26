@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -27,7 +28,7 @@ export const useOnboardingNavigation = (isArabic: boolean) => {
     
     try {
       if (currentStep < totalSteps - 1) {
-        // Save current data before proceeding to next step
+        // حفظ البيانات الحالية قبل الانتقال للخطوة التالية
         const saved = await saveFunction();
         if (!saved) {
           throw new Error(isArabic ? 'فشل في حفظ البيانات' : 'Failed to save data');
@@ -36,43 +37,48 @@ export const useOnboardingNavigation = (isArabic: boolean) => {
         setCurrentStep(prev => prev + 1);
         setIsNavigating(false);
       } else {
-        // This is the final step - complete onboarding
+        // هذه هي الخطوة الأخيرة - إكمال الـ onboarding
         console.log('=== COMPLETING ONBOARDING ===');
         console.log('Current data before completion:', data);
         
-        // Mark onboarding as complete - this is the critical fix
+        // تمييز الـ onboarding كمكتمل - هذا هو الإصلاح الحرج
         const completedData = { 
           ...data, 
           completed: true,
-          // Also set a completion timestamp for immediate use
+          // أيضاً تحديد وقت الإكمال للاستخدام الفوري
           completedAt: new Date().toISOString()
         };
         console.log('Data with completion status:', completedData);
-        console.log('completedData.completed:', completedData.completed, typeof completedData.completed);
         
-        // Update local state first
+        // تحديث الحالة المحلية أولاً
         updateData(completedData);
         
-        // Save the completed data
+        // حفظ البيانات المكتملة
         console.log('=== SAVING COMPLETED DATA ===');
-        console.log('About to call saveFunction with completed data...');
         const finalSaved = await saveFunction();
         console.log('Final save result:', finalSaved);
         
         if (finalSaved) {
           console.log('Onboarding completed successfully, navigating to dashboard');
+          
+          // عرض رسالة نجاح
           toast({
             title: isArabic ? 'تم الانتهاء!' : 'Completed!',
-            description: isArabic ? 'تم إكمال الإعداد بنجاح' : 'Onboarding completed successfully',
+            description: isArabic ? 'تم إكمال الإعداد بنجاح. جاري توجيهك إلى لوحة التحكم...' : 'Setup completed successfully. Redirecting to dashboard...',
           });
           
-          // Force navigation with a slight delay to ensure save is processed
+          // فترة انتظار قصيرة لضمان معالجة الحفظ
           setTimeout(() => {
-            console.log('Forcing navigation to dashboard...');
-            navigate('/', { replace: true });
-            // Also force a page reload to clear any cached state
-            window.location.href = '/';
-          }, 1000);
+            console.log('=== REDIRECTING TO DASHBOARD ===');
+            // التوجيه للوحة التحكم مباشرة
+            navigate('/dashboard', { replace: true });
+            
+            // تحديث إضافي للصفحة لضمان تحميل البيانات الصحيحة
+            setTimeout(() => {
+              console.log('Performing page refresh to ensure latest data...');
+              window.location.href = '/dashboard';
+            }, 500);
+          }, 1500);
         } else {
           throw new Error(isArabic ? 'فشل في إكمال الإعداد' : 'Failed to complete onboarding');
         }

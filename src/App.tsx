@@ -38,30 +38,17 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              {/* Redirect root to Arabic landing page */}
-              <Route path="/" element={<Navigate to="/landing-ar" replace />} />
-              
-              {/* Landing pages */}
-              <Route path="/landing" element={<LandingPage />} />
-              <Route path="/landing-ar" element={<LandingPageAr />} />
-              
-              {/* Auth pages */}
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/auth-ar" element={<AuthAr />} />
-              <Route path="/register-ar" element={<RegisterAr />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              
-              {/* Onboarding Wizard */}
-              <Route
-                path="/onboarding"
+              {/* الصفحة الرئيسية - توجيه للوحة التحكم أو الهبوط */}
+              <Route 
+                path="/" 
                 element={
                   <ProtectedRoute>
-                    <Onboarding />
+                    <Index />
                   </ProtectedRoute>
-                }
+                } 
               />
               
-              {/* Dashboard */}
+              {/* لوحة التحكم - نفس المسار للراحة */}
               <Route
                 path="/dashboard"
                 element={
@@ -71,7 +58,27 @@ const App = () => (
                 }
               />
               
-              {/* Profile */}
+              {/* صفحات الهبوط */}
+              <Route path="/landing" element={<LandingPage />} />
+              <Route path="/landing-ar" element={<LandingPageAr />} />
+              
+              {/* صفحات المصادقة */}
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/auth-ar" element={<AuthAr />} />
+              <Route path="/register-ar" element={<RegisterAr />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              
+              {/* معالج الإعداد */}
+              <Route
+                path="/onboarding"
+                element={
+                  <ProtectedRoute>
+                    <Onboarding />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* الملف الشخصي */}
               <Route
                 path="/profile"
                 element={
@@ -81,7 +88,7 @@ const App = () => (
                 }
               />
               
-              {/* Management pages */}
+              {/* صفحات الإدارة */}
               <Route
                 path="/team-management"
                 element={
@@ -100,7 +107,7 @@ const App = () => (
                 }
               />
               
-              {/* Support and Help */}
+              {/* المساعدة والدعم */}
               <Route
                 path="/help-center"
                 element={
@@ -110,7 +117,7 @@ const App = () => (
                 }
               />
               
-              {/* Billing */}
+              {/* الفوترة */}
               <Route
                 path="/billing"
                 element={
@@ -120,15 +127,15 @@ const App = () => (
                 }
               />
               
-              {/* Pricing pages */}
+              {/* صفحات الأسعار */}
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/pricing-ar" element={<PricingAr />} />
               
-              {/* Privacy pages */}
+              {/* صفحات الخصوصية */}
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/privacy-ar" element={<PrivacyAr />} />
               
-              {/* Terms */}
+              {/* الشروط */}
               <Route path="/terms" element={<Terms />} />
               
               {/* 404 */}

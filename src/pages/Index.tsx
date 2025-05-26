@@ -20,12 +20,14 @@ const Index: React.FC = () => {
   const isArabic = language === 'ar';
 
   useEffect(() => {
+    console.log('=== INDEX PAGE DEBUG ===');
     console.log('Auth loading:', authLoading);
     console.log('User exists:', !!user);
+    console.log('Current path:', window.location.pathname);
     
     if (!authLoading && !user) {
-      console.log('No user found, redirecting to auth');
-      navigate('/auth');
+      console.log('No user found, redirecting to Arabic landing page');
+      navigate('/landing-ar');
       return;
     }
 
@@ -37,28 +39,40 @@ const Index: React.FC = () => {
   const checkOnboardingStatus = async () => {
     if (!user) return;
     
+    console.log('=== CHECKING ONBOARDING STATUS ===');
     setCheckingOnboarding(true);
+    
     try {
       const onboardingData = await getOnboardingData();
-      console.log('Onboarding data:', onboardingData);
+      console.log('Onboarding data received:', onboardingData);
       
-      // If user hasn't completed onboarding, redirect to wizard
-      if (!onboardingData || !onboardingData.completed) {
+      // التحقق من حالة الإكمال بطرق متعددة للتأكد
+      const isCompleted = onboardingData && (
+        onboardingData.completed_at !== null || 
+        onboardingData.completed === true ||
+        (onboardingData.business_name && onboardingData.industry)
+      );
+      
+      console.log('Onboarding completion status:', isCompleted);
+      
+      if (!isCompleted) {
         console.log('Onboarding not completed, redirecting to wizard');
         navigate('/onboarding');
         return;
       }
       
+      console.log('Onboarding completed, showing dashboard');
       setLoading(false);
     } catch (error) {
       console.error('Error checking onboarding status:', error);
-      setLoading(false);
+      // في حالة الخطأ، نوجه للـ onboarding للتأكد
+      navigate('/onboarding');
     } finally {
       setCheckingOnboarding(false);
     }
   };
 
-  // Show loading while checking authentication or onboarding
+  // عرض حالة التحميل أثناء التحقق من المصادقة أو الـ onboarding
   if (authLoading || loading || checkingOnboarding) {
     console.log('Showing loading state');
     return (
@@ -68,7 +82,9 @@ const Index: React.FC = () => {
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
             <p className="text-gray-600 dark:text-gray-300">
               {checkingOnboarding 
-                ? (isArabic ? 'جاري التحقق من الإعداد...' : 'Checking setup status...')
+                ? (isArabic ? 'جاري التحقق من حالة الإعداد...' : 'Checking setup status...')
+                : authLoading
+                ? (isArabic ? 'جاري التحقق من الهوية...' : 'Checking authentication...')
                 : (isArabic ? 'جاري تحميل لوحة التحكم...' : 'Loading dashboard...')
               }
             </p>
@@ -79,7 +95,7 @@ const Index: React.FC = () => {
   }
 
   if (!user) {
-    console.log('No user, returning null (should redirect)');
+    console.log('No user after loading, this should not happen');
     return null;
   }
 
@@ -89,12 +105,10 @@ const Index: React.FC = () => {
       
       {/* Mobile Layout - Chat at bottom */}
       <div className="md:hidden flex-1 flex flex-col overflow-hidden">
-        {/* Dashboard Section - Top on mobile */}
         <div className="flex-1 bg-white dark:bg-gray-900 overflow-y-auto">
           <MarketingDashboardTabs />
         </div>
 
-        {/* Chat Section - Fixed at bottom on mobile */}
         <div className="h-64 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
           <ChatSection />
         </div>
@@ -102,7 +116,6 @@ const Index: React.FC = () => {
 
       {/* Desktop/Tablet Layout */}
       <div className="hidden md:flex flex-1 overflow-hidden desktop-layout">
-        {/* Chat Section - Consistent positioning */}
         <div className={`w-full md:w-2/5 lg:w-1/3 xl:w-3/10 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 desktop-chat-left ${
           isArabic ? 'border-l' : 'border-r'
         }`}>
@@ -111,7 +124,6 @@ const Index: React.FC = () => {
           </div>
         </div>
 
-        {/* Dashboard Section - Main content */}
         <div className="flex-1 bg-white dark:bg-gray-900 desktop-content-right">
           <div className="h-full overflow-y-auto">
             <MarketingDashboardTabs />
