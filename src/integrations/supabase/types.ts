@@ -283,6 +283,45 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_chat_history: {
+        Row: {
+          agent_type: string | null
+          context: Json | null
+          created_at: string
+          id: string
+          message_content: string
+          message_type: string
+          metadata: Json | null
+          session_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          agent_type?: string | null
+          context?: Json | null
+          created_at?: string
+          id?: string
+          message_content: string
+          message_type: string
+          metadata?: Json | null
+          session_id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          agent_type?: string | null
+          context?: Json | null
+          created_at?: string
+          id?: string
+          message_content?: string
+          message_type?: string
+          metadata?: Json | null
+          session_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_conversations: {
         Row: {
           agent_type: string

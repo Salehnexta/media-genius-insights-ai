@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,6 +5,7 @@ import { Send, Bot, User, TrendingUp, BarChart3, Users, Target, Loader2, Brain }
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { chatHistoryService } from '@/services/chatHistoryService';
 import AIMarketingManagerIntro from './AIMarketingManagerIntro';
 
 interface Message {
@@ -19,31 +19,72 @@ interface Message {
 interface ChatInterfaceProps {
   isMobile?: boolean;
   isExpanded?: boolean;
+  sessionId?: string;
+  onSessionChange?: (sessionId: string) => void;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpanded = false }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ 
+  isMobile = false, 
+  isExpanded = false,
+  sessionId: providedSessionId,
+  onSessionChange
+}) => {
   const { t, language } = useLanguage();
   const isArabic = language === 'ar';
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
+  const [currentSessionId, setCurrentSessionId] = useState<string>(
+    providedSessionId || chatHistoryService.generateSessionId()
+  );
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Initialize messages with AI Marketing Manager introduction
+  // Load chat history when session changes
   useEffect(() => {
-    const initialMessages: Message[] = [
-      {
-        id: '1',
-        content: isArabic 
-          ? 'مرحباً! أنا مدير التسويق الذكي، وأنا هنا لقيادة فريق التسويق الذكي الخاص بك. فريقنا يتكون من 8 خبراء تسويق ذكيين مستعدين للعمل 24/7 لنجاح عملك. كيف يمكنني مساعدتك اليوم؟'
-          : 'Hello! I\'m your AI Marketing Manager, here to lead your complete AI Marketing Team. Our team consists of 8 AI marketing experts ready to work 24/7 for your business success. How can I help you today?',
-        sender: 'ai',
-        timestamp: new Date(),
+    const loadChatHistory = async () => {
+      if (currentSessionId && currentSessionId !== 'new') {
+        try {
+          const history = await chatHistoryService.getSessionHistory(currentSessionId);
+          if (history.length > 0) {
+            const loadedMessages: Message[] = history.map(msg => ({
+              id: msg.id,
+              content: msg.message_content,
+              sender: msg.message_type as 'ai' | 'user',
+              timestamp: new Date(msg.created_at)
+            }));
+            setMessages(loadedMessages);
+            setShowIntro(false);
+            return;
+          }
+        } catch (error) {
+          console.error('Error loading chat history:', error);
+        }
       }
-    ];
-    setMessages(initialMessages);
-  }, [isArabic]);
+      
+      // Initialize with welcome message for new sessions
+      const initialMessages: Message[] = [
+        {
+          id: '1',
+          content: isArabic 
+            ? 'مرحباً! أنا مدير التسويق الذكي، وأنا هنا لقيادة فريق التسويق الذكي الخاص بك. فريقنا يتكون من 8 خبراء تسويق ذكيين مستعدين للعمل 24/7 لنجاح عملك. كيف يمكنني مساعدتك اليوم؟'
+            : 'Hello! I\'m your AI Marketing Manager, here to lead your complete AI Marketing Team. Our team consists of 8 AI marketing experts ready to work 24/7 for your business success. How can I help you today?',
+          sender: 'ai',
+          timestamp: new Date(),
+        }
+      ];
+      setMessages(initialMessages);
+    };
+
+    loadChatHistory();
+  }, [currentSessionId, isArabic]);
+
+  // Update session ID when provided externally
+  useEffect(() => {
+    if (providedSessionId && providedSessionId !== currentSessionId) {
+      setCurrentSessionId(providedSessionId);
+    }
+  }, [providedSessionId]);
 
   const suggestionCards = [
     {
@@ -93,7 +134,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
           message, 
           context,
           language,
-          role: 'marketing-manager' // Specify that this is the marketing manager
+          role: 'marketing-manager'
         }
       });
 
@@ -127,6 +168,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
     setInput('');
     setIsLoading(true);
 
+    // Save user message to history
+    await chatHistoryService.saveMessage(
+      currentSessionId,
+      textToSend,
+      'user',
+      'marketing-manager',
+      context ? { context } : {}
+    );
+
     // Add loading message
     const loadingMessage: Message = {
       id: (Date.now() + 1).toString(),
@@ -147,6 +197,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ isMobile = false, isExpan
           ? { ...msg, content: aiResponse, loading: false }
           : msg
       ));
+
+      // Save AI response to history
+      await chatHistoryService.saveMessage(
+        currentSessionId,
+        aiResponse,
+        'ai',
+        'marketing-manager',
+        context ? { context } : {}
+      );
+
+      // Notify parent component about session change if this is a new session
+      if (onSessionChange && messages.length === 1) {
+        onSessionChange(currentSessionId);
+      }
     } catch (error) {
       // Replace loading message with error message
       const errorMessage = isArabic 
